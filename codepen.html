@@ -193,6 +193,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .storage-bar { height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden; margin: 6px 0; }
 .storage-bar span { display: block; height: 100%; width: 99.8%; background: var(--accent); }
 .storage-txt { margin: 2px 0 0; }
+.copyright { margin: 12px 0 0; font-size: 11px; color: var(--text-faint); }
+.about-card .copyright { margin-top: 14px; }
 
 /* ===== Inbox ===== */
 .inbox {
@@ -647,6 +649,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
         <p>Storage almost full of "no."</p>
         <div class="storage-bar"><span></span></div>
         <p class="storage-txt">14.97 GB of 15 GB used (all rejections)</p>
+        <p class="copyright">© <span class="yr">2026</span> UNEMPLOYABLE™ · a satire</p>
       </div>
     </aside>
 
@@ -705,6 +708,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <a class="about-shop" href="https://garrettbear.com" target="_blank" rel="noopener">Shop the brand →</a>
       <p class="disclaimer"><strong>Disclaimer:</strong> This is satire. It is not Gmail, it is not affiliated with or endorsed by Google or any company shown. All emails are fictional and auto-generated for comedy. Company names are used nominatively to parody the universal job-hunt experience. No real rejection emails are reproduced. Any resemblance to the soul-crushing message you got last Tuesday is purely because they all write the exact same thing. Made with spite and love by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a>.</p>
       <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
+      <p class="copyright">© <span class="yr">2026</span> UNEMPLOYABLE™ · All rights reserved (the only thing we've got).</p>
     </div>
   </div>
 
@@ -1845,6 +1849,9 @@ function firePrank() {
   const overlay = document.getElementById("offerPrank");
   if (overlay) overlay.addEventListener("click", () => { overlay.hidden = true; document.body.style.overflow = ""; });
 })();
+
+/* ---------- Keep the copyright year current ---------- */
+document.querySelectorAll(".yr").forEach((el) => { el.textContent = new Date().getFullYear(); });
 
 /* ---------- Go ---------- */
 loadBatch();

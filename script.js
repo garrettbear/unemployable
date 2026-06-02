@@ -1089,6 +1089,9 @@ function firePrank() {
   if (overlay) overlay.addEventListener("click", () => { overlay.hidden = true; document.body.style.overflow = ""; });
 })();
 
+/* ---------- Keep the copyright year current ---------- */
+document.querySelectorAll(".yr").forEach((el) => { el.textContent = new Date().getFullYear(); });
+
 /* ---------- Go ---------- */
 loadBatch();
 loadBatch();

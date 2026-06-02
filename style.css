@@ -153,6 +153,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .storage-bar { height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden; margin: 6px 0; }
 .storage-bar span { display: block; height: 100%; width: 99.8%; background: var(--accent); }
 .storage-txt { margin: 2px 0 0; }
+.copyright { margin: 12px 0 0; font-size: 11px; color: var(--text-faint); }
+.about-card .copyright { margin-top: 14px; }
 
 /* ===== Inbox ===== */
 .inbox {
