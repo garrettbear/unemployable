@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 720" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#23262b"/>
+      <stop offset="1" stop-color="#15171a"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="720" fill="#f3efe7"/>
+
+  <!-- t-shirt -->
+  <g transform="translate(50,60)">
+    <path d="M232,40
+      C256,84 344,84 368,40
+      L474,86 C506,100 528,116 540,150 L506,262
+      C501,278 487,281 472,274 L452,210 L452,560
+      C452,580 438,590 420,590 L180,590 C162,590 148,580 148,560 L148,210
+      L128,274 C113,281 99,278 94,262 L60,150 C72,116 94,100 126,86 Z"
+      fill="url(#cloth)" stroke="#0d0e10" stroke-width="2"/>
+    <!-- collar -->
+    <path d="M232,40 C256,84 344,84 368,40 C346,70 254,70 232,40 Z" fill="#0f1012"/>
+    <path d="M232,40 C256,82 344,82 368,40" fill="none" stroke="#3a3d42" stroke-width="3"/>
+    <!-- subtle seams -->
+    <path d="M150,210 L150,560" stroke="#0d0e10" stroke-width="1" opacity=".5"/>
+    <path d="M450,210 L450,560" stroke="#0d0e10" stroke-width="1" opacity=".5"/>
+
+    <!-- ===== chest graphic (kept within ~250px print area) ===== -->
+    <g text-anchor="middle">
+      <text x="300" y="258" font-size="16" letter-spacing="3" fill="#9aa0a6" font-weight="700">STATUS: NOT SELECTED</text>
+      <text x="300" y="316" font-size="44" font-weight="800" fill="#ffffff" letter-spacing="0">REPLACED</text>
+      <text x="296" y="362" font-size="34" font-weight="800" fill="#ffffff" letter-spacing="0">BY A PROMPT</text>
+      <!-- terminal cursor -->
+      <rect x="406" y="338" width="14" height="30" fill="#f28b82"/>
+      <text x="300" y="404" font-size="16" fill="#bdc1c6" letter-spacing="1">94% confidence · 0% empathy</text>
+      <text x="300" y="444" font-size="14" fill="#71757c" letter-spacing="4">UNEMPLOYABLE™</text>
+    </g>
+  </g>
+</svg>

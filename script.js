@@ -35,6 +35,7 @@ const REAL_COMPANIES = [
   // more real ones pulled from the forwarded emails
   "LaunchDarkly", "Addepar", "Second Nature", "Premier Lacrosse League",
   "Taco Bell", "Zoo", "Gametime United",
+  "Monarch Money", "Era", "Parachute Home", "JPL", "Dave", "Ring",
   // a few famous names mixed in for the laugh
   "Airbnb", "Apple", "Netflix", "Spotify", "Uber", "Lyft", "Adobe", "Dropbox", "Notion",
   "Linear", "Datadog", "Robinhood", "Brex", "Canva", "Duolingo", "Nike",
@@ -80,6 +81,8 @@ const BRAND = {
   "Airbnb": ["airbnb.com", "#FF5A5F"], "Taco Bell": ["tacobell.com", "#702082"],
   "LaunchDarkly": ["launchdarkly.com", "#3D3D3D"], "Addepar": ["addepar.com", "#1B6FB3"],
   "Zoo": ["zoo.dev", "#111111"], "Premier Lacrosse League": ["premierlacrosseleague.com", "#0A1A2F"],
+  "JPL": ["jpl.nasa.gov", "#1A3A6B"], "Ring": ["ring.com", "#1B97E0"],
+  "Monarch Money": ["monarchmoney.com", "#5A31F4"], "Dave": ["dave.com", "#111111"],
   "Ironically Still Hiring Inc.": ["stillno.com", "#777777"]
 };
 

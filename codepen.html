@@ -407,6 +407,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
   --accent-soft: #3a2a2a;
   --blue: #8ab4f8;
   --hover: #2a2b2e;
+  --unread: #e8eaed;            /* bright: unread row sender/subject */
+  --read: #bdc1c6;              /* legible grey: read row sender/subject */
   --shadow: 0 1px 2px rgba(0,0,0,.6), 0 2px 6px 2px rgba(0,0,0,.35);
 }
 :root[data-theme="dark"] .topbar-search { background: #2a2b2e; }
@@ -616,6 +618,7 @@ const REAL_COMPANIES = [
   // more real ones pulled from the forwarded emails
   "LaunchDarkly", "Addepar", "Second Nature", "Premier Lacrosse League",
   "Taco Bell", "Zoo", "Gametime United",
+  "Monarch Money", "Era", "Parachute Home", "JPL", "Dave", "Ring",
   // a few famous names mixed in for the laugh
   "Airbnb", "Apple", "Netflix", "Spotify", "Uber", "Lyft", "Adobe", "Dropbox", "Notion",
   "Linear", "Datadog", "Robinhood", "Brex", "Canva", "Duolingo", "Nike",
@@ -661,6 +664,8 @@ const BRAND = {
   "Airbnb": ["airbnb.com", "#FF5A5F"], "Taco Bell": ["tacobell.com", "#702082"],
   "LaunchDarkly": ["launchdarkly.com", "#3D3D3D"], "Addepar": ["addepar.com", "#1B6FB3"],
   "Zoo": ["zoo.dev", "#111111"], "Premier Lacrosse League": ["premierlacrosseleague.com", "#0A1A2F"],
+  "JPL": ["jpl.nasa.gov", "#1A3A6B"], "Ring": ["ring.com", "#1B97E0"],
+  "Monarch Money": ["monarchmoney.com", "#5A31F4"], "Dave": ["dave.com", "#111111"],
   "Ironically Still Hiring Inc.": ["stillno.com", "#777777"]
 };
 
