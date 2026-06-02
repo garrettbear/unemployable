@@ -447,6 +447,68 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .row-check,
 :root[data-theme="dark"] .er-check { accent-color: #8ab4f8; }
 
+/* ===========================================================
+   Rejection Training — gamification HUD
+   =========================================================== */
+.game-hud {
+  position: fixed; right: 20px; bottom: 20px; width: 244px; z-index: 45;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow); padding: 14px 16px 16px; font-family: "Roboto", Arial, sans-serif;
+  animation: hudIn .35s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes hudIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.game-hud.hidden { display: none; }
+.game-min {
+  position: absolute; top: 8px; right: 10px; width: 24px; height: 24px; border: none;
+  background: none; color: var(--text-faint); font-size: 20px; line-height: 1; cursor: pointer;
+  border-radius: 50%;
+}
+.game-min:hover { background: var(--hover); color: var(--text); }
+.game-title { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--text-faint); }
+.game-rank { font-size: 19px; font-weight: 700; color: var(--text); margin: 6px 0 10px; line-height: 1.15; }
+.game-bar { height: 8px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.game-bar span {
+  display: block; height: 100%; width: 0%; border-radius: 5px;
+  background: linear-gradient(90deg, var(--accent), #ef9a93);
+  transition: width .5s cubic-bezier(.2,.8,.2,1);
+}
+.game-stats { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--text-soft); }
+.game-stats #gameNext { color: var(--text-faint); white-space: nowrap; }
+.game-best { margin-top: 4px; font-size: 11px; color: var(--text-faint); }
+
+.game-pill {
+  position: fixed; right: 20px; bottom: 20px; z-index: 45; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); border-radius: 22px; padding: 9px 15px;
+  font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow);
+  display: inline-flex; align-items: center; gap: 6px; font-family: "Roboto", Arial, sans-serif;
+}
+.game-pill[hidden] { display: none; }
+.game-pill:hover { border-color: var(--accent); }
+
+.game-toasts {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  z-index: 60; display: flex; flex-direction: column; gap: 10px; align-items: center;
+  pointer-events: none; width: max-content; max-width: 90vw;
+}
+.game-toast {
+  background: var(--text); color: var(--surface); padding: 12px 20px; border-radius: 24px;
+  font-size: 14px; font-weight: 600; box-shadow: var(--shadow); font-family: "Roboto", Arial, sans-serif;
+  animation: toastIn .3s ease, toastOut .4s ease 3.1s forwards;
+  display: flex; align-items: center; gap: 10px; pointer-events: auto;
+}
+.game-toast .t-emoji { font-size: 20px; }
+.game-toast.shop { background: var(--accent); color: #fff; cursor: pointer; }
+.game-toast.shop a { color: #fff; text-decoration: underline; font-weight: 800; }
+@keyframes toastIn { from { transform: translateY(16px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes toastOut { to { transform: translateY(8px); opacity: 0; } }
+
+@media (max-width: 600px) {
+  .game-hud { right: 12px; bottom: 12px; width: 200px; padding: 12px 13px 13px; }
+  .game-rank { font-size: 17px; }
+  .game-best { display: none; }
+  .game-pill { right: 12px; bottom: 12px; }
+}
+
   </style>
 
   <!-- SEO: structured data -->
@@ -580,6 +642,21 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
     </div>
   </div>
+
+  <!-- ===== Rejection Training (gamification HUD) ===== -->
+  <aside class="game-hud" id="gameHud" aria-label="Rejection Training score">
+    <button class="game-min" id="gameMin" aria-label="Minimize Rejection Training" title="Minimize">–</button>
+    <div class="game-title">🎯 Rejection Training</div>
+    <div class="game-rank" id="gameRank">🐣 Fresh Grad</div>
+    <div class="game-bar" aria-hidden="true"><span id="gameBar"></span></div>
+    <div class="game-stats">
+      <span id="gameCount" aria-live="polite">0 rejections read</span>
+      <span id="gameNext"></span>
+    </div>
+    <div class="game-best" id="gameBest"></div>
+  </aside>
+  <button class="game-pill" id="gamePill" hidden aria-label="Open Rejection Training">🎯 <span id="gamePillCount">0</span></button>
+  <div class="game-toasts" id="gameToasts" aria-live="assertive"></div>
   <script>
 /* =============================================================
    UNEMPLOYABLE — endless inbox engine
@@ -1279,6 +1356,7 @@ function openEmail(i) {
   e.unread = false;
   const row = list.querySelector(`.email-row[data-i="${i}"]`);
   if (row) { row.classList.remove("unread"); row.classList.add("read"); }
+  recordOpen(e);
 
   modalBody.parentElement.classList.toggle("egg", !!e.egg);
 
@@ -1414,6 +1492,87 @@ if (themeBtn) themeBtn.addEventListener("click", () => {
   applyTheme(theme);
   try { localStorage.setItem("ue-theme", theme); } catch (e) {}
 });
+
+/* ---------- Rejection Training (gamification) ---------- */
+const RANKS = [
+  { min: 0,   name: "Fresh Grad",                emoji: "🐣" },
+  { min: 3,   name: "Open to Work",              emoji: "🟢" },
+  { min: 8,   name: "Serial Applicant",          emoji: "📨" },
+  { min: 15,  name: "Seasoned Reject",           emoji: "🥲" },
+  { min: 25,  name: "Ghost Whisperer",           emoji: "👻" },
+  { min: 40,  name: "Rejection Connoisseur",     emoji: "🍷" },
+  { min: 60,  name: "Certified Unemployable",    emoji: "🎓" },
+  { min: 85,  name: "Zen Master of No",          emoji: "🧘" },
+  { min: 120, name: "Final Boss: The Algorithm", emoji: "🤖" }
+];
+const gOpened = new Set();
+let gTotal = 0;
+try { gTotal = parseInt(localStorage.getItem("ue-rejections"), 10) || 0; } catch (e) {}
+const gEl = {
+  hud: document.getElementById("gameHud"),
+  rank: document.getElementById("gameRank"),
+  bar: document.getElementById("gameBar"),
+  count: document.getElementById("gameCount"),
+  next: document.getElementById("gameNext"),
+  best: document.getElementById("gameBest"),
+  toasts: document.getElementById("gameToasts"),
+  pill: document.getElementById("gamePill"),
+  pillCount: document.getElementById("gamePillCount"),
+  min: document.getElementById("gameMin")
+};
+function rankFor(n) { let r = RANKS[0], idx = 0; for (let i = 0; i < RANKS.length; i++) { if (n >= RANKS[i].min) { r = RANKS[i]; idx = i; } } return { r, idx }; }
+function gToast(html, cls) {
+  if (!gEl.toasts) return;
+  const d = document.createElement("div");
+  d.className = "game-toast" + (cls ? " " + cls : "");
+  d.setAttribute("role", "status");
+  d.innerHTML = html;
+  gEl.toasts.appendChild(d);
+  setTimeout(() => d.remove(), 3600);
+}
+function renderGame() {
+  const { r, idx } = rankFor(gTotal);
+  const next = RANKS[idx + 1];
+  if (gEl.rank) gEl.rank.textContent = `${r.emoji} ${r.name}`;
+  if (gEl.count) gEl.count.textContent = `${gTotal} rejection${gTotal === 1 ? "" : "s"} read`;
+  if (next) {
+    const prog = Math.min(1, (gTotal - r.min) / (next.min - r.min));
+    if (gEl.bar) gEl.bar.style.width = (prog * 100).toFixed(1) + "%";
+    if (gEl.next) gEl.next.textContent = `${next.min - gTotal} to ${next.emoji}`;
+  } else {
+    if (gEl.bar) gEl.bar.style.width = "100%";
+    if (gEl.next) gEl.next.textContent = "MAX";
+  }
+  if (gEl.best) gEl.best.textContent = idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0";
+  if (gEl.pillCount) gEl.pillCount.textContent = gTotal;
+}
+function recordOpen(e) {
+  const key = `${e.company}|${e.subject}|${e.date.getTime()}`;
+  if (gOpened.has(key)) return;
+  gOpened.add(key);
+  const prevIdx = rankFor(gTotal).idx;
+  gTotal++;
+  try { localStorage.setItem("ue-rejections", gTotal); } catch (err) {}
+  const newIdx = rankFor(gTotal).idx;
+  renderGame();
+  if (newIdx > prevIdx) {
+    const r = RANKS[newIdx];
+    gToast(`<span class="t-emoji">${r.emoji}</span> Level up — <strong>${r.name}</strong>`);
+  } else if (gTotal > 0 && gTotal % 25 === 0) {
+    gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
+  }
+}
+function setHudMin(min) {
+  if (gEl.hud) gEl.hud.classList.toggle("hidden", min);
+  if (gEl.pill) gEl.pill.hidden = !min;
+  try { localStorage.setItem("ue-hud-min", min ? "1" : "0"); } catch (e) {}
+}
+if (gEl.min) gEl.min.addEventListener("click", () => setHudMin(true));
+if (gEl.pill) gEl.pill.addEventListener("click", () => setHudMin(false));
+let hudMin = false;
+try { hudMin = localStorage.getItem("ue-hud-min") === "1"; } catch (e) {}
+setHudMin(hudMin);
+renderGame();
 
 /* ---------- Go ---------- */
 loadBatch();

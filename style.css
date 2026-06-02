@@ -408,3 +408,65 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .mb-cta a:hover { background: var(--accent); }
 :root[data-theme="dark"] .row-check,
 :root[data-theme="dark"] .er-check { accent-color: #8ab4f8; }
+
+/* ===========================================================
+   Rejection Training — gamification HUD
+   =========================================================== */
+.game-hud {
+  position: fixed; right: 20px; bottom: 20px; width: 244px; z-index: 45;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow); padding: 14px 16px 16px; font-family: "Roboto", Arial, sans-serif;
+  animation: hudIn .35s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes hudIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.game-hud.hidden { display: none; }
+.game-min {
+  position: absolute; top: 8px; right: 10px; width: 24px; height: 24px; border: none;
+  background: none; color: var(--text-faint); font-size: 20px; line-height: 1; cursor: pointer;
+  border-radius: 50%;
+}
+.game-min:hover { background: var(--hover); color: var(--text); }
+.game-title { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--text-faint); }
+.game-rank { font-size: 19px; font-weight: 700; color: var(--text); margin: 6px 0 10px; line-height: 1.15; }
+.game-bar { height: 8px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.game-bar span {
+  display: block; height: 100%; width: 0%; border-radius: 5px;
+  background: linear-gradient(90deg, var(--accent), #ef9a93);
+  transition: width .5s cubic-bezier(.2,.8,.2,1);
+}
+.game-stats { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--text-soft); }
+.game-stats #gameNext { color: var(--text-faint); white-space: nowrap; }
+.game-best { margin-top: 4px; font-size: 11px; color: var(--text-faint); }
+
+.game-pill {
+  position: fixed; right: 20px; bottom: 20px; z-index: 45; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); border-radius: 22px; padding: 9px 15px;
+  font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow);
+  display: inline-flex; align-items: center; gap: 6px; font-family: "Roboto", Arial, sans-serif;
+}
+.game-pill[hidden] { display: none; }
+.game-pill:hover { border-color: var(--accent); }
+
+.game-toasts {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  z-index: 60; display: flex; flex-direction: column; gap: 10px; align-items: center;
+  pointer-events: none; width: max-content; max-width: 90vw;
+}
+.game-toast {
+  background: var(--text); color: var(--surface); padding: 12px 20px; border-radius: 24px;
+  font-size: 14px; font-weight: 600; box-shadow: var(--shadow); font-family: "Roboto", Arial, sans-serif;
+  animation: toastIn .3s ease, toastOut .4s ease 3.1s forwards;
+  display: flex; align-items: center; gap: 10px; pointer-events: auto;
+}
+.game-toast .t-emoji { font-size: 20px; }
+.game-toast.shop { background: var(--accent); color: #fff; cursor: pointer; }
+.game-toast.shop a { color: #fff; text-decoration: underline; font-weight: 800; }
+@keyframes toastIn { from { transform: translateY(16px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes toastOut { to { transform: translateY(8px); opacity: 0; } }
+
+@media (max-width: 600px) {
+  .game-hud { right: 12px; bottom: 12px; width: 200px; padding: 12px 13px 13px; }
+  .game-rank { font-size: 17px; }
+  .game-best { display: none; }
+  .game-pill { right: 12px; bottom: 12px; }
+}

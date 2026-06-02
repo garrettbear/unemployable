@@ -696,6 +696,7 @@ function openEmail(i) {
   e.unread = false;
   const row = list.querySelector(`.email-row[data-i="${i}"]`);
   if (row) { row.classList.remove("unread"); row.classList.add("read"); }
+  recordOpen(e);
 
   modalBody.parentElement.classList.toggle("egg", !!e.egg);
 
@@ -831,6 +832,87 @@ if (themeBtn) themeBtn.addEventListener("click", () => {
   applyTheme(theme);
   try { localStorage.setItem("ue-theme", theme); } catch (e) {}
 });
+
+/* ---------- Rejection Training (gamification) ---------- */
+const RANKS = [
+  { min: 0,   name: "Fresh Grad",                emoji: "🐣" },
+  { min: 3,   name: "Open to Work",              emoji: "🟢" },
+  { min: 8,   name: "Serial Applicant",          emoji: "📨" },
+  { min: 15,  name: "Seasoned Reject",           emoji: "🥲" },
+  { min: 25,  name: "Ghost Whisperer",           emoji: "👻" },
+  { min: 40,  name: "Rejection Connoisseur",     emoji: "🍷" },
+  { min: 60,  name: "Certified Unemployable",    emoji: "🎓" },
+  { min: 85,  name: "Zen Master of No",          emoji: "🧘" },
+  { min: 120, name: "Final Boss: The Algorithm", emoji: "🤖" }
+];
+const gOpened = new Set();
+let gTotal = 0;
+try { gTotal = parseInt(localStorage.getItem("ue-rejections"), 10) || 0; } catch (e) {}
+const gEl = {
+  hud: document.getElementById("gameHud"),
+  rank: document.getElementById("gameRank"),
+  bar: document.getElementById("gameBar"),
+  count: document.getElementById("gameCount"),
+  next: document.getElementById("gameNext"),
+  best: document.getElementById("gameBest"),
+  toasts: document.getElementById("gameToasts"),
+  pill: document.getElementById("gamePill"),
+  pillCount: document.getElementById("gamePillCount"),
+  min: document.getElementById("gameMin")
+};
+function rankFor(n) { let r = RANKS[0], idx = 0; for (let i = 0; i < RANKS.length; i++) { if (n >= RANKS[i].min) { r = RANKS[i]; idx = i; } } return { r, idx }; }
+function gToast(html, cls) {
+  if (!gEl.toasts) return;
+  const d = document.createElement("div");
+  d.className = "game-toast" + (cls ? " " + cls : "");
+  d.setAttribute("role", "status");
+  d.innerHTML = html;
+  gEl.toasts.appendChild(d);
+  setTimeout(() => d.remove(), 3600);
+}
+function renderGame() {
+  const { r, idx } = rankFor(gTotal);
+  const next = RANKS[idx + 1];
+  if (gEl.rank) gEl.rank.textContent = `${r.emoji} ${r.name}`;
+  if (gEl.count) gEl.count.textContent = `${gTotal} rejection${gTotal === 1 ? "" : "s"} read`;
+  if (next) {
+    const prog = Math.min(1, (gTotal - r.min) / (next.min - r.min));
+    if (gEl.bar) gEl.bar.style.width = (prog * 100).toFixed(1) + "%";
+    if (gEl.next) gEl.next.textContent = `${next.min - gTotal} to ${next.emoji}`;
+  } else {
+    if (gEl.bar) gEl.bar.style.width = "100%";
+    if (gEl.next) gEl.next.textContent = "MAX";
+  }
+  if (gEl.best) gEl.best.textContent = idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0";
+  if (gEl.pillCount) gEl.pillCount.textContent = gTotal;
+}
+function recordOpen(e) {
+  const key = `${e.company}|${e.subject}|${e.date.getTime()}`;
+  if (gOpened.has(key)) return;
+  gOpened.add(key);
+  const prevIdx = rankFor(gTotal).idx;
+  gTotal++;
+  try { localStorage.setItem("ue-rejections", gTotal); } catch (err) {}
+  const newIdx = rankFor(gTotal).idx;
+  renderGame();
+  if (newIdx > prevIdx) {
+    const r = RANKS[newIdx];
+    gToast(`<span class="t-emoji">${r.emoji}</span> Level up — <strong>${r.name}</strong>`);
+  } else if (gTotal > 0 && gTotal % 25 === 0) {
+    gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
+  }
+}
+function setHudMin(min) {
+  if (gEl.hud) gEl.hud.classList.toggle("hidden", min);
+  if (gEl.pill) gEl.pill.hidden = !min;
+  try { localStorage.setItem("ue-hud-min", min ? "1" : "0"); } catch (e) {}
+}
+if (gEl.min) gEl.min.addEventListener("click", () => setHudMin(true));
+if (gEl.pill) gEl.pill.addEventListener("click", () => setHudMin(false));
+let hudMin = false;
+try { hudMin = localStorage.getItem("ue-hud-min") === "1"; } catch (e) {}
+setHudMin(hudMin);
+renderGame();
 
 /* ---------- Go ---------- */
 loadBatch();
