@@ -610,7 +610,7 @@ function renderRow(email) {
     <span class="er-main">
       <span class="er-label ${labelClass[email.label]}">${labelText[email.label]}</span>
       <span class="er-subject">${email.subject}</span>
-      <span class="er-snippet"> — ${email.snippet}</span>
+      <span class="er-snippet">${email.snippet}</span>
     </span>
     <span class="er-date">${fmtDate(email.date)}</span>
   `;
@@ -658,12 +658,17 @@ const TAB_LABELS = {
   promotions: "Promotions — your dreams, marked down",
   social: "Social — everyone's hiring but you"
 };
-function switchTab(tab, el) {
+function syncTabUI(tab) {
+  document.querySelectorAll(".tab, .mobile-tab").forEach((t) => {
+    const on = t.dataset.tab === tab;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+  });
+}
+function switchTab(tab) {
   if (tab === currentTab) { list.scrollTop = 0; return; }
   currentTab = tab;
-  document.querySelectorAll(".tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
-  el.classList.add("active");
-  el.setAttribute("aria-selected", "true");
+  syncTabUI(tab);
   // reset the stream
   index = 0;
   cursorDate = new Date(START);
@@ -680,10 +685,13 @@ document.querySelectorAll(".tab").forEach((t) => {
   t.setAttribute("role", "tab");
   t.tabIndex = 0;
   t.setAttribute("aria-selected", t.classList.contains("active") ? "true" : "false");
-  t.addEventListener("click", () => switchTab(t.dataset.tab, t));
+  t.addEventListener("click", () => switchTab(t.dataset.tab));
   t.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchTab(t.dataset.tab, t); }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchTab(t.dataset.tab); }
   });
+});
+document.querySelectorAll(".mobile-tab").forEach((t) => {
+  t.addEventListener("click", () => switchTab(t.dataset.tab));
 });
 
 /* ---------- Modal ---------- */
@@ -765,7 +773,7 @@ document.getElementById("aboutClose").addEventListener("click", closeAbout);
 aboutOverlay.addEventListener("click", (e) => { if (e.target === aboutOverlay) closeAbout(); });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeModal(); closeAbout(); closeShare(); }
+  if (e.key === "Escape") { closeModal(); closeAbout(); closeShare(); closeDrawer(); }
 });
 
 /* ---------- Infinite scroll ---------- */
@@ -789,9 +797,23 @@ function updateCounter() {
   document.getElementById("counter").textContent = `1–${index} of many, many more`;
 }
 
-/* ---------- Mobile sidebar ---------- */
+/* ---------- Mobile drawer ---------- */
 const sidebar = document.getElementById("sidebar");
-document.getElementById("menuBtn").addEventListener("click", () => sidebar.classList.toggle("open"));
+const scrim = document.getElementById("scrim");
+function openDrawer() { if (sidebar) sidebar.classList.add("open"); if (scrim) scrim.hidden = false; }
+function closeDrawer() { if (sidebar) sidebar.classList.remove("open"); if (scrim) scrim.hidden = true; }
+function toggleDrawer() { (sidebar && sidebar.classList.contains("open")) ? closeDrawer() : openDrawer(); }
+const menuBtn = document.getElementById("menuBtn");
+if (menuBtn) menuBtn.addEventListener("click", toggleDrawer);
+if (scrim) scrim.addEventListener("click", closeDrawer);
+// tapping a folder closes the drawer
+if (sidebar) sidebar.querySelectorAll(".folder").forEach((f) => f.addEventListener("click", closeDrawer));
+// drawer "About & the joke" opens the about modal
+const aboutBtnDrawer = document.getElementById("aboutBtnDrawer");
+if (aboutBtnDrawer) aboutBtnDrawer.addEventListener("click", () => {
+  closeDrawer();
+  if (aboutOverlay) { aboutOverlay.hidden = false; document.body.style.overflow = "hidden"; }
+});
 
 /* ---------- Refresh = false hope ---------- */
 document.getElementById("refreshBtn").addEventListener("click", function () {
@@ -821,6 +843,8 @@ function applyTheme(t) {
     themeBtn.setAttribute("title", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
     themeBtn.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
   }
+  const dd = document.getElementById("themeBtnDrawer");
+  if (dd) dd.innerHTML = t === "dark" ? "☀️&nbsp;&nbsp;Light mode" : "🌙&nbsp;&nbsp;Dark mode";
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute("content", t === "dark" ? "#202124" : "#ffffff");
 }
@@ -842,11 +866,14 @@ if (window.matchMedia) {
   if (mq.addEventListener) mq.addEventListener("change", onOsChange);
   else if (mq.addListener) mq.addListener(onOsChange);
 }
-if (themeBtn) themeBtn.addEventListener("click", () => {
-  theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-  applyTheme(theme);
-  try { localStorage.setItem("ue-theme", theme); } catch (e) {}
-});
+function toggleTheme() {
+  const t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  applyTheme(t);
+  try { localStorage.setItem("ue-theme", t); } catch (e) {}
+}
+if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
+const themeBtnDrawer = document.getElementById("themeBtnDrawer");
+if (themeBtnDrawer) themeBtnDrawer.addEventListener("click", toggleTheme);
 
 /* ---------- Rejection Training (gamification) ---------- */
 const RANKS = [
@@ -993,13 +1020,17 @@ function drawAndDownload() {
 /* ---------- Sidebar reactions ---------- */
 let sentTally = 487;
 const sentEl = document.getElementById("sentCount");
-const composeBtn = document.getElementById("composeBtn");
-if (composeBtn) composeBtn.addEventListener("click", () => {
+function applyAgain() {
   sentTally++;
   if (sentEl) sentEl.textContent = sentTally;
   const quips = ["fired into the void. 🫡", "auto-archived by their ATS.", "read by absolutely no one.", "instantly ghosted.", "added to the 'maybe later' pile (it's never later)."];
   gToast(`📨 Application #${sentTally} ${quips[Math.floor(Math.random() * quips.length)]}`);
-});
+  closeDrawer();
+}
+const composeBtn = document.getElementById("composeBtn");
+if (composeBtn) composeBtn.addEventListener("click", applyAgain);
+const fabCompose = document.getElementById("fabCompose");
+if (fabCompose) fabCompose.addEventListener("click", applyAgain);
 document.querySelectorAll(".folder[data-joke]").forEach((f) => {
   f.addEventListener("click", (e) => { e.preventDefault(); gToast(f.getAttribute("data-joke")); });
 });

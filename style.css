@@ -217,6 +217,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .er-main { flex: 1; overflow: hidden; white-space: nowrap; font-size: 14px; min-width: 0; }
 .er-subject { color: var(--text); }
 .er-snippet { color: var(--text-faint); font-weight: 400; }
+.er-snippet::before { content: "— "; }   /* desktop inline dash; removed on mobile */
 .er-label {
   display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px;
   border-radius: 4px; margin-right: 8px; vertical-align: middle;
@@ -325,36 +326,108 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .disclaimer a, .cvs-egg a { color: var(--blue); }
 .cvs-egg { font-size: 12px; color: var(--text-faint); }
 
-/* ===== Mobile ===== */
+/* ===== Mobile (native-app feel) — desktop is untouched ===== */
 .mobile-only { display: none; }
+.mobile-tabs, .fab-compose, .scrim { display: none; }
+
 @media (max-width: 900px) {
-  :root { --sidebar-w: 0px; }
-  .topbar-left { min-width: 0; }
-  .logo-word, .logo-sub { display: none; }
-  .shop-cta { padding: 8px 12px; font-size: 11px; }
+  :root { --topbar-h: 58px; }
+  .mobile-only { display: flex; }
+
+  /* --- top bar: hamburger + search pill + avatar --- */
+  .topbar { padding: 8px 10px; gap: 8px; }
+  .topbar-left { min-width: 0; flex: none; gap: 0; }
+  .logo { display: none; }
+  .shop-cta, #themeBtn, #aboutBtn { display: none; }
+  .topbar-search { flex: 1; height: 44px; max-width: none; }
+  .topbar-right { flex: none; margin-left: 0; gap: 4px; }
+
+  /* --- slide-in drawer --- */
   .sidebar {
-    position: fixed; top: var(--topbar-h); left: 0; bottom: 0; width: 280px;
-    background: var(--bg); z-index: 40; transform: translateX(-100%);
-    transition: transform .2s ease; box-shadow: var(--shadow);
+    position: fixed; top: 0; left: 0; bottom: 0; width: 300px; max-width: 86vw;
+    background: var(--bg); z-index: 60; transform: translateX(-100%);
+    transition: transform .25s cubic-bezier(.2,.8,.2,1); box-shadow: var(--shadow);
+    padding-top: 4px; overscroll-behavior: contain;
   }
   .sidebar.open { transform: none; }
-  .layout { height: calc(100vh - var(--topbar-h)); }
+  .scrim { display: block; position: fixed; inset: 0; z-index: 55; background: rgba(0,0,0,.45); animation: fade .2s ease; }
+  .scrim[hidden] { display: none; }
+  .drawer-brand { align-items: center; gap: 10px; padding: 12px 16px 14px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+  .drawer-brand .logo-word { display: inline; font-size: 20px; color: var(--text-soft); }
+  .drawer-brand .logo-sub { display: inline; font-size: 10.5px; color: var(--text-faint); font-style: italic; }
+  .drawer-extra { flex-direction: column; border-top: 1px solid var(--line); margin: 6px 8px 0; padding-top: 6px; }
+  .drawer-item {
+    display: flex; align-items: center; gap: 6px; padding: 0 16px; height: 46px; width: 100%;
+    border: none; background: none; color: var(--text); font-size: 14px; text-align: left;
+    cursor: pointer; border-radius: 0 24px 24px 0; text-decoration: none; font-family: inherit;
+  }
+  .drawer-item:hover, .drawer-item:active { background: var(--hover); }
+
+  .layout { height: calc(100dvh - var(--topbar-h)); }
   .inbox { border-radius: 0; }
-  .er-sender { width: 120px; }
-  .er-snippet { display: none; }
-  .tab small { display: none; }
-  .tab { padding: 0 14px; }
+
+  /* --- strip desktop chrome --- */
+  .tabs, .inbox-toolbar { display: none; }
+
+  /* --- native multiline rows --- */
+  .email-list { padding-bottom: 84px; }
+  .email-row {
+    display: grid; grid-template-columns: 44px 1fr auto;
+    grid-template-areas: "av sender date" "av subject subject" "av snippet snippet";
+    column-gap: 12px; row-gap: 1px; height: auto; min-height: 78px;
+    padding: 12px 16px; align-items: start;
+  }
+  .email-row:hover { box-shadow: none; }
+  .er-check, .er-star, .er-label { display: none; }
+  .er-avatar { grid-area: av; width: 40px; height: 40px; font-size: 17px; align-self: center; }
+  .er-sender { grid-area: sender; width: auto; font-size: 15px; align-self: center; }
+  .er-date { grid-area: date; width: auto; font-size: 12px; align-self: center; }
+  .er-main { display: contents; }
+  .er-subject { grid-area: subject; font-size: 14px; white-space: normal; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+  .er-snippet { grid-area: snippet; font-size: 13px; white-space: normal; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.35; }
+  .er-snippet::before { content: ""; }
+
+  /* --- bottom tab bar --- */
+  .mobile-tabs {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; height: 60px;
+    background: var(--surface); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .mobile-tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    border: none; background: none; color: var(--text-faint); font-size: 11px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  .mobile-tab span { font-size: 21px; line-height: 1; }
+  .mobile-tab.active { color: var(--accent); }
+
+  /* --- compose FAB --- */
+  .fab-compose {
+    display: flex; align-items: center; justify-content: center; position: fixed;
+    right: 16px; bottom: calc(72px + env(safe-area-inset-bottom, 0)); z-index: 52;
+    width: 56px; height: 56px; border-radius: 18px; border: none;
+    background: var(--accent); box-shadow: var(--shadow); cursor: pointer;
+  }
+  .fab-compose svg { width: 26px; height: 26px; fill: #fff; }
+
+  /* --- keep the game HUD clear of the FAB + bottom bar --- */
+  .game-hud { right: auto; left: 12px; bottom: calc(72px + env(safe-area-inset-bottom, 0)); width: 210px; }
+  .game-pill { right: auto; left: 12px; bottom: calc(72px + env(safe-area-inset-bottom, 0)); }
+  .game-best { display: none; }
+  .game-toasts { bottom: calc(140px + env(safe-area-inset-bottom, 0)); }
+
+  /* full-screen modals */
   .modal-overlay { padding: 0; }
   .modal { max-width: 100%; min-height: 100vh; border-radius: 0; }
   .modal-body { padding: 18px 18px 28px; }
   .mb-subject { font-size: 18px; }
-  .er-avatar { display: flex; }
 }
+
 @media (max-width: 520px) {
-  .er-check, .er-star { display: none; }
-  .er-sender { width: 92px; }
-  .er-date { width: 52px; }
-  .er-label { display: none; }
+  .er-sender { font-size: 14px; }
+  .game-hud { width: 188px; }
 }
 
 /* ===========================================================
