@@ -254,6 +254,53 @@ const TEMPLATES = [
       "Wishing you the best of luck, truly.",
       "On behalf of everyone at {company},"
     ]
+  },
+  {
+    label: "rejected",
+    subject: "An update on the {label} role",
+    body: [
+      "Hi {first},",
+      "Thank you for applying to the {label} position at {company}.",
+      "After careful consideration, we've decided to move forward with an AI tool that does about 80% of this role for 0% of the salary. It works weekends, never asks about equity, and doesn't read these emails either.",
+      "We were genuinely impressed by how human you are. Unfortunately, that's no longer one of the requirements.",
+      "We'll keep your resume in a training dataset somewhere.",
+      "Warm regards,"
+    ]
+  },
+  {
+    label: "ghosted",
+    subject: "Your application was reviewed by our AI",
+    body: [
+      "Hi {first},",
+      "Your application for {label} was reviewed, scored, and declined by an automated system in roughly 0.3 seconds.",
+      "No human at {company} has seen it, and — if we're being honest — no human ever will. The model rated you \"qualified, but redundant.\"",
+      "This decision was made with 94% confidence and 0% empathy.",
+      "— Automated Talent Intelligence at {company}"
+    ]
+  },
+  {
+    label: "final",
+    subject: "Regarding the {label} position",
+    body: [
+      "Hello {first},",
+      "Thanks for interviewing for the {label} role. You did great — genuinely better than we expected.",
+      "That said, we asked an AI to do the take-home assignment and it finished before you'd even said hello. So.",
+      "It's not you, it's the inevitable march of progress. (Okay, it's a little bit you.)",
+      "We wish you and your fellow humans the very best.",
+      "Sincerely,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Thank you for your interest in {company}",
+    body: [
+      "Dear {first},",
+      "We appreciate you applying for {label}.",
+      "We've paused this search while we evaluate whether the role can be done by a model with a monthly subscription instead of a person with a pulse.",
+      "Early signs suggest: yes. Sorry you found out this way.",
+      "Please don't take it personally — we're doing this to literally everyone.",
+      "Best,"
+    ]
   }
 ];
 
@@ -268,7 +315,11 @@ const SNIPPETS = [
   "The status of your application has changed to: Not Selected…",
   "We've decided to pause hiring for this role at this time…",
   "We received an overwhelming number of qualified applicants…",
-  "Please don't take this as a reflection of your abilities…"
+  "Please don't take this as a reflection of your abilities…",
+  "We've decided to move forward with an AI tool that works weekends…",
+  "Your application was scored and declined by an automated system in 0.3 seconds…",
+  "We asked an AI to do the take-home and it finished before you said hello…",
+  "The model rated you 'qualified, but redundant'…"
 ];
 
 const FIRST_NAME = "Garrett";
@@ -383,7 +434,12 @@ const PROMO = [
   { c: "UNEMPLOYABLE", d: "garrettbear.com", color: "#111111", from: "UNEMPLOYABLE™", user: "shop",
     s: "Your dream job, 90% off (it's a hoodie)",
     snippet: "The only offer letter you'll get this year ships in 3–5 days…",
-    body: ["Hi Garrett,", "We can't get you hired, but we can get you a hoodie that explains the situation.", "New drop: \"Open To Work (Spiritually)\" tee, \"We'll Keep Your Resume On File\" crewneck, and the \"Moving Forward With Other Candidates\" dad hat.", "This is the only place that wants you."],
+    body: ["Hi Garrett,", "We can't get you hired, but we can get you a hoodie that explains the situation.", "New drop — the \"AI Took My Job\" collection: \"Replaced by a Prompt\" tee, \"94% Confidence, 0% Empathy\" crewneck, and the \"Still More Human Than Required\" dad hat.", "This is the only place that wants you."],
+    cta: "shop" },
+  { c: "UNEMPLOYABLE", d: "garrettbear.com", color: "#c5221f", from: "UNEMPLOYABLE™", user: "drop",
+    s: "🤖 New: the 'AI Took My Job' collection just dropped",
+    snippet: "Wear the layoff. Before a model wears your old badge…",
+    body: ["Hi Garrett,", "They automated the role. We immortalized the feeling.", "Featuring: \"I Was Beta. They Shipped Someone Else,\" \"Trained My Replacement (It Was Software),\" and \"Hello, I'm Human (Apparently a Downside).\"", "Ethically sourced cotton. Unethically sourced job market."],
     cta: "shop" },
   { c: "Robinhood", d: "robinhood.com", color: "#00C805", from: "Robinhood", user: "no-reply",
     s: "Put your unemployment check to work 📈",
@@ -538,6 +594,9 @@ function renderRow(email) {
   const li = document.createElement("li");
   li.className = "email-row " + (email.unread ? "unread" : "read");
   li.dataset.i = email.i;
+  li.tabIndex = 0;
+  li.setAttribute("role", "button");
+  li.setAttribute("aria-label", `${email.unread ? "Unread, " : ""}${email.senderName}: ${email.subject}`);
   if (email.egg) li.classList.add("egg-row");
 
   li.innerHTML = `
@@ -564,6 +623,9 @@ function renderRow(email) {
   li.querySelector(".er-check").addEventListener("click", (e) => e.stopPropagation());
 
   li.addEventListener("click", () => openEmail(email.i));
+  li.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEmail(email.i); }
+  });
   return li;
 }
 
@@ -596,8 +658,9 @@ const TAB_LABELS = {
 function switchTab(tab, el) {
   if (tab === currentTab) { list.scrollTop = 0; return; }
   currentTab = tab;
-  document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
   el.classList.add("active");
+  el.setAttribute("aria-selected", "true");
   // reset the stream
   index = 0;
   cursorDate = new Date(START);
@@ -611,7 +674,13 @@ function switchTab(tab, el) {
   list.scrollTop = 0;
 }
 document.querySelectorAll(".tab").forEach((t) => {
+  t.setAttribute("role", "tab");
+  t.tabIndex = 0;
+  t.setAttribute("aria-selected", t.classList.contains("active") ? "true" : "false");
   t.addEventListener("click", () => switchTab(t.dataset.tab, t));
+  t.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchTab(t.dataset.tab, t); }
+  });
 });
 
 /* ---------- Modal ---------- */

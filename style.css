@@ -86,7 +86,18 @@ svg { fill: currentColor; }
   flex: 1; border: none; background: transparent; outline: none;
   font-size: 16px; color: var(--text); padding: 0 8px;
 }
+/* Readable placeholder in both themes (Chrome's default fails AA on dark). */
+.topbar-search input::placeholder { color: var(--text-soft); opacity: 1; }
 .search-icon { color: var(--text-soft); }
+
+/* Visible keyboard focus everywhere interactive (WCAG 2.4.7). */
+a:focus-visible, button:focus-visible, input:focus-visible,
+.tab:focus-visible, .email-row:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+.email-row:focus-visible { outline-offset: -2px; z-index: 2; }
 
 .topbar-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
 .shop-cta {
