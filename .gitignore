@@ -3,3 +3,5 @@ node_modules/
 *.log
 .vscode/
 _preview_*.png
+shop/img/demo*.jpg
+shop/_preview_*.png
