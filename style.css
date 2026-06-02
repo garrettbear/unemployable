@@ -155,6 +155,15 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .storage-txt { margin: 2px 0 0; }
 .copyright { margin: 12px 0 0; font-size: 11px; color: var(--text-faint); }
 .about-card .copyright { margin-top: 14px; }
+.built-by { margin: 6px 0 0; font-size: 11px; color: var(--text-faint); }
+.built-by a { color: var(--blue); text-decoration: none; }
+.built-by a:hover { text-decoration: underline; }
+.about-credit {
+  font-size: 13px; line-height: 1.6; color: var(--text);
+  background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; margin: 8px 0 4px;
+}
+.about-credit a { color: var(--accent); font-weight: 700; text-decoration: none; }
+.about-credit a:hover { text-decoration: underline; }
 
 /* ===== Inbox ===== */
 .inbox {
