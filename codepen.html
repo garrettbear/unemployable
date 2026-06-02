@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unemployable — An Endless Inbox of Rejection</title>
+
+  <!-- Primary Meta -->
+  <meta name="description" content="An endless scroll of automated job rejection emails. Every 'we've decided to move forward with other candidates' you've ever read, forever. A satire by Garrett Bear. Now a clothing brand." />
+  <meta name="author" content="Garrett Bear" />
+  <meta name="keywords" content="job rejection, unemployable, tech jobs, layoffs, application rejected, job hunt, satire, clothing brand, product designer, front end developer" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://unemployable.lol/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Unemployable" />
+  <meta property="og:title" content="Unemployable — An Endless Inbox of Rejection" />
+  <meta property="og:description" content="Scroll back through every automated 'unfortunately we won't be moving forward' email, forever. A clothing brand for the chronically applied-but-never-hired." />
+  <meta property="og:url" content="https://unemployable.lol/" />
+  <meta property="og:image" content="https://unemployable.lol/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="An inbox full of unread job rejection emails." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Unemployable — An Endless Inbox of Rejection" />
+  <meta name="twitter:description" content="An endless scroll of automated job rejection emails. You are not a culture fit. Forever." />
+  <meta name="twitter:image" content="https://unemployable.lol/og-image.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📭</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+/* ===========================================================
+   UNEMPLOYABLE — a Gmail-flavored endless inbox of rejection
+   Satire. Not affiliated with Google. See disclaimer.
+   =========================================================== */
+
+:root {
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --line: #e8eaed;
+  --text: #202124;
+  --text-soft: #5f6368;
+  --text-faint: #80868b;
+  --accent: #c5221f;        /* rejection red */
+  --accent-soft: #fce8e6;
+  --blue: #1a73e8;
+  --unread: #202124;
+  --read: #5f6368;
+  --hover: #f5f5f5;
+  --shadow: 0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15);
+  --radius: 16px;
+  --sidebar-w: 256px;
+  --topbar-h: 64px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Roboto", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+svg { fill: currentColor; }
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s;
+  flex: none;
+}
+.icon-btn:hover { background: rgba(60,64,67,.08); }
+
+/* ===== Top bar ===== */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+.topbar-left { display: flex; align-items: center; gap: 4px; min-width: var(--sidebar-w); }
+.logo { display: flex; align-items: baseline; gap: 8px; text-decoration: none; padding-left: 8px; }
+.logo-mark {
+  font-weight: 700; font-size: 22px; color: var(--accent);
+  font-family: "Roboto", sans-serif;
+}
+.logo-word { font-size: 22px; color: #5f6368; font-weight: 400; letter-spacing: -.5px; }
+.logo-sub { font-size: 11px; color: var(--text-faint); font-style: italic; align-self: center; }
+
+.topbar-search {
+  flex: 1;
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  background: #eaf1fb;
+  border-radius: 8px;
+  padding: 2px 6px;
+  height: 48px;
+  transition: background .15s, box-shadow .15s;
+}
+.topbar-search:focus-within { background: #fff; box-shadow: var(--shadow); }
+.topbar-search input {
+  flex: 1; border: none; background: transparent; outline: none;
+  font-size: 16px; color: var(--text); padding: 0 8px;
+}
+.search-icon { color: var(--text-soft); }
+
+.topbar-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.shop-cta {
+  background: var(--text); color: #fff; text-decoration: none;
+  font-weight: 700; font-size: 13px; letter-spacing: .3px;
+  padding: 9px 16px; border-radius: 20px; white-space: nowrap;
+  transition: transform .12s, background .15s;
+}
+.shop-cta:hover { background: var(--accent); transform: translateY(-1px); }
+.avatar-me {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+
+/* ===== Layout ===== */
+.layout { display: flex; height: calc(100vh - var(--topbar-h)); }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: var(--sidebar-w);
+  flex: none;
+  padding: 8px 8px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.compose {
+  display: flex; align-items: center; gap: 12px;
+  background: #c2e7ff; color: #001d35; border: none;
+  border-radius: 16px; padding: 14px 22px 14px 16px;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1); margin: 8px 0 12px 0;
+  align-self: flex-start; transition: box-shadow .15s, background .15s;
+}
+.compose:hover { box-shadow: var(--shadow); background: #b3e0ff; }
+
+.folders { display: flex; flex-direction: column; }
+.folder {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 12px 0 16px; height: 36px; border-radius: 0 16px 16px 0;
+  font-size: 14px; color: var(--text); cursor: pointer; text-decoration: none;
+  font-weight: 400;
+}
+.folder:hover { background: #eaeaea; }
+.folder.active { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.f-ic { width: 20px; text-align: center; font-size: 15px; }
+.f-count { margin-left: auto; font-size: 12px; font-weight: 700; }
+.folder.active .f-count { color: var(--accent); }
+.f-note { margin-left: auto; font-size: 11px; color: var(--text-faint); font-style: italic; }
+
+.sidebar-foot { margin-top: auto; padding: 16px 16px 8px; font-size: 11px; color: var(--text-faint); }
+.storage-bar { height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden; margin: 6px 0; }
+.storage-bar span { display: block; height: 100%; width: 99.8%; background: var(--accent); }
+.storage-txt { margin: 2px 0 0; }
+
+/* ===== Inbox ===== */
+.inbox {
+  flex: 1;
+  background: var(--surface);
+  border-radius: var(--radius) 0 0 0;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.inbox-toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px; height: 48px; flex: none;
+  border-bottom: 1px solid transparent;
+}
+.row-check { width: 18px; height: 18px; accent-color: var(--text-soft); cursor: pointer; }
+.toolbar-label { font-size: 13px; color: var(--text-faint); font-style: italic; }
+.toolbar-right { margin-left: auto; font-size: 12px; color: var(--text-soft); }
+
+.tabs { display: flex; border-bottom: 1px solid var(--line); padding: 0 8px; flex: none; }
+.tab {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 24px; height: 44px; font-size: 14px; color: var(--text-soft);
+  cursor: pointer; border-bottom: 3px solid transparent; max-width: 280px;
+}
+.tab small { color: var(--text-faint); font-size: 11px; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+.tab:hover:not(.active) { background: var(--hover); }
+.tab-ic { font-size: 16px; }
+
+.email-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+
+.email-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px; height: 40px; cursor: pointer;
+  border-bottom: 1px solid #f1f3f4; position: relative;
+  transition: box-shadow .1s;
+}
+.email-row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15); z-index: 1; }
+.email-row.unread { background: #fff; }
+.email-row.read { background: #f2f2f2; }
+.email-row.unread .er-sender,
+.email-row.unread .er-subject { font-weight: 700; color: var(--unread); }
+.email-row.read .er-sender,
+.email-row.read .er-subject { font-weight: 400; color: var(--read); }
+
+.er-check { width: 18px; height: 18px; accent-color: var(--text-soft); flex: none; }
+.er-star {
+  color: #dadce0; font-size: 18px; line-height: 1; cursor: pointer; flex: none;
+  width: 20px; text-align: center; user-select: none;
+}
+.er-star.on { color: #f4b400; }
+.er-avatar {
+  width: 26px; height: 26px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; font-weight: 500;
+}
+.er-sender { width: 200px; flex: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.er-main { flex: 1; overflow: hidden; white-space: nowrap; font-size: 14px; min-width: 0; }
+.er-subject { color: var(--text); }
+.er-snippet { color: var(--text-faint); font-weight: 400; }
+.er-label {
+  display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px;
+  border-radius: 4px; margin-right: 8px; vertical-align: middle;
+}
+.lbl-rejected { background: var(--accent-soft); color: var(--accent); }
+.lbl-ghosted  { background: #e8eaed; color: #5f6368; }
+.lbl-final    { background: #fef7e0; color: #b06000; }
+.er-date { width: 70px; flex: none; text-align: right; font-size: 12px; color: var(--text-soft); }
+.email-row.unread .er-date { font-weight: 700; color: var(--text); }
+.er-date .row-hover-ic { display: none; }
+
+/* ===== Loader ===== */
+.loader {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 24px; color: var(--text-soft); font-size: 13px;
+}
+.spinner {
+  width: 18px; height: 18px; border: 3px solid #dadce0;
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== Email modal ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(32,33,36,.6);
+  z-index: 50; display: flex; align-items: flex-start; justify-content: center;
+  padding: 40px 16px; overflow-y: auto;
+  animation: fade .15s ease;
+}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--surface); width: 100%; max-width: 860px;
+  border-radius: 16px; box-shadow: var(--shadow); overflow: hidden;
+  animation: pop .18s ease;
+}
+@keyframes pop { from { transform: translateY(8px) scale(.99); opacity: .6; } to { transform: none; opacity: 1; } }
+.modal-toolbar {
+  display: flex; align-items: center; gap: 4px;
+  padding: 6px 12px; border-bottom: 1px solid var(--line);
+}
+.modal-tool-icons { display: flex; gap: 2px; margin-left: 8px; }
+.modal-body { padding: 24px 32px 36px; }
+
+.mb-subject { font-size: 22px; font-weight: 400; margin: 0 0 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mb-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 22px; }
+.mb-avatar {
+  width: 40px; height: 40px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 500; font-size: 18px;
+}
+.mb-meta { flex: 1; min-width: 0; }
+.mb-from { font-size: 14px; font-weight: 700; color: var(--text); }
+.mb-email { font-size: 13px; color: var(--text-soft); font-weight: 400; }
+.mb-to { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+.mb-date { font-size: 12px; color: var(--text-soft); white-space: nowrap; }
+.mb-content { font-size: 14px; line-height: 1.7; color: #3c4043; }
+.mb-content p { margin: 0 0 14px; }
+.mb-content .sig { color: var(--text-soft); }
+.mb-cta {
+  margin-top: 28px; padding: 18px 20px; border: 1px dashed var(--accent);
+  border-radius: 12px; background: var(--accent-soft); text-align: center;
+}
+.mb-cta p { margin: 0 0 10px; font-size: 14px; color: var(--accent); font-weight: 500; }
+.mb-cta a {
+  display: inline-block; background: var(--text); color: #fff; text-decoration: none;
+  font-weight: 700; padding: 10px 22px; border-radius: 20px; font-size: 13px;
+  letter-spacing: .3px; transition: background .15s;
+}
+.mb-cta a:hover { background: var(--accent); }
+.mb-actions { margin-top: 24px; display: flex; gap: 12px; }
+.mb-btn {
+  border: 1px solid var(--line); background: #fff; color: var(--text-soft);
+  border-radius: 18px; padding: 8px 20px; font-size: 14px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; font-family: inherit;
+}
+.mb-btn:hover { background: var(--hover); }
+
+/* Easter-egg email styling */
+.egg .mb-content { font-family: "Courier New", monospace; }
+
+/* ===== About / disclaimer ===== */
+.about-card {
+  background: #fff; max-width: 540px; width: 100%; border-radius: 18px;
+  padding: 40px 36px 32px; position: relative; box-shadow: var(--shadow);
+  animation: pop .2s ease; margin: auto;
+}
+.about-close {
+  position: absolute; top: 14px; right: 18px; background: none; border: none;
+  font-size: 28px; line-height: 1; color: var(--text-soft); cursor: pointer;
+}
+.about-card h2 { margin: 0; font-size: 30px; letter-spacing: 1px; }
+.about-tag { margin: 4px 0 20px; color: var(--accent); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 13px; }
+.about-card p { font-size: 14px; line-height: 1.65; color: #3c4043; }
+.about-shop {
+  display: inline-block; background: var(--text); color: #fff; text-decoration: none;
+  font-weight: 700; padding: 12px 26px; border-radius: 22px; margin: 12px 0 20px;
+  letter-spacing: .3px; transition: background .15s;
+}
+.about-shop:hover { background: var(--accent); }
+.disclaimer { font-size: 11.5px; color: var(--text-faint); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 16px; }
+.disclaimer a, .cvs-egg a { color: var(--blue); }
+.cvs-egg { font-size: 12px; color: var(--text-faint); }
+
+/* ===== Mobile ===== */
+.mobile-only { display: none; }
+@media (max-width: 900px) {
+  :root { --sidebar-w: 0px; }
+  .topbar-left { min-width: 0; }
+  .logo-word, .logo-sub { display: none; }
+  .shop-cta { padding: 8px 12px; font-size: 11px; }
+  .sidebar {
+    position: fixed; top: var(--topbar-h); left: 0; bottom: 0; width: 280px;
+    background: var(--bg); z-index: 40; transform: translateX(-100%);
+    transition: transform .2s ease; box-shadow: var(--shadow);
+  }
+  .sidebar.open { transform: none; }
+  .layout { height: calc(100vh - var(--topbar-h)); }
+  .inbox { border-radius: 0; }
+  .er-sender { width: 120px; }
+  .er-snippet { display: none; }
+  .tab small { display: none; }
+  .tab { padding: 0 14px; }
+  .modal-overlay { padding: 0; }
+  .modal { max-width: 100%; min-height: 100vh; border-radius: 0; }
+  .modal-body { padding: 18px 18px 28px; }
+  .mb-subject { font-size: 18px; }
+  .er-avatar { display: flex; }
+}
+@media (max-width: 520px) {
+  .er-check, .er-star { display: none; }
+  .er-sender { width: 92px; }
+  .er-date { width: 52px; }
+  .er-label { display: none; }
+}
+
+  </style>
+
+  <!-- SEO: structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Unemployable",
+    "url": "https://unemployable.lol/",
+    "description": "An endless scroll of automated job rejection emails. A satire and clothing brand by Garrett Bear.",
+    "author": { "@type": "Person", "name": "Garrett Bear", "url": "https://garrettbear.com" }
+  }
+  </script>
+</head>
+<body>
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn" id="menuBtn" aria-label="Main menu">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+      <a class="logo" href="#" aria-label="Gmail">
+        <span class="logo-mark">M</span>
+        <span class="logo-word">Gmail</span>
+        <span class="logo-sub">no longer in service</span>
+      </a>
+    </div>
+
+    <div class="topbar-search">
+      <button class="icon-btn search-icon" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      </button>
+      <input type="text" placeholder="Search hope (no results)" aria-label="Search mail" id="searchInput" />
+    </div>
+
+    <div class="topbar-right">
+      <a class="shop-cta" href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>
+      <button class="icon-btn" id="aboutBtn" aria-label="About this site">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
+      </button>
+      <div class="avatar-me" title="garrett, professionally rejected">G</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar" id="sidebar">
+      <button class="compose">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        Apply again
+      </button>
+      <nav class="folders">
+        <a class="folder active"><span class="f-ic">📥</span> Inbox <span class="f-count" id="inboxCount">∞</span></a>
+        <a class="folder"><span class="f-ic">⭐</span> Starred</a>
+        <a class="folder"><span class="f-ic">🕓</span> Snoozed <span class="f-note">indefinitely</span></a>
+        <a class="folder"><span class="f-ic">📨</span> Sent <span class="f-count">487</span></a>
+        <a class="folder"><span class="f-ic">📝</span> Drafts <span class="f-count">3</span></a>
+        <a class="folder"><span class="f-ic">💼</span> Interviews <span class="f-count">0</span></a>
+        <a class="folder"><span class="f-ic">🎉</span> Offers <span class="f-count">0</span></a>
+      </nav>
+      <div class="sidebar-foot">
+        <p>Storage almost full of "no."</p>
+        <div class="storage-bar"><span></span></div>
+        <p class="storage-txt">14.97 GB of 15 GB used (all rejections)</p>
+      </div>
+    </aside>
+
+    <!-- ===== Inbox ===== -->
+    <main class="inbox">
+      <div class="inbox-toolbar">
+        <input type="checkbox" class="row-check" aria-label="Select all" />
+        <button class="icon-btn" aria-label="Refresh" id="refreshBtn">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        </button>
+        <span class="toolbar-label">Primary — your fault, apparently</span>
+        <span class="toolbar-right" id="counter">1–50 of many, many more</span>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active"><span class="tab-ic">📥</span> Primary</div>
+        <div class="tab"><span class="tab-ic">🏷️</span> Promotions <small>(your dreams, 90% off)</small></div>
+        <div class="tab"><span class="tab-ic">👥</span> Social <small>(everyone's hiring but you)</small></div>
+      </div>
+
+      <ul class="email-list" id="emailList" aria-live="polite"></ul>
+
+      <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <span>Loading more rejection…</span>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Email modal ===== -->
+  <div class="modal-overlay" id="modalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalSubject">
+      <div class="modal-toolbar">
+        <button class="icon-btn" id="modalBack" aria-label="Back to inbox">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg>
+        </button>
+        <div class="modal-tool-icons">
+          <button class="icon-btn" title="Archive (the feeling)" aria-label="Archive"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M20.54 5.23l-1.39-1.68A1.45 1.45 0 0 0 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.82-1h12l.93 1H5.12z"/></svg></button>
+          <button class="icon-btn" title="Report as spam (it is)" aria-label="Spam"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2L1 21h22L12 2zm1 16h-2v-2h2v2zm0-4h-2V9h2v5z"/></svg></button>
+          <button class="icon-btn" title="Delete" aria-label="Delete"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+      </div>
+      <div class="modal-body" id="modalBody"><!-- filled by JS --></div>
+    </div>
+  </div>
+
+  <!-- ===== About / disclaimer modal ===== -->
+  <div class="modal-overlay" id="aboutOverlay" hidden>
+    <div class="about-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <button class="about-close" id="aboutClose" aria-label="Close">×</button>
+      <h2 id="aboutTitle">UNEMPLOYABLE™</h2>
+      <p class="about-tag">Wear the rejection.</p>
+      <p>You've spent 1.5 years getting the same email from every company on earth. "We've decided to move forward with other candidates." "We'll keep your resume on file." "This was a difficult decision."</p>
+      <p>It wasn't a difficult decision. It was an automated one. So here's an inbox that never ends — scroll back through the entire genre of corporate "no," all the way down.</p>
+      <p>Then go buy the merch, because if no one will employ you, you might as well be <strong>Unemployable</strong> on purpose.</p>
+      <a class="about-shop" href="https://garrettbear.com" target="_blank" rel="noopener">Shop the brand →</a>
+      <p class="disclaimer"><strong>Disclaimer:</strong> This is satire. It is not Gmail, it is not affiliated with or endorsed by Google or any company shown. All emails are fictional and auto-generated for comedy. Company names are used nominatively to parody the universal job-hunt experience. No real rejection emails are reproduced. Any resemblance to the soul-crushing message you got last Tuesday is purely because they all write the exact same thing. Made with spite and love by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a>.</p>
+      <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
+    </div>
+  </div>
+  <script>
+/* =============================================================
+   UNEMPLOYABLE — endless inbox engine
+   Satire by Garrett Bear. Not affiliated with Google or any
+   company shown. All emails fictional + auto-generated.
+   ============================================================= */
+
+/* ---------- Companies (mix of real + famous; edit freely) ----------
+   Swap in the real companies that rejected you. Just keep the shape:
+   { name, domain, color }  — color is the avatar circle.            */
+const COMPANIES = [
+  ["Google", "google.com", "#4285F4"], ["Meta", "meta.com", "#0866FF"],
+  ["Apple", "apple.com", "#555555"], ["Netflix", "netflix.com", "#E50914"],
+  ["Stripe", "stripe.com", "#635BFF"], ["Airbnb", "airbnb.com", "#FF5A5F"],
+  ["Figma", "figma.com", "#A259FF"], ["Notion", "notion.so", "#2F2F2F"],
+  ["Linear", "linear.app", "#5E6AD2"], ["Vercel", "vercel.com", "#111111"],
+  ["Spotify", "spotify.com", "#1DB954"], ["Shopify", "shopify.com", "#5E8E3E"],
+  ["Coinbase", "coinbase.com", "#0052FF"], ["Uber", "uber.com", "#111111"],
+  ["DoorDash", "doordash.com", "#FF3008"], ["Robinhood", "robinhood.com", "#00C805"],
+  ["Dropbox", "dropbox.com", "#0061FF"], ["Slack", "slack.com", "#4A154B"],
+  ["Atlassian", "atlassian.com", "#0052CC"], ["Adobe", "adobe.com", "#FF0000"],
+  ["Microsoft", "microsoft.com", "#0078D4"], ["Amazon", "amazon.com", "#FF9900"],
+  ["Pinterest", "pinterest.com", "#E60023"], ["Reddit", "reddit.com", "#FF4500"],
+  ["Discord", "discord.com", "#5865F2"], ["Plaid", "plaid.com", "#111111"],
+  ["Brex", "brex.com", "#F46A35"], ["Ramp", "ramp.com", "#E8B23A"],
+  ["Webflow", "webflow.com", "#4353FF"], ["Canva", "canva.com", "#00C4CC"],
+  ["Squarespace", "squarespace.com", "#111111"], ["Twilio", "twilio.com", "#F22F46"],
+  ["Datadog", "datadoghq.com", "#632CA6"], ["Snowflake", "snowflake.com", "#29B5E8"],
+  ["OpenAI", "openai.com", "#10A37F"], ["Anthropic", "anthropic.com", "#D97757"],
+  ["Asana", "asana.com", "#F06A6A"], ["Miro", "miro.com", "#FFD02F"],
+  ["Loom", "loom.com", "#625DF5"], ["Calendly", "calendly.com", "#006BFF"],
+  ["Instacart", "instacart.com", "#43B02A"], ["Affirm", "affirm.com", "#4A4AF4"],
+  ["Twitch", "twitch.tv", "#9146FF"], ["Snap", "snap.com", "#FFFC00"],
+  ["Block", "block.xyz", "#111111"], ["Patreon", "patreon.com", "#FF424D"],
+  ["Substack", "substack.com", "#FF6719"], ["Etsy", "etsy.com", "#F45800"],
+  ["Peloton", "onepeloton.com", "#181818"], ["LinkedIn", "linkedin.com", "#0A66C2"],
+  ["Carta", "carta.com", "#199BDC"], ["Rippling", "rippling.com", "#5C39E6"],
+  ["Deel", "deel.com", "#1357F0"], ["Mercury", "mercury.com", "#5266EB"],
+  ["Faire", "faire.com", "#111111"], ["Retool", "retool.com", "#3D3DFF"],
+  ["Airtable", "airtable.com", "#FCB400"], ["Amplitude", "amplitude.com", "#1F6FFF"],
+  ["Zapier", "zapier.com", "#FF4F00"], ["Intercom", "intercom.com", "#1F8DED"],
+  ["Zendesk", "zendesk.com", "#03363D"], ["HubSpot", "hubspot.com", "#FF7A59"],
+  ["Salesforce", "salesforce.com", "#00A1E0"], ["Duolingo", "duolingo.com", "#58CC02"],
+  ["Grammarly", "grammarly.com", "#15C39A"], ["Strava", "strava.com", "#FC4C02"],
+  ["Roblox", "roblox.com", "#E2231A"], ["Unity", "unity.com", "#222C37"],
+  ["Nvidia", "nvidia.com", "#76B900"], ["Tesla", "tesla.com", "#CC0000"],
+  ["Nike", "nike.com", "#111111"], ["Warby Parker", "warbyparker.com", "#00A2E1"],
+  ["Glossier", "glossier.com", "#FFB3C0"], ["Chime", "chime.com", "#1EC677"],
+  ["Wealthfront", "wealthfront.com", "#4150F7"], ["Gusto", "gusto.com", "#F45D48"],
+  ["Whatnot", "whatnot.com", "#FFFC00"], ["Ironically Hiring Inc.", "stillno.com", "#777777"]
+];
+
+/* Roles a product designer / front-end dev would chase */
+const ROLES = [
+  "Senior Product Designer", "Product Designer", "Staff Product Designer",
+  "UX/UI Designer", "UX Designer", "Design Systems Engineer",
+  "Front-End Engineer", "Senior Frontend Engineer", "UI Engineer",
+  "Design Technologist", "Web Developer", "Lead Product Designer",
+  "Principal Designer", "Design Systems Lead", "Full-Stack Designer"
+];
+
+/* Sender personas */
+const SENDERS = [
+  ["Talent Acquisition", "talent"], ["Recruiting Team", "recruiting"],
+  ["People Operations", "people"], ["No Reply", "no-reply"],
+  ["University Recruiting", "careers"], ["Candidate Experience", "candidates"],
+  ["The Hiring Team", "jobs"], ["Workday Notifications", "notifications"],
+  ["Greenhouse", "no-reply"], ["Recruitment", "talent-acquisition"]
+];
+
+/* The genre. Sharp, sarcastic, but unmistakably the real thing.
+   {label} = role, {company} = company, {first} = first name.        */
+const TEMPLATES = [
+  {
+    label: "rejected",
+    subject: "Update on your application for {label}",
+    body: [
+      "Hi {first},",
+      "Thank you for your interest in the {label} position at {company} and for taking the time to apply.",
+      "After careful consideration, we've decided to move forward with other candidates whose qualifications more closely align with our current needs. This was a difficult decision, as we received many strong applications.",
+      "We were genuinely impressed by your background and encourage you to apply for future openings that match your skills.",
+      "We wish you the very best in your job search.",
+      "Warm regards,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Your application to {company}",
+    body: [
+      "Dear {first},",
+      "Thank you for applying to the {label} role at {company}.",
+      "We've completed our review and, while your experience is impressive, we will not be moving forward with your application at this time.",
+      "Please don't take this as a reflection of your abilities. We had an exceptionally competitive pool.",
+      "We'll keep your resume on file should a suitable opportunity arise.",
+      "Best,"
+    ]
+  },
+  {
+    label: "final",
+    subject: "Regarding your candidacy — {label}",
+    body: [
+      "Hello {first},",
+      "We appreciate you taking the time to interview with the team for the {label} position.",
+      "It was a tough call, but we've chosen to proceed with another candidate whose experience was a slightly better fit for what we're looking for right now.",
+      "We really enjoyed getting to know you and hope our paths cross again.",
+      "Thank you again for your interest in {company}.",
+      "Sincerely,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Thank you for your interest in {company}",
+    body: [
+      "Hi {first},",
+      "Thanks so much for your application for {label}.",
+      "We received an overwhelming number of qualified applicants, and unfortunately we are unable to move forward with your candidacy at this time.",
+      "We know job searching is hard, and we don't take your effort for granted.",
+      "We wish you success in your search and hope you'll consider {company} again in the future.",
+      "Kind regards,"
+    ]
+  },
+  {
+    label: "ghosted",
+    subject: "Your application status has been updated",
+    body: [
+      "Hi {first},",
+      "This is an automated message regarding your application for {label} at {company}.",
+      "The status of your application has changed to: Not Selected.",
+      "No further action is required on your part. Please do not reply to this message, as this inbox is not monitored.",
+      "Thank you for your interest in {company}.",
+      "— This is an automated notification —"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "An update from the {company} hiring team",
+    body: [
+      "Dear {first},",
+      "Thank you for the time and energy you invested in applying for the {label} role.",
+      "After much deliberation, we have decided not to proceed with your application. We were fortunate to connect with several candidates and have moved forward with someone whose profile most closely matched the role.",
+      "This decision is not a judgment of your talent or potential.",
+      "We genuinely wish you all the best.",
+      "Warmly,"
+    ]
+  },
+  {
+    label: "final",
+    subject: "Following up on your {label} interview",
+    body: [
+      "Hi {first},",
+      "Thank you again for interviewing for the {label} position at {company}.",
+      "We want to be transparent: we've decided to pause hiring for this role and will not be extending an offer at this time.",
+      "Budgets change, priorities shift, and unfortunately the timing didn't work out.",
+      "We'd love to stay in touch for when things open back up.",
+      "All the best,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Re: {label} — application outcome",
+    body: [
+      "Hello {first},",
+      "We hope this message finds you well.",
+      "After reviewing your application for {label}, we've determined that we will not be advancing your candidacy. We were particularly impressed by many aspects of your background, but ultimately selected a candidate with a more specific skill set.",
+      "We encourage you to keep an eye on our careers page for roles that may be a stronger match.",
+      "Thank you for considering {company}.",
+      "Respectfully,"
+    ]
+  },
+  {
+    label: "ghosted",
+    subject: "We've reviewed your application",
+    body: [
+      "Hi {first},",
+      "Thank you for applying to {company} for the {label} position.",
+      "We're reaching out to let you know that we won't be moving forward. We received your application along with hundreds of others, and the bar this cycle was incredibly high.",
+      "While this isn't the outcome you were hoping for, we hope you'll keep us in mind down the road.",
+      "Take care,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Important update regarding your {company} application",
+    body: [
+      "Dear {first},",
+      "Thank you for your patience throughout our process for the {label} role.",
+      "We know waiting is the hardest part, so we won't bury the news: we've decided to go in a different direction.",
+      "We were genuinely torn, and we hope this isn't goodbye.",
+      "Wishing you the best of luck, truly.",
+      "On behalf of everyone at {company},"
+    ]
+  }
+];
+
+/* Snippets shown in the row (just the gut-punch sentence) */
+const SNIPPETS = [
+  "After careful consideration, we've decided to move forward with other candidates…",
+  "Unfortunately, we will not be moving forward with your application at this time…",
+  "This was a difficult decision, as we received many strong applications…",
+  "We'll keep your resume on file should a suitable opportunity arise…",
+  "While your experience is impressive, we've chosen another candidate…",
+  "We were genuinely impressed, but the timing didn't work out…",
+  "The status of your application has changed to: Not Selected…",
+  "We've decided to pause hiring for this role at this time…",
+  "We received an overwhelming number of qualified applicants…",
+  "Please don't take this as a reflection of your abilities…"
+];
+
+const FIRST_NAME = "Garrett";
+
+/* ---------- Deterministic RNG so each row is stable ---------- */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const pick = (rng, arr) => arr[Math.floor(rng() * arr.length)];
+
+/* ---------- Build one email from its index ---------- */
+const START = new Date();          // today
+const STEP_HOURS_MIN = 5;          // emails get older as you scroll
+const STEP_HOURS_MAX = 34;
+
+let cursorDate = new Date(START);
+
+function buildEmail(i) {
+  const rng = mulberry32(i * 2654435761 + 12345);
+  const [cName, cDomain, cColor] = pick(rng, COMPANIES);
+  const role = pick(rng, ROLES);
+  const [senderName, senderUser] = pick(rng, SENDERS);
+  const tpl = TEMPLATES[Math.floor(rng() * TEMPLATES.length)];
+  const snippet = pick(rng, SNIPPETS);
+
+  // walk the date backwards by a pseudo-random gap
+  if (i > 0) {
+    const gap = STEP_HOURS_MIN + rng() * (STEP_HOURS_MAX - STEP_HOURS_MIN);
+    cursorDate = new Date(cursorDate.getTime() - gap * 3600 * 1000);
+  }
+  const date = new Date(cursorDate);
+
+  const fill = (s) => s.replaceAll("{label}", role).replaceAll("{company}", cName).replaceAll("{first}", FIRST_NAME);
+
+  return {
+    i,
+    company: cName,
+    domain: cDomain,
+    color: cColor,
+    role,
+    senderName: `${cName} ${senderName}`,
+    senderEmail: `${senderUser}@${cDomain}`,
+    subject: fill(tpl.subject),
+    body: tpl.body.map(fill),
+    sigCompany: cName,
+    label: tpl.label,
+    snippet,
+    date,
+    unread: rng() > 0.45,
+    starred: false,
+    egg: false
+  };
+}
+
+/* ---------- The one (1) good email: the Easter egg ---------- */
+const EGG_INDEX = 6; // appears near the top, a glimmer of hope. it is not.
+function buildEgg() {
+  const date = new Date(cursorDate);
+  return {
+    i: EGG_INDEX,
+    company: "CVS",
+    domain: "cvs.com",
+    color: "#CC0000",
+    role: "Loyal Customer",
+    senderName: "CVS Pharmacy ExtraCare",
+    senderEmail: "receipts@cvs.com",
+    subject: "🧾 Your receipt is ready (and it's longer than your career)",
+    body: [
+      "Hi {first},".replace("{first}", FIRST_NAME),
+      "Thank you for shopping at CVS. Your receipt has printed.",
+      "It is currently 14 feet long and still going. We've attached 47 coupons for things you'll never buy, 3 surveys, and a $0.25 ExtraBucks reward that expires before you reach the parking lot.",
+      "Unlike every employer you've contacted, CVS will never stop sending you things. We see you. We print for you.",
+      "This receipt is a tribute to the one that started it all.",
+      "Forever yours (literally, this receipt does not end),"
+    ],
+    sigCompany: "CVS",
+    label: "final",
+    snippet: "Your receipt is ready and it is longer than your entire career. A tribute…",
+    date,
+    unread: true,
+    starred: true,
+    egg: true
+  };
+}
+
+/* ---------- Rendering ---------- */
+const list = document.getElementById("emailList");
+const loader = document.getElementById("loader");
+let index = 0;
+const BATCH = 25;
+
+const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmtDate(d) {
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  if (sameDay) {
+    let h = d.getHours(), m = d.getMinutes();
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${h}:${String(m).padStart(2,"0")} ${ampm}`;
+  }
+  if (d.getFullYear() === now.getFullYear()) return `${monthNames[d.getMonth()]} ${d.getDate()}`;
+  return `${d.getMonth()+1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}`;
+}
+function fmtFull(d) {
+  return d.toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
+const labelClass = { rejected: "lbl-rejected", ghosted: "lbl-ghosted", final: "lbl-final" };
+const labelText  = { rejected: "Rejected", ghosted: "Auto-reply", final: "So close" };
+
+const store = {}; // index -> email object
+
+function renderRow(email) {
+  const li = document.createElement("li");
+  li.className = "email-row " + (email.unread ? "unread" : "read");
+  li.dataset.i = email.i;
+  if (email.egg) li.classList.add("egg-row");
+
+  li.innerHTML = `
+    <input type="checkbox" class="er-check" aria-label="Select" />
+    <span class="er-star ${email.starred ? "on" : ""}" role="button" aria-label="Star" title="Star">${email.starred ? "★" : "☆"}</span>
+    <span class="er-avatar" style="background:${email.color}">${email.company[0]}</span>
+    <span class="er-sender">${email.senderName}</span>
+    <span class="er-main">
+      <span class="er-label ${labelClass[email.label]}">${labelText[email.label]}</span>
+      <span class="er-subject">${email.subject}</span>
+      <span class="er-snippet"> — ${email.snippet}</span>
+    </span>
+    <span class="er-date">${fmtDate(email.date)}</span>
+  `;
+
+  // star toggle (doesn't open modal)
+  li.querySelector(".er-star").addEventListener("click", (e) => {
+    e.stopPropagation();
+    email.starred = !email.starred;
+    const s = e.currentTarget;
+    s.classList.toggle("on", email.starred);
+    s.textContent = email.starred ? "★" : "☆";
+  });
+  li.querySelector(".er-check").addEventListener("click", (e) => e.stopPropagation());
+
+  li.addEventListener("click", () => openEmail(email.i));
+  return li;
+}
+
+function loadBatch() {
+  const frag = document.createDocumentFragment();
+  for (let n = 0; n < BATCH; n++) {
+    const email = (index === EGG_INDEX) ? buildEgg() : buildEmail(index);
+    // keep the egg from also advancing cursor weirdly: buildEgg used current cursorDate
+    if (index === EGG_INDEX) {
+      // nudge cursor back a little so following emails keep descending
+      cursorDate = new Date(cursorDate.getTime() - 8 * 3600 * 1000);
+    }
+    store[index] = email;
+    frag.appendChild(renderRow(email));
+    index++;
+  }
+  list.appendChild(frag);
+}
+
+/* ---------- Modal ---------- */
+const overlay = document.getElementById("modalOverlay");
+const modalBody = document.getElementById("modalBody");
+
+function openEmail(i) {
+  const e = store[i];
+  if (!e) return;
+  e.unread = false;
+  const row = list.querySelector(`.email-row[data-i="${i}"]`);
+  if (row) { row.classList.remove("unread"); row.classList.add("read"); }
+
+  modalBody.parentElement.classList.toggle("egg", !!e.egg);
+
+  modalBody.innerHTML = `
+    <h1 class="mb-subject">
+      <span class="er-label ${labelClass[e.label]}">${labelText[e.label]}</span>
+      ${e.subject}
+    </h1>
+    <div class="mb-head">
+      <span class="mb-avatar" style="background:${e.color}">${e.company[0]}</span>
+      <div class="mb-meta">
+        <div class="mb-from">${e.senderName} <span class="mb-email">&lt;${e.senderEmail}&gt;</span></div>
+        <div class="mb-to">to me</div>
+      </div>
+      <div class="mb-date">${fmtFull(e.date)}</div>
+    </div>
+    <div class="mb-content">
+      ${e.body.map((p, idx) => idx === e.body.length - 1
+        ? `<p class="sig">${p}<br>The ${e.sigCompany} Team${e.egg ? "" : " · This inbox is not monitored"}</p>`
+        : `<p>${p}</p>`).join("")}
+    </div>
+    <div class="mb-cta">
+      <p>${e.egg
+        ? "At least someone wants you around. Wear it with pride:"
+        : "Rejected again? You're not unemployed. You're <strong>UNEMPLOYABLE™</strong>."}</p>
+      <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop the brand →</a>
+    </div>
+    <div class="mb-actions">
+      <button class="mb-btn" id="replyBtn">↩ Reply</button>
+      <button class="mb-btn" id="fwdBtn">↪ Forward to mom</button>
+    </div>
+  `;
+
+  modalBody.querySelector("#replyBtn").addEventListener("click", () => {
+    alert("This inbox is not monitored. It never was.");
+  });
+  modalBody.querySelector("#fwdBtn").addEventListener("click", () => {
+    alert("Forwarded. She still thinks you should 'just call the manager.'");
+  });
+
+  overlay.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  overlay.hidden = true;
+  document.body.style.overflow = "";
+}
+document.getElementById("modalBack").addEventListener("click", closeModal);
+overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+
+/* ---------- About / disclaimer ---------- */
+const aboutOverlay = document.getElementById("aboutOverlay");
+document.getElementById("aboutBtn").addEventListener("click", () => {
+  aboutOverlay.hidden = false; document.body.style.overflow = "hidden";
+});
+function closeAbout() { aboutOverlay.hidden = true; document.body.style.overflow = ""; }
+document.getElementById("aboutClose").addEventListener("click", closeAbout);
+aboutOverlay.addEventListener("click", (e) => { if (e.target === aboutOverlay) closeAbout(); });
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeModal(); closeAbout(); }
+});
+
+/* ---------- Infinite scroll ---------- */
+const sentinel = loader;
+const io = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    loadBatch();
+    updateCounter();
+  }
+}, { rootMargin: "600px" });
+io.observe(sentinel);
+
+/* fallback for browsers/scroll containers */
+list.addEventListener("scroll", () => {
+  if (list.scrollTop + list.clientHeight >= list.scrollHeight - 800) {
+    loadBatch(); updateCounter();
+  }
+});
+
+function updateCounter() {
+  document.getElementById("counter").textContent = `1–${index} of many, many more`;
+}
+
+/* ---------- Mobile sidebar ---------- */
+const sidebar = document.getElementById("sidebar");
+document.getElementById("menuBtn").addEventListener("click", () => sidebar.classList.toggle("open"));
+
+/* ---------- Refresh = false hope ---------- */
+document.getElementById("refreshBtn").addEventListener("click", function () {
+  this.style.transition = "transform .6s"; this.style.transform = "rotate(360deg)";
+  setTimeout(() => { this.style.transform = "none"; }, 600);
+});
+
+/* ---------- Search does nothing, beautifully ---------- */
+const search = document.getElementById("searchInput");
+search.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const ph = ["No results.", "Still no results.", "Have you tried being a culture fit?", "0 matches for hope.", "Did you mean: unemployable?"];
+    search.value = "";
+    search.placeholder = ph[Math.floor(Math.random() * ph.length)];
+  }
+});
+
+/* ---------- Go ---------- */
+loadBatch();
+loadBatch();
+updateCounter();
+
+/* Konami-ish: type "hire" anywhere for a surprise */
+let buf = "";
+document.addEventListener("keydown", (e) => {
+  if (e.key.length === 1) buf = (buf + e.key.toLowerCase()).slice(-4);
+  if (buf === "hire") {
+    buf = "";
+    alert("LOL. No.\n\n— Every company, 2024–2026");
+  }
+});
+
+  </script>
+</body>
+</html>

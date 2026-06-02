@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unemployable — An Endless Inbox of Rejection</title>
+
+  <!-- Primary Meta -->
+  <meta name="description" content="An endless scroll of automated job rejection emails. Every 'we've decided to move forward with other candidates' you've ever read, forever. A satire by Garrett Bear. Now a clothing brand." />
+  <meta name="author" content="Garrett Bear" />
+  <meta name="keywords" content="job rejection, unemployable, tech jobs, layoffs, application rejected, job hunt, satire, clothing brand, product designer, front end developer" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://unemployable.lol/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Unemployable" />
+  <meta property="og:title" content="Unemployable — An Endless Inbox of Rejection" />
+  <meta property="og:description" content="Scroll back through every automated 'unfortunately we won't be moving forward' email, forever. A clothing brand for the chronically applied-but-never-hired." />
+  <meta property="og:url" content="https://unemployable.lol/" />
+  <meta property="og:image" content="https://unemployable.lol/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="An inbox full of unread job rejection emails." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Unemployable — An Endless Inbox of Rejection" />
+  <meta name="twitter:description" content="An endless scroll of automated job rejection emails. You are not a culture fit. Forever." />
+  <meta name="twitter:image" content="https://unemployable.lol/og-image.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📭</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- SEO: structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Unemployable",
+    "url": "https://unemployable.lol/",
+    "description": "An endless scroll of automated job rejection emails. A satire and clothing brand by Garrett Bear.",
+    "author": { "@type": "Person", "name": "Garrett Bear", "url": "https://garrettbear.com" }
+  }
+  </script>
+</head>
+<body>
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn" id="menuBtn" aria-label="Main menu">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+      <a class="logo" href="#" aria-label="Gmail">
+        <span class="logo-mark">M</span>
+        <span class="logo-word">Gmail</span>
+        <span class="logo-sub">no longer in service</span>
+      </a>
+    </div>
+
+    <div class="topbar-search">
+      <button class="icon-btn search-icon" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      </button>
+      <input type="text" placeholder="Search hope (no results)" aria-label="Search mail" id="searchInput" />
+    </div>
+
+    <div class="topbar-right">
+      <a class="shop-cta" href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>
+      <button class="icon-btn" id="aboutBtn" aria-label="About this site">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
+      </button>
+      <div class="avatar-me" title="garrett, professionally rejected">G</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar" id="sidebar">
+      <button class="compose">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        Apply again
+      </button>
+      <nav class="folders">
+        <a class="folder active"><span class="f-ic">📥</span> Inbox <span class="f-count" id="inboxCount">∞</span></a>
+        <a class="folder"><span class="f-ic">⭐</span> Starred</a>
+        <a class="folder"><span class="f-ic">🕓</span> Snoozed <span class="f-note">indefinitely</span></a>
+        <a class="folder"><span class="f-ic">📨</span> Sent <span class="f-count">487</span></a>
+        <a class="folder"><span class="f-ic">📝</span> Drafts <span class="f-count">3</span></a>
+        <a class="folder"><span class="f-ic">💼</span> Interviews <span class="f-count">0</span></a>
+        <a class="folder"><span class="f-ic">🎉</span> Offers <span class="f-count">0</span></a>
+      </nav>
+      <div class="sidebar-foot">
+        <p>Storage almost full of "no."</p>
+        <div class="storage-bar"><span></span></div>
+        <p class="storage-txt">14.97 GB of 15 GB used (all rejections)</p>
+      </div>
+    </aside>
+
+    <!-- ===== Inbox ===== -->
+    <main class="inbox">
+      <div class="inbox-toolbar">
+        <input type="checkbox" class="row-check" aria-label="Select all" />
+        <button class="icon-btn" aria-label="Refresh" id="refreshBtn">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        </button>
+        <span class="toolbar-label">Primary — your fault, apparently</span>
+        <span class="toolbar-right" id="counter">1–50 of many, many more</span>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active"><span class="tab-ic">📥</span> Primary</div>
+        <div class="tab"><span class="tab-ic">🏷️</span> Promotions <small>(your dreams, 90% off)</small></div>
+        <div class="tab"><span class="tab-ic">👥</span> Social <small>(everyone's hiring but you)</small></div>
+      </div>
+
+      <ul class="email-list" id="emailList" aria-live="polite"></ul>
+
+      <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <span>Loading more rejection…</span>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Email modal ===== -->
+  <div class="modal-overlay" id="modalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalSubject">
+      <div class="modal-toolbar">
+        <button class="icon-btn" id="modalBack" aria-label="Back to inbox">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg>
+        </button>
+        <div class="modal-tool-icons">
+          <button class="icon-btn" title="Archive (the feeling)" aria-label="Archive"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M20.54 5.23l-1.39-1.68A1.45 1.45 0 0 0 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.82-1h12l.93 1H5.12z"/></svg></button>
+          <button class="icon-btn" title="Report as spam (it is)" aria-label="Spam"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2L1 21h22L12 2zm1 16h-2v-2h2v2zm0-4h-2V9h2v5z"/></svg></button>
+          <button class="icon-btn" title="Delete" aria-label="Delete"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+      </div>
+      <div class="modal-body" id="modalBody"><!-- filled by JS --></div>
+    </div>
+  </div>
+
+  <!-- ===== About / disclaimer modal ===== -->
+  <div class="modal-overlay" id="aboutOverlay" hidden>
+    <div class="about-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <button class="about-close" id="aboutClose" aria-label="Close">×</button>
+      <h2 id="aboutTitle">UNEMPLOYABLE™</h2>
+      <p class="about-tag">Wear the rejection.</p>
+      <p>You've spent 1.5 years getting the same email from every company on earth. "We've decided to move forward with other candidates." "We'll keep your resume on file." "This was a difficult decision."</p>
+      <p>It wasn't a difficult decision. It was an automated one. So here's an inbox that never ends — scroll back through the entire genre of corporate "no," all the way down.</p>
+      <p>Then go buy the merch, because if no one will employ you, you might as well be <strong>Unemployable</strong> on purpose.</p>
+      <a class="about-shop" href="https://garrettbear.com" target="_blank" rel="noopener">Shop the brand →</a>
+      <p class="disclaimer"><strong>Disclaimer:</strong> This is satire. It is not Gmail, it is not affiliated with or endorsed by Google or any company shown. All emails are fictional and auto-generated for comedy. Company names are used nominatively to parody the universal job-hunt experience. No real rejection emails are reproduced. Any resemblance to the soul-crushing message you got last Tuesday is purely because they all write the exact same thing. Made with spite and love by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a>.</p>
+      <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
