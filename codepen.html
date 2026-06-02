@@ -10,14 +10,14 @@
   <meta name="author" content="Garrett Bear" />
   <meta name="keywords" content="job rejection, unemployable, tech jobs, layoffs, application rejected, job hunt, satire, clothing brand, product designer, front end developer" />
   <meta name="theme-color" content="#ffffff" />
-  <link rel="canonical" href="https://unemployable-one.vercel.app/" />
+  <link rel="canonical" href="https://theunemployable.xyz/" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Unemployable" />
   <meta property="og:title" content="Unemployable — An Endless Inbox of Rejection" />
   <meta property="og:description" content="Scroll back through every automated 'unfortunately we won't be moving forward' email, forever. A clothing brand for the chronically applied-but-never-hired." />
-  <meta property="og:url" content="https://unemployable-one.vercel.app/" />
+  <meta property="og:url" content="https://theunemployable.xyz/" />
   <meta property="og:image" content="https://unemployable-one.vercel.app/og-image.png" />
   <meta property="og:image:secure_url" content="https://unemployable-one.vercel.app/og-image.png" />
   <meta property="og:image:type" content="image/png" />
@@ -582,7 +582,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Unemployable",
-    "url": "https://unemployable-one.vercel.app/",
+    "url": "https://theunemployable.xyz/",
     "description": "An endless scroll of automated job rejection emails. A satire and clothing brand by Garrett Bear.",
     "author": { "@type": "Person", "name": "Garrett Bear", "url": "https://garrettbear.com" }
   }
@@ -735,7 +735,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
         <div class="sc-rank" id="scRank">Fresh Grad</div>
         <div class="sc-count"><span id="scCount">0</span> rejections read</div>
         <div class="sc-sub" id="scSub">Offers received: 0</div>
-        <div class="sc-url">unemployable-one.vercel.app</div>
+        <div class="sc-url">theunemployable.xyz</div>
       </div>
       <div class="share-actions">
         <a class="share-btn primary" id="shareX" target="_blank" rel="noopener">𝕏 Share</a>
@@ -1689,7 +1689,7 @@ setHudMin(hudMin);
 renderGame();
 
 /* ---------- Shareable Rejection Résumé ---------- */
-const SHARE_URL = "https://unemployable-one.vercel.app";
+const SHARE_URL = "https://theunemployable.xyz";
 const shareOverlay = document.getElementById("shareOverlay");
 const sEl = {
   emoji: document.getElementById("scEmoji"), rank: document.getElementById("scRank"),
@@ -1736,7 +1736,7 @@ function drawAndDownload() {
   ctx.fillStyle = "#ffffff"; ctx.font = "800 62px Arial"; ctx.fillText(r.name, W / 2, 378);
   ctx.fillStyle = "#f28b82"; ctx.font = "800 38px Arial"; ctx.fillText(`${gTotal} rejections read`, W / 2, 452);
   ctx.fillStyle = "#9aa0a6"; ctx.font = "28px Arial"; ctx.fillText(idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0", W / 2, 502);
-  ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("unemployable-one.vercel.app", W / 2, 562);
+  ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("theunemployable.xyz", W / 2, 562);
   cv.toBlob((blob) => {
     if (!blob) { gToast("Download failed"); return; }
     const url = URL.createObjectURL(blob);

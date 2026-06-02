@@ -932,7 +932,7 @@ setHudMin(hudMin);
 renderGame();
 
 /* ---------- Shareable Rejection Résumé ---------- */
-const SHARE_URL = "https://unemployable-one.vercel.app";
+const SHARE_URL = "https://theunemployable.xyz";
 const shareOverlay = document.getElementById("shareOverlay");
 const sEl = {
   emoji: document.getElementById("scEmoji"), rank: document.getElementById("scRank"),
@@ -979,7 +979,7 @@ function drawAndDownload() {
   ctx.fillStyle = "#ffffff"; ctx.font = "800 62px Arial"; ctx.fillText(r.name, W / 2, 378);
   ctx.fillStyle = "#f28b82"; ctx.font = "800 38px Arial"; ctx.fillText(`${gTotal} rejections read`, W / 2, 452);
   ctx.fillStyle = "#9aa0a6"; ctx.font = "28px Arial"; ctx.fillText(idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0", W / 2, 502);
-  ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("unemployable-one.vercel.app", W / 2, 562);
+  ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("theunemployable.xyz", W / 2, 562);
   cv.toBlob((blob) => {
     if (!blob) { gToast("Download failed"); return; }
     const url = URL.createObjectURL(blob);
