@@ -32,8 +32,11 @@ const REAL_COMPANIES = [
   "UTA", "CBS Interactive", "AOL", "VSCO", "Ghost", "Girlboss", "Jumpcut",
   "Runway", "TP-Link", "BMW", "Cast & Crew", "Freshworks", "a16z", "CX2",
   "Airtable", "Zoox", "Yum Brands", "BCG Digital Ventures",
+  // more real ones pulled from the forwarded emails
+  "LaunchDarkly", "Addepar", "Second Nature", "Premier Lacrosse League",
+  "Taco Bell", "Zoo", "Gametime United",
   // a few famous names mixed in for the laugh
-  "Apple", "Netflix", "Spotify", "Uber", "Lyft", "Adobe", "Dropbox", "Notion",
+  "Airbnb", "Apple", "Netflix", "Spotify", "Uber", "Lyft", "Adobe", "Dropbox", "Notion",
   "Linear", "Datadog", "Robinhood", "Brex", "Canva", "Duolingo", "Nike",
   "Patreon", "Substack", "Etsy", "Asana", "Zendesk", "Pinterest", "Discord",
   // and the house favorite
@@ -74,6 +77,9 @@ const BRAND = {
   "Webflow": ["webflow.com", "#4353FF"], "Pinterest": ["pinterest.com", "#E60023"],
   "Discord": ["discord.com", "#5865F2"], "Loom": ["loom.com", "#625DF5"],
   "Calendly": ["calendly.com", "#006BFF"], "Airtable": ["airtable.com", "#FCB400"],
+  "Airbnb": ["airbnb.com", "#FF5A5F"], "Taco Bell": ["tacobell.com", "#702082"],
+  "LaunchDarkly": ["launchdarkly.com", "#3D3D3D"], "Addepar": ["addepar.com", "#1B6FB3"],
+  "Zoo": ["zoo.dev", "#111111"], "Premier Lacrosse League": ["premierlacrosseleague.com", "#0A1A2F"],
   "Ironically Still Hiring Inc.": ["stillno.com", "#777777"]
 };
 
