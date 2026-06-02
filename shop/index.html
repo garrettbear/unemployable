@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNEMPLOYABLE™ — Coming Soon</title>
+
+  <meta name="description" content="The clothing brand for the chronically applied-but-never-hired. Products dropping soon — get on the list." />
+  <meta name="author" content="Garrett Bear" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="canonical" href="https://shop.theunemployable.xyz/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="UNEMPLOYABLE™" />
+  <meta property="og:title" content="UNEMPLOYABLE™ — Coming Soon" />
+  <meta property="og:description" content="The brand for the chronically applied-but-never-hired. Drop incoming. Get on the list." />
+  <meta property="og:url" content="https://shop.theunemployable.xyz/" />
+  <meta property="og:image" content="https://shop.theunemployable.xyz/img/og-shop.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="UNEMPLOYABLE™ — Coming Soon" />
+  <meta name="twitter:description" content="The brand for the chronically applied-but-never-hired. Drop incoming." />
+  <meta name="twitter:image" content="https://shop.theunemployable.xyz/img/og-shop.png" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- top nav -->
+  <header class="nav">
+    <a class="nav-logo" href="#hero" aria-label="Unemployable home">
+      <img src="img/logo-white.png" alt="UNEMPLOYABLE" />
+    </a>
+    <nav class="nav-right">
+      <a class="nav-inbox" href="https://theunemployable.xyz" target="_blank" rel="noopener">Enter the inbox <span aria-hidden="true">→</span></a>
+      <a class="nav-cta" href="#notify">Get on the list</a>
+    </nav>
+  </header>
+
+  <!-- progress dots -->
+  <nav class="dots" id="dots" aria-label="Section navigation"></nav>
+
+  <!-- scroll-jack deck -->
+  <main class="deck" id="deck">
+
+    <!-- HERO -->
+    <section class="panel hero" id="hero" data-label="Intro">
+      <div class="hero-inner">
+        <p class="kicker">The brand for the chronically applied-but-never-hired</p>
+        <img class="hero-logo" src="img/logo-white.png" alt="UNEMPLOYABLE™" />
+        <h1 class="hero-h1">You're not unemployed.<br><span class="accent">You're unemployable.</span></h1>
+        <p class="hero-sub">The first drop is loading. Be first in line for the layoffs of fashion.</p>
+        <form class="signup" id="signupTop">
+          <input type="email" name="email" required placeholder="you@stillchecking.email" aria-label="Email address" />
+          <button type="submit">Notify me</button>
+        </form>
+        <p class="signup-note" id="noteTop">No spam. Unlike recruiters, we actually follow up.</p>
+      </div>
+      <button class="scroll-cue" id="scrollCue" aria-label="Scroll to products">↓</button>
+    </section>
+
+    <!-- PRODUCT 1 -->
+    <section class="panel product" data-label="The AI Bubble Tee">
+      <div class="product-stage">
+        <img class="product-img" src="img/tee-survive.jpg" alt="White tee reading: I did not survive the AI bubble" />
+      </div>
+      <div class="product-meta">
+        <span class="tag">Drop 01 · Coming soon</span>
+        <h2>“I did not survive<br>the AI bubble.”</h2>
+        <p>For the recently automated. Worn by humans, briefly.</p>
+      </div>
+    </section>
+
+    <!-- PRODUCT 2 -->
+    <section class="panel product" data-label="The Unemployable Tee">
+      <div class="product-stage">
+        <img class="product-img" src="img/tee-tagline.jpg" alt="Black tee reading: You're not unemployed. You're unemployable." />
+      </div>
+      <div class="product-meta">
+        <span class="tag">Drop 01 · Coming soon</span>
+        <h2>“You're not unemployed.<br>You're <span class="accent">unemployable.</span>”</h2>
+        <p>Say it with your chest. Then put it on a résumé you'll never send.</p>
+      </div>
+    </section>
+
+    <!-- PRODUCT 3 -->
+    <section class="panel product" data-label="The Office Mat">
+      <div class="product-stage">
+        <img class="product-img" src="img/mat-office.jpg" alt="Doormat reading: Unemployable Office" />
+      </div>
+      <div class="product-meta">
+        <span class="tag">Drop 01 · Coming soon</span>
+        <h2>UNEMPLOYABLE™<br>Office mat</h2>
+        <p>Welcome to the home office. Population: you, and a 0% callback rate.</p>
+      </div>
+    </section>
+
+    <!-- CLOSING -->
+    <section class="panel closing" id="notify" data-label="Get on the list">
+      <div class="closing-inner">
+        <h2 class="closing-h2">Get the drop before<br>the rejection emails do.</h2>
+        <form class="signup big" id="signupBottom">
+          <input type="email" name="email" required placeholder="you@stillchecking.email" aria-label="Email address" />
+          <button type="submit">Notify me</button>
+        </form>
+        <p class="signup-note" id="noteBottom">First drop, early access, zero recruiter energy.</p>
+        <a class="closing-inbox" href="https://theunemployable.xyz" target="_blank" rel="noopener">
+          Not shopping? Go get rejected → <strong>the inbox</strong>
+        </a>
+        <p class="foot">© <span id="yr">2026</span> UNEMPLOYABLE™ · built by
+          <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a> · ironically, available for hire</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- bottom ticker -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- hidden target so the Google Form post doesn't navigate away -->
+  <iframe name="gform_sink" id="gform_sink" style="display:none" title="hidden"></iframe>
+
+  <script src="script.js"></script>
+</body>
+</html>
