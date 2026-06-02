@@ -65,12 +65,9 @@ svg { fill: currentColor; }
   z-index: 30;
 }
 .topbar-left { display: flex; align-items: center; gap: 4px; min-width: var(--sidebar-w); }
-.logo { display: flex; align-items: baseline; gap: 8px; text-decoration: none; padding-left: 8px; }
-.logo-mark {
-  font-weight: 700; font-size: 22px; color: var(--accent);
-  font-family: "Roboto", sans-serif;
-}
-.logo-word { font-size: 22px; color: #5f6368; font-weight: 400; letter-spacing: -.5px; }
+.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; padding-left: 8px; }
+.logo-mark { display: block; flex: none; }
+.logo-word { font-size: 22px; color: var(--text-soft); font-weight: 400; letter-spacing: -.5px; align-self: center; }
 .logo-sub { font-size: 11px; color: var(--text-faint); font-style: italic; align-self: center; }
 
 .topbar-search {
@@ -214,6 +211,8 @@ svg { fill: currentColor; }
 .lbl-rejected { background: var(--accent-soft); color: var(--accent); }
 .lbl-ghosted  { background: #e8eaed; color: #5f6368; }
 .lbl-final    { background: #fef7e0; color: #b06000; }
+.lbl-promo    { background: #e8f0fe; color: #1a73e8; }
+.lbl-social   { background: #e6f4ea; color: #137333; }
 .er-date { width: 70px; flex: none; text-align: right; font-size: 12px; color: var(--text-soft); }
 .email-row.unread .er-date { font-weight: 700; color: var(--text); }
 .er-date .row-hover-ic { display: none; }
@@ -344,3 +343,55 @@ svg { fill: currentColor; }
   .er-date { width: 52px; }
   .er-label { display: none; }
 }
+
+/* ===========================================================
+   Dark mode — Gmail-style. Toggled via <html data-theme="dark">.
+   =========================================================== */
+:root[data-theme="dark"] {
+  --bg: #1b1c1d;
+  --surface: #202124;
+  --line: #3c4043;
+  --text: #e8eaed;
+  --text-soft: #bdc1c6;
+  --text-faint: #9aa0a6;
+  --accent: #f28b82;            /* lighter red, readable on dark */
+  --accent-soft: #3a2a2a;
+  --blue: #8ab4f8;
+  --hover: #2a2b2e;
+  --shadow: 0 1px 2px rgba(0,0,0,.6), 0 2px 6px 2px rgba(0,0,0,.35);
+}
+:root[data-theme="dark"] .topbar-search { background: #2a2b2e; }
+:root[data-theme="dark"] .topbar-search:focus-within { background: #303134; }
+:root[data-theme="dark"] .compose { background: #004a77; color: #c2e7ff; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+:root[data-theme="dark"] .compose:hover { background: #00598f; }
+:root[data-theme="dark"] .folder:hover { background: #2a2b2e; }
+:root[data-theme="dark"] .email-row { border-bottom-color: #2d2e30; }
+:root[data-theme="dark"] .email-row.unread { background: #2a2b2e; }
+:root[data-theme="dark"] .email-row.read { background: #202124; }
+:root[data-theme="dark"] .email-row:hover {
+  box-shadow: inset 1px 0 0 #5f6368, inset -1px 0 0 #5f6368, 0 1px 2px 0 rgba(0,0,0,.6);
+}
+:root[data-theme="dark"] .er-star { color: #5f6368; }
+:root[data-theme="dark"] .storage-bar { background: #3c4043; }
+:root[data-theme="dark"] .shop-cta { background: #e8eaed; color: #202124; }
+:root[data-theme="dark"] .shop-cta:hover { background: var(--accent); color: #202124; }
+:root[data-theme="dark"] .avatar-me { background: var(--accent); color: #202124; }
+:root[data-theme="dark"] .compose,
+:root[data-theme="dark"] .icon-btn { color: var(--text-soft); }
+:root[data-theme="dark"] .icon-btn:hover { background: rgba(232,234,237,.1); }
+:root[data-theme="dark"] .about-card { background: #2a2b2e; }
+:root[data-theme="dark"] .mb-content { color: #e8eaed; }
+:root[data-theme="dark"] .mb-content .sig { color: var(--text-soft); }
+:root[data-theme="dark"] .mb-btn { background: transparent; color: var(--text-soft); border-color: var(--line); }
+:root[data-theme="dark"] .mb-btn:hover { background: var(--hover); }
+:root[data-theme="dark"] .logo-mark rect { fill: #2a2b2e; stroke: #3c4043; }
+/* keep promo/social chips readable on dark */
+:root[data-theme="dark"] .lbl-ghosted { background: #3c4043; color: #bdc1c6; }
+:root[data-theme="dark"] .lbl-final { background: #3a3320; color: #fdd663; }
+:root[data-theme="dark"] .lbl-promo { background: #1f2a3d; color: #8ab4f8; }
+:root[data-theme="dark"] .lbl-social { background: #1e2e22; color: #81c995; }
+:root[data-theme="dark"] .mb-cta { background: var(--accent-soft); }
+:root[data-theme="dark"] .mb-cta a { background: #e8eaed; color: #202124; }
+:root[data-theme="dark"] .mb-cta a:hover { background: var(--accent); }
+:root[data-theme="dark"] .row-check,
+:root[data-theme="dark"] .er-check { accent-color: #8ab4f8; }

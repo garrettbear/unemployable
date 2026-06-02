@@ -29,7 +29,9 @@
   <meta name="twitter:description" content="An endless scroll of automated job rejection emails. You are not a culture fit. Forever." />
   <meta name="twitter:image" content="https://unemployable.lol/og-image.png" />
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📭</text></svg>" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -54,8 +56,16 @@
       <button class="icon-btn" id="menuBtn" aria-label="Main menu">
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
       </button>
-      <a class="logo" href="#" aria-label="Gmail">
-        <span class="logo-mark">M</span>
+      <a class="logo" href="#" aria-label="Gmail — no longer in service">
+        <svg class="logo-mark" viewBox="0 0 56 40" width="40" height="29" aria-hidden="true">
+          <rect x="2.5" y="6" width="51" height="28" rx="5.5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+          <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 31 V13" stroke="#c5221f"/>
+            <path d="M8 13 L28 28.5" stroke="#ea4335"/>
+            <path d="M28 28.5 L48 13" stroke="#9aa0a6"/>
+            <path d="M48 13 V31" stroke="#5f6368"/>
+          </g>
+        </svg>
         <span class="logo-word">Gmail</span>
         <span class="logo-sub">no longer in service</span>
       </a>
@@ -70,6 +80,7 @@
 
     <div class="topbar-right">
       <a class="shop-cta" href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle dark theme" title="Toggle dark theme"></button>
       <button class="icon-btn" id="aboutBtn" aria-label="About this site">
         <svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
       </button>
@@ -112,9 +123,9 @@
       </div>
 
       <div class="tabs">
-        <div class="tab active"><span class="tab-ic">📥</span> Primary</div>
-        <div class="tab"><span class="tab-ic">🏷️</span> Promotions <small>(your dreams, 90% off)</small></div>
-        <div class="tab"><span class="tab-ic">👥</span> Social <small>(everyone's hiring but you)</small></div>
+        <div class="tab active" data-tab="primary"><span class="tab-ic">📥</span> Primary</div>
+        <div class="tab" data-tab="promotions"><span class="tab-ic">🏷️</span> Promotions <small>(your dreams, 90% off)</small></div>
+        <div class="tab" data-tab="social"><span class="tab-ic">👥</span> Social <small>(everyone's hiring but you)</small></div>
       </div>
 
       <ul class="email-list" id="emailList" aria-live="polite"></ul>
