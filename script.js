@@ -12,7 +12,7 @@
    color are generated automatically. Override the look for specific
    brands in the BRAND map below.                                       */
 const REAL_COMPANIES = [
-  "Google", "Facebook", "Amazon", "Microsoft", "Mozilla", "IBM", "Intuit",
+  "Google", "Meta", "Facebook", "X", "Amazon", "Microsoft", "Mozilla", "IBM", "Intuit",
   "Disney", "PlayStation", "Roku", "Vimeo", "Yelp", "Nextdoor", "Reddit",
   "Snap", "Shopify", "Stripe", "Coinbase", "Plaid", "Mercury", "Ramp",
   "Klaviyo", "Figma", "Figure", "Frame.io", "InVision", "Webflow", "Vercel",
@@ -44,6 +44,7 @@ const REAL_COMPANIES = [
    not listed gets a slugged domain and a stable auto-generated color.   */
 const BRAND = {
   "Google": ["google.com", "#4285F4"], "Facebook": ["facebook.com", "#0866FF"],
+  "Meta": ["meta.com", "#0866FF"], "X": ["x.com", "#000000"],
   "Amazon": ["amazon.com", "#FF9900"], "Microsoft": ["microsoft.com", "#0078D4"],
   "Apple": ["apple.com", "#555555"], "Netflix": ["netflix.com", "#E50914"],
   "Stripe": ["stripe.com", "#635BFF"], "Figma": ["figma.com", "#A259FF"],
@@ -286,7 +287,9 @@ let cursorDate = new Date(START);
 
 function buildEmail(i) {
   const rng = mulberry32(i * 2654435761 + 12345);
-  const c = pick(rng, COMPANIES);
+  let c = pick(rng, COMPANIES);
+  // Pinned at the very top (most recent): Ramp — the one that stung the most.
+  if (i === 0) c = COMPANIES.find((x) => x.name === "Ramp") || c;
   const cName = c.name, cDomain = c.domain, cColor = c.color;
   const role = pick(rng, ROLES);
   const [senderName, senderUser] = pick(rng, SENDERS);
