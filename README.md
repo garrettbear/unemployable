@@ -33,18 +33,31 @@ npx serve .      # or: python3 -m http.server
 
 ## Make it *yours* (the real companies that rejected you)
 
-Open `script.js` and edit the `COMPANIES` array near the top:
+Most of the companies in here are **real ones Garrett applied to** (pulled from a
+250-email "Job Applications" Gmail label), shuffled with a few famous names.
+
+To add or change them, open `script.js` and edit the `REAL_COMPANIES` array near
+the top — it's just a list of names:
 
 ```js
-const COMPANIES = [
-  ["Google", "google.com", "#4285F4"],
-  ["Your Real Rejection Inc.", "theircompany.com", "#FF0000"],
-  // [name, domain, avatar color]
+const REAL_COMPANIES = [
+  "Google", "Stripe", "Figma",
+  "Your Real Rejection Inc.",   // <- just add the name; that's it
 ];
 ```
 
-Tweak `ROLES` for the jobs you applied to, and `TEMPLATES` for the rejection
-copy. `FIRST_NAME` sets who the emails are addressed to.
+Each name automatically gets a sender domain (`yourrealrejection.com`) and a
+stable avatar color. Want a specific brand color or domain? Add an override to
+the `BRAND` map:
+
+```js
+const BRAND = {
+  "Your Real Rejection Inc.": ["theircompany.com", "#FF0000"],
+};
+```
+
+Tweak `ROLES` for the job titles to cycle through, and `TEMPLATES` for the
+rejection copy. `FIRST_NAME` sets who the emails are addressed to.
 
 ### Easter eggs
 - One **CVS receipt** email near the top — a tribute to the original pen.

@@ -510,58 +510,117 @@ svg { fill: currentColor; }
    company shown. All emails fictional + auto-generated.
    ============================================================= */
 
-/* ---------- Companies (mix of real + famous; edit freely) ----------
-   Swap in the real companies that rejected you. Just keep the shape:
-   { name, domain, color }  — color is the avatar circle.            */
-const COMPANIES = [
-  ["Google", "google.com", "#4285F4"], ["Meta", "meta.com", "#0866FF"],
-  ["Apple", "apple.com", "#555555"], ["Netflix", "netflix.com", "#E50914"],
-  ["Stripe", "stripe.com", "#635BFF"], ["Airbnb", "airbnb.com", "#FF5A5F"],
-  ["Figma", "figma.com", "#A259FF"], ["Notion", "notion.so", "#2F2F2F"],
-  ["Linear", "linear.app", "#5E6AD2"], ["Vercel", "vercel.com", "#111111"],
-  ["Spotify", "spotify.com", "#1DB954"], ["Shopify", "shopify.com", "#5E8E3E"],
-  ["Coinbase", "coinbase.com", "#0052FF"], ["Uber", "uber.com", "#111111"],
-  ["DoorDash", "doordash.com", "#FF3008"], ["Robinhood", "robinhood.com", "#00C805"],
-  ["Dropbox", "dropbox.com", "#0061FF"], ["Slack", "slack.com", "#4A154B"],
-  ["Atlassian", "atlassian.com", "#0052CC"], ["Adobe", "adobe.com", "#FF0000"],
-  ["Microsoft", "microsoft.com", "#0078D4"], ["Amazon", "amazon.com", "#FF9900"],
-  ["Pinterest", "pinterest.com", "#E60023"], ["Reddit", "reddit.com", "#FF4500"],
-  ["Discord", "discord.com", "#5865F2"], ["Plaid", "plaid.com", "#111111"],
-  ["Brex", "brex.com", "#F46A35"], ["Ramp", "ramp.com", "#E8B23A"],
-  ["Webflow", "webflow.com", "#4353FF"], ["Canva", "canva.com", "#00C4CC"],
-  ["Squarespace", "squarespace.com", "#111111"], ["Twilio", "twilio.com", "#F22F46"],
-  ["Datadog", "datadoghq.com", "#632CA6"], ["Snowflake", "snowflake.com", "#29B5E8"],
-  ["OpenAI", "openai.com", "#10A37F"], ["Anthropic", "anthropic.com", "#D97757"],
-  ["Asana", "asana.com", "#F06A6A"], ["Miro", "miro.com", "#FFD02F"],
-  ["Loom", "loom.com", "#625DF5"], ["Calendly", "calendly.com", "#006BFF"],
-  ["Instacart", "instacart.com", "#43B02A"], ["Affirm", "affirm.com", "#4A4AF4"],
-  ["Twitch", "twitch.tv", "#9146FF"], ["Snap", "snap.com", "#FFFC00"],
-  ["Block", "block.xyz", "#111111"], ["Patreon", "patreon.com", "#FF424D"],
-  ["Substack", "substack.com", "#FF6719"], ["Etsy", "etsy.com", "#F45800"],
-  ["Peloton", "onepeloton.com", "#181818"], ["LinkedIn", "linkedin.com", "#0A66C2"],
-  ["Carta", "carta.com", "#199BDC"], ["Rippling", "rippling.com", "#5C39E6"],
-  ["Deel", "deel.com", "#1357F0"], ["Mercury", "mercury.com", "#5266EB"],
-  ["Faire", "faire.com", "#111111"], ["Retool", "retool.com", "#3D3DFF"],
-  ["Airtable", "airtable.com", "#FCB400"], ["Amplitude", "amplitude.com", "#1F6FFF"],
-  ["Zapier", "zapier.com", "#FF4F00"], ["Intercom", "intercom.com", "#1F8DED"],
-  ["Zendesk", "zendesk.com", "#03363D"], ["HubSpot", "hubspot.com", "#FF7A59"],
-  ["Salesforce", "salesforce.com", "#00A1E0"], ["Duolingo", "duolingo.com", "#58CC02"],
-  ["Grammarly", "grammarly.com", "#15C39A"], ["Strava", "strava.com", "#FC4C02"],
-  ["Roblox", "roblox.com", "#E2231A"], ["Unity", "unity.com", "#222C37"],
-  ["Nvidia", "nvidia.com", "#76B900"], ["Tesla", "tesla.com", "#CC0000"],
-  ["Nike", "nike.com", "#111111"], ["Warby Parker", "warbyparker.com", "#00A2E1"],
-  ["Glossier", "glossier.com", "#FFB3C0"], ["Chime", "chime.com", "#1EC677"],
-  ["Wealthfront", "wealthfront.com", "#4150F7"], ["Gusto", "gusto.com", "#F45D48"],
-  ["Whatnot", "whatnot.com", "#FFFC00"], ["Ironically Hiring Inc.", "stillno.com", "#777777"]
+/* ---------- Companies ------------------------------------------------
+   The bulk of these are REAL companies Garrett actually applied to
+   (pulled from a 250-email "Job Applications" Gmail label), shuffled
+   together with a few famous names for recognizability.
+   Add a name to REAL_COMPANIES and it just works — domain + avatar
+   color are generated automatically. Override the look for specific
+   brands in the BRAND map below.                                       */
+const REAL_COMPANIES = [
+  "Google", "Facebook", "Amazon", "Microsoft", "Mozilla", "IBM", "Intuit",
+  "Disney", "PlayStation", "Roku", "Vimeo", "Yelp", "Nextdoor", "Reddit",
+  "Snap", "Shopify", "Stripe", "Coinbase", "Plaid", "Mercury", "Ramp",
+  "Klaviyo", "Figma", "Figure", "Frame.io", "InVision", "Webflow", "Vercel",
+  "Netlify", "GitLab", "HashiCorp", "ClickHouse", "ClickUp", "Cursor", "Loom",
+  "Calendly", "Linktree", "ReadMe", "Hightouch", "Metronome", "Movable Ink",
+  "Sprinklr", "Podium", "NerdWallet", "Instacart", "DoorDash", "Instabase",
+  "Anthropic", "OpenAI", "Luma AI", "Nominal", "Cribl", "HackerOne", "Socure",
+  "Transcend", "ID.me", "Kajabi", "Anchorage Digital", "Altruist", "Square",
+  "Opendoor", "Open Listings", "Peerspace", "Whatnot", "GOAT", "StubHub",
+  "PrizePicks", "Gametime", "Sweetgreen", "Ritual", "Headspace", "Equinox",
+  "FIGS", "Bird", "Rivian", "Tesla", "Faraday Future", "Hyperloop One",
+  "Cubic", "Esri", "Experian", "Symantec", "NortonLifeLock", "Cylance",
+  "Anduril", "Epirus", "CHAOS Industries", "BuildOps", "ServiceTitan",
+  "Fetch Rewards", "System1", "Revature", "Atticus", "JOANY", "Fair",
+  "Foundation", "Chariot", "PushPress", "Moss", "MomentFeed", "Smarkets",
+  "SteelHouse", "Sidebench", "Hawke Media", "Fullscreen", "We Are Envoy",
+  "UTA", "CBS Interactive", "AOL", "VSCO", "Ghost", "Girlboss", "Jumpcut",
+  "Runway", "TP-Link", "BMW", "Cast & Crew", "Freshworks", "a16z", "CX2",
+  "Airtable", "Zoox", "Yum Brands", "BCG Digital Ventures",
+  // a few famous names mixed in for the laugh
+  "Apple", "Netflix", "Spotify", "Uber", "Lyft", "Adobe", "Dropbox", "Notion",
+  "Linear", "Datadog", "Robinhood", "Brex", "Canva", "Duolingo", "Nike",
+  "Patreon", "Substack", "Etsy", "Asana", "Zendesk", "Pinterest", "Discord",
+  // and the house favorite
+  "Ironically Still Hiring Inc."
 ];
 
-/* Roles a product designer / front-end dev would chase */
+/* Optional per-brand overrides: name -> [domain, avatarColor]. Anything
+   not listed gets a slugged domain and a stable auto-generated color.   */
+const BRAND = {
+  "Google": ["google.com", "#4285F4"], "Facebook": ["facebook.com", "#0866FF"],
+  "Amazon": ["amazon.com", "#FF9900"], "Microsoft": ["microsoft.com", "#0078D4"],
+  "Apple": ["apple.com", "#555555"], "Netflix": ["netflix.com", "#E50914"],
+  "Stripe": ["stripe.com", "#635BFF"], "Figma": ["figma.com", "#A259FF"],
+  "Shopify": ["shopify.com", "#5E8E3E"], "Coinbase": ["coinbase.com", "#0052FF"],
+  "DoorDash": ["doordash.com", "#FF3008"], "Reddit": ["reddit.com", "#FF4500"],
+  "Snap": ["snap.com", "#111111"], "Tesla": ["tesla.com", "#CC0000"],
+  "Rivian": ["rivian.com", "#0E1B2C"], "Adobe": ["adobe.com", "#FF0000"],
+  "Dropbox": ["dropbox.com", "#0061FF"], "Spotify": ["spotify.com", "#1DB954"],
+  "Klaviyo": ["klaviyo.com", "#1D1D1D"], "Ramp": ["ramp.com", "#E8B23A"],
+  "Mercury": ["mercury.com", "#5266EB"], "OpenAI": ["openai.com", "#10A37F"],
+  "Anthropic": ["anthropic.com", "#D97757"], "GitLab": ["gitlab.com", "#FC6D26"],
+  "Vercel": ["vercel.com", "#111111"], "Vimeo": ["vimeo.com", "#1AB7EA"],
+  "Yelp": ["yelp.com", "#FF1A1A"], "IBM": ["ibm.com", "#1F70C1"],
+  "Intuit": ["intuit.com", "#236CFF"], "Disney": ["disney.com", "#1A3FA0"],
+  "PlayStation": ["playstation.com", "#003791"], "Roku": ["roku.com", "#6F1AB1"],
+  "Plaid": ["plaid.com", "#111111"], "Instacart": ["instacart.com", "#43B02A"],
+  "Headspace": ["headspace.com", "#FF7E1D"], "ID.me": ["id.me", "#2B7DE9"],
+  "Frame.io": ["frame.io", "#111111"], "Notion": ["notion.so", "#2F2F2F"],
+  "Linear": ["linear.app", "#5E6AD2"], "Datadog": ["datadoghq.com", "#632CA6"],
+  "Robinhood": ["robinhood.com", "#00C805"], "Brex": ["brex.com", "#F46A35"],
+  "Canva": ["canva.com", "#00C4CC"], "Etsy": ["etsy.com", "#F45800"],
+  "Nike": ["nike.com", "#111111"], "Uber": ["uber.com", "#111111"],
+  "Lyft": ["lyft.com", "#EA0B8C"], "Duolingo": ["duolingo.com", "#58CC02"],
+  "Patreon": ["patreon.com", "#FF424D"], "Substack": ["substack.com", "#FF6719"],
+  "Asana": ["asana.com", "#F06A6A"], "Zendesk": ["zendesk.com", "#03363D"],
+  "Anduril": ["anduril.com", "#1A1A1A"], "Whatnot": ["whatnot.com", "#111111"],
+  "Webflow": ["webflow.com", "#4353FF"], "Pinterest": ["pinterest.com", "#E60023"],
+  "Discord": ["discord.com", "#5865F2"], "Loom": ["loom.com", "#625DF5"],
+  "Calendly": ["calendly.com", "#006BFF"], "Airtable": ["airtable.com", "#FCB400"],
+  "Ironically Still Hiring Inc.": ["stillno.com", "#777777"]
+};
+
+/* Slug a name into a domain: "Cast & Crew" -> "castandcrew.com" */
+function slugDomain(name) {
+  return name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "") + ".com";
+}
+/* Stable, pleasant avatar color from a name (Gmail-style). */
+function autoColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  const hue = h % 360;
+  const sat = 55 + (h % 20);   // 55–74%
+  const lit = 38 + (h % 10);   // 38–47%  (dark enough for white text)
+  return `hsl(${hue} ${sat}% ${lit}%)`;
+}
+/* Normalize into { name, domain, color } */
+const COMPANIES = REAL_COMPANIES.map((name) => {
+  const o = BRAND[name];
+  return { name, domain: o ? o[0] : slugDomain(name), color: o ? o[1] : autoColor(name) };
+});
+
+/* Roles to cycle through — Garrett's actual world (product design,
+   front-end, design systems, UX) plus a few playful ones to keep the
+   endless scroll from feeling repetitive. Add whatever you want.       */
 const ROLES = [
+  // product design
   "Senior Product Designer", "Product Designer", "Staff Product Designer",
-  "UX/UI Designer", "UX Designer", "Design Systems Engineer",
-  "Front-End Engineer", "Senior Frontend Engineer", "UI Engineer",
-  "Design Technologist", "Web Developer", "Lead Product Designer",
-  "Principal Designer", "Design Systems Lead", "Full-Stack Designer"
+  "Lead Product Designer", "Principal Product Designer", "Product Designer II",
+  "Senior UX/UI Designer", "UX/UI Designer", "UX Designer", "Senior UX Designer",
+  "Product Design Lead", "Senior Interaction Designer", "Visual Designer",
+  "Senior Visual Designer", "Brand & Product Designer", "Designer, Growth",
+  // design systems
+  "Design Systems Engineer", "Design Systems Designer", "Design Systems Lead",
+  "Senior Design Systems Engineer", "Design Technologist", "UX Engineer",
+  // front-end / dev
+  "Front-End Engineer", "Senior Front-End Engineer", "Front-End Developer",
+  "UI Engineer", "Senior UI Engineer", "Web Developer", "Full-Stack Designer",
+  "Creative Developer", "Senior Web Engineer", "Front-End Engineer, Design Systems",
+  // a wink to the rest of Garrett's world
+  "Head of Design (you, specifically, no)", "Founding Designer",
+  "Design Engineer", "Senior Designer, Anything Really"
 ];
 
 /* Sender personas */
@@ -733,7 +792,8 @@ let cursorDate = new Date(START);
 
 function buildEmail(i) {
   const rng = mulberry32(i * 2654435761 + 12345);
-  const [cName, cDomain, cColor] = pick(rng, COMPANIES);
+  const c = pick(rng, COMPANIES);
+  const cName = c.name, cDomain = c.domain, cColor = c.color;
   const role = pick(rng, ROLES);
   const [senderName, senderUser] = pick(rng, SENDERS);
   const tpl = TEMPLATES[Math.floor(rng() * TEMPLATES.length)];
