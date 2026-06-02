@@ -464,9 +464,51 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 @keyframes toastIn { from { transform: translateY(16px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes toastOut { to { transform: translateY(8px); opacity: 0; } }
 
+.game-share {
+  margin-top: 12px; width: 100%; border: 1px solid var(--line); background: var(--hover);
+  color: var(--text); border-radius: 10px; padding: 8px; font-size: 12.5px; font-weight: 700;
+  cursor: pointer; font-family: "Roboto", Arial, sans-serif;
+}
+.game-share:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ===== Shareable Rejection Résumé ===== */
+.share-wrap {
+  background: var(--surface); max-width: 520px; width: 100%; margin: auto; border-radius: 18px;
+  padding: 28px 28px 24px; position: relative; box-shadow: var(--shadow); animation: pop .2s ease;
+}
+.share-h { margin: 0 0 16px; font-size: 22px; color: var(--text); }
+.share-card {
+  border-radius: 16px; padding: 30px 24px; text-align: center; color: #fff;
+  background: radial-gradient(120% 140% at 50% 0%, #2a2b2e 0%, #15171a 72%);
+  border: 1px solid #0c0d0f;
+}
+.sc-top { font-size: 11px; letter-spacing: 2px; color: #9aa0a6; font-weight: 700; }
+.sc-emoji { font-size: 62px; line-height: 1; margin: 14px 0 8px; }
+.sc-rank { font-size: 26px; font-weight: 800; letter-spacing: .3px; }
+.sc-count { font-size: 16px; color: #e8eaed; margin-top: 12px; }
+.sc-count span { color: #f28b82; font-weight: 800; }
+.sc-sub { font-size: 13px; color: #9aa0a6; margin-top: 4px; }
+.sc-url { font-size: 12px; color: #71757c; margin-top: 16px; letter-spacing: 1px; }
+.share-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.share-btn {
+  flex: 1; min-width: 110px; text-align: center; border: 1px solid var(--line); background: var(--surface);
+  color: var(--text); border-radius: 22px; padding: 11px 14px; font-size: 14px; font-weight: 700;
+  cursor: pointer; text-decoration: none; font-family: "Roboto", Arial, sans-serif;
+}
+.share-btn:hover { background: var(--hover); }
+.share-btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+.share-btn.primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+#shareCanvas { display: none; }
+
+/* sidebar counter reactions */
+.f-count.faking { color: #34a853 !important; display: inline-block; transform: scale(1.3); transition: transform .2s; }
+.f-count.struck { text-decoration: line-through; opacity: .55; }
+
 @media (max-width: 600px) {
   .game-hud { right: 12px; bottom: 12px; width: 200px; padding: 12px 13px 13px; }
   .game-rank { font-size: 17px; }
   .game-best { display: none; }
   .game-pill { right: 12px; bottom: 12px; }
+  .share-wrap { margin: 12px; padding: 22px 18px 18px; }
+  .share-actions { flex-direction: column; }
 }

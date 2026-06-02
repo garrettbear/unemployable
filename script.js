@@ -765,7 +765,7 @@ document.getElementById("aboutClose").addEventListener("click", closeAbout);
 aboutOverlay.addEventListener("click", (e) => { if (e.target === aboutOverlay) closeAbout(); });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeModal(); closeAbout(); }
+  if (e.key === "Escape") { closeModal(); closeAbout(); closeShare(); }
 });
 
 /* ---------- Infinite scroll ---------- */
@@ -898,6 +898,7 @@ function recordOpen(e) {
   if (newIdx > prevIdx) {
     const r = RANKS[newIdx];
     gToast(`<span class="t-emoji">${r.emoji}</span> Level up — <strong>${r.name}</strong>`);
+    interviewFakeout();
   } else if (gTotal > 0 && gTotal % 25 === 0) {
     gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
   }
@@ -913,6 +914,89 @@ let hudMin = false;
 try { hudMin = localStorage.getItem("ue-hud-min") === "1"; } catch (e) {}
 setHudMin(hudMin);
 renderGame();
+
+/* ---------- Shareable Rejection Résumé ---------- */
+const SHARE_URL = "https://unemployable-one.vercel.app";
+const shareOverlay = document.getElementById("shareOverlay");
+const sEl = {
+  emoji: document.getElementById("scEmoji"), rank: document.getElementById("scRank"),
+  count: document.getElementById("scCount"), sub: document.getElementById("scSub"),
+  x: document.getElementById("shareX"), copy: document.getElementById("shareCopy"),
+  dl: document.getElementById("shareDownload"), canvas: document.getElementById("shareCanvas")
+};
+function shareText() {
+  const { r } = rankFor(gTotal);
+  return `I've read ${gTotal} job rejection${gTotal === 1 ? "" : "s"} on Unemployable. Rank: ${r.name} ${r.emoji}. Offers received: 0.`;
+}
+function openShare() {
+  const { r, idx } = rankFor(gTotal);
+  if (sEl.emoji) sEl.emoji.textContent = r.emoji;
+  if (sEl.rank) sEl.rank.textContent = r.name;
+  if (sEl.count) sEl.count.textContent = gTotal;
+  if (sEl.sub) sEl.sub.textContent = idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0";
+  if (sEl.x) sEl.x.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText())}&url=${encodeURIComponent(SHARE_URL)}`;
+  if (shareOverlay) { shareOverlay.hidden = false; document.body.style.overflow = "hidden"; }
+}
+function closeShare() { if (shareOverlay) { shareOverlay.hidden = true; document.body.style.overflow = ""; } }
+const gameShareBtn = document.getElementById("gameShare");
+if (gameShareBtn) gameShareBtn.addEventListener("click", openShare);
+const shareCloseBtn = document.getElementById("shareClose");
+if (shareCloseBtn) shareCloseBtn.addEventListener("click", closeShare);
+if (shareOverlay) shareOverlay.addEventListener("click", (e) => { if (e.target === shareOverlay) closeShare(); });
+if (sEl.copy) sEl.copy.addEventListener("click", () => {
+  const txt = shareText() + " " + SHARE_URL;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => gToast("📋 Copied to clipboard")).catch(() => gToast("📋 Copy failed — select manually"));
+  } else { gToast("📋 Clipboard unavailable"); }
+});
+if (sEl.dl) sEl.dl.addEventListener("click", drawAndDownload);
+function drawAndDownload() {
+  const cv = sEl.canvas; if (!cv || !cv.getContext) return;
+  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
+  const { r, idx } = rankFor(gTotal);
+  const g = ctx.createRadialGradient(W / 2, 0, 100, W / 2, 0, H * 1.4);
+  g.addColorStop(0, "#2a2b2e"); g.addColorStop(1, "#121315");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#9aa0a6"; ctx.font = "700 26px Arial"; ctx.fillText("UNEMPLOYABLE™ · REJECTION TRAINING", W / 2, 92);
+  ctx.font = "140px Arial"; ctx.fillText(r.emoji, W / 2, 285);
+  ctx.fillStyle = "#ffffff"; ctx.font = "800 62px Arial"; ctx.fillText(r.name, W / 2, 378);
+  ctx.fillStyle = "#f28b82"; ctx.font = "800 38px Arial"; ctx.fillText(`${gTotal} rejections read`, W / 2, 452);
+  ctx.fillStyle = "#9aa0a6"; ctx.font = "28px Arial"; ctx.fillText(idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0", W / 2, 502);
+  ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("unemployable-one.vercel.app", W / 2, 562);
+  cv.toBlob((blob) => {
+    if (!blob) { gToast("Download failed"); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "my-rejection-resume.png";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    gToast("⬇️ Saved your Rejection Résumé");
+  }, "image/png");
+}
+
+/* ---------- Sidebar reactions ---------- */
+let sentTally = 487;
+const sentEl = document.getElementById("sentCount");
+const composeBtn = document.getElementById("composeBtn");
+if (composeBtn) composeBtn.addEventListener("click", () => {
+  sentTally++;
+  if (sentEl) sentEl.textContent = sentTally;
+  const quips = ["fired into the void. 🫡", "auto-archived by their ATS.", "read by absolutely no one.", "instantly ghosted.", "added to the 'maybe later' pile (it's never later)."];
+  gToast(`📨 Application #${sentTally} ${quips[Math.floor(Math.random() * quips.length)]}`);
+});
+document.querySelectorAll(".folder[data-joke]").forEach((f) => {
+  f.addEventListener("click", (e) => { e.preventDefault(); gToast(f.getAttribute("data-joke")); });
+});
+let fakeoutTimer = null;
+function interviewFakeout() {
+  const el = document.getElementById("interviewsCount"); if (!el) return;
+  clearTimeout(fakeoutTimer);
+  el.classList.remove("struck"); el.classList.add("faking"); el.textContent = "1";
+  fakeoutTimer = setTimeout(() => {
+    el.classList.remove("faking"); el.classList.add("struck"); el.textContent = "0";
+    setTimeout(() => el.classList.remove("struck"), 1200);
+  }, 1000);
+}
 
 /* ---------- Go ---------- */
 loadBatch();

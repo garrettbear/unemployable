@@ -502,11 +502,53 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 @keyframes toastIn { from { transform: translateY(16px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes toastOut { to { transform: translateY(8px); opacity: 0; } }
 
+.game-share {
+  margin-top: 12px; width: 100%; border: 1px solid var(--line); background: var(--hover);
+  color: var(--text); border-radius: 10px; padding: 8px; font-size: 12.5px; font-weight: 700;
+  cursor: pointer; font-family: "Roboto", Arial, sans-serif;
+}
+.game-share:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ===== Shareable Rejection Résumé ===== */
+.share-wrap {
+  background: var(--surface); max-width: 520px; width: 100%; margin: auto; border-radius: 18px;
+  padding: 28px 28px 24px; position: relative; box-shadow: var(--shadow); animation: pop .2s ease;
+}
+.share-h { margin: 0 0 16px; font-size: 22px; color: var(--text); }
+.share-card {
+  border-radius: 16px; padding: 30px 24px; text-align: center; color: #fff;
+  background: radial-gradient(120% 140% at 50% 0%, #2a2b2e 0%, #15171a 72%);
+  border: 1px solid #0c0d0f;
+}
+.sc-top { font-size: 11px; letter-spacing: 2px; color: #9aa0a6; font-weight: 700; }
+.sc-emoji { font-size: 62px; line-height: 1; margin: 14px 0 8px; }
+.sc-rank { font-size: 26px; font-weight: 800; letter-spacing: .3px; }
+.sc-count { font-size: 16px; color: #e8eaed; margin-top: 12px; }
+.sc-count span { color: #f28b82; font-weight: 800; }
+.sc-sub { font-size: 13px; color: #9aa0a6; margin-top: 4px; }
+.sc-url { font-size: 12px; color: #71757c; margin-top: 16px; letter-spacing: 1px; }
+.share-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.share-btn {
+  flex: 1; min-width: 110px; text-align: center; border: 1px solid var(--line); background: var(--surface);
+  color: var(--text); border-radius: 22px; padding: 11px 14px; font-size: 14px; font-weight: 700;
+  cursor: pointer; text-decoration: none; font-family: "Roboto", Arial, sans-serif;
+}
+.share-btn:hover { background: var(--hover); }
+.share-btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+.share-btn.primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+#shareCanvas { display: none; }
+
+/* sidebar counter reactions */
+.f-count.faking { color: #34a853 !important; display: inline-block; transform: scale(1.3); transition: transform .2s; }
+.f-count.struck { text-decoration: line-through; opacity: .55; }
+
 @media (max-width: 600px) {
   .game-hud { right: 12px; bottom: 12px; width: 200px; padding: 12px 13px 13px; }
   .game-rank { font-size: 17px; }
   .game-best { display: none; }
   .game-pill { right: 12px; bottom: 12px; }
+  .share-wrap { margin: 12px; padding: 22px 18px 18px; }
+  .share-actions { flex-direction: column; }
 }
 
   </style>
@@ -565,18 +607,18 @@ a:focus-visible, button:focus-visible, input:focus-visible,
   <div class="layout">
     <!-- ===== Sidebar ===== -->
     <aside class="sidebar" id="sidebar">
-      <button class="compose">
+      <button class="compose" id="composeBtn">
         <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
         Apply again
       </button>
       <nav class="folders">
         <a class="folder active"><span class="f-ic">📥</span> Inbox <span class="f-count" id="inboxCount">∞</span></a>
-        <a class="folder"><span class="f-ic">⭐</span> Starred</a>
+        <a class="folder" data-joke="One starred rejection. You framed the nicest 'no.'"><span class="f-ic">⭐</span> Starred</a>
         <a class="folder"><span class="f-ic">🕓</span> Snoozed <span class="f-note">indefinitely</span></a>
-        <a class="folder"><span class="f-ic">📨</span> Sent <span class="f-count">487</span></a>
-        <a class="folder"><span class="f-ic">📝</span> Drafts <span class="f-count">3</span></a>
-        <a class="folder"><span class="f-ic">💼</span> Interviews <span class="f-count">0</span></a>
-        <a class="folder"><span class="f-ic">🎉</span> Offers <span class="f-count">0</span></a>
+        <a class="folder" id="sentFolder"><span class="f-ic">📨</span> Sent <span class="f-count" id="sentCount">487</span></a>
+        <a class="folder" data-joke="3 drafts you'll never send. 'Hi, I know it's been a while…'"><span class="f-ic">📝</span> Drafts <span class="f-count">3</span></a>
+        <a class="folder" id="interviewsFolder" data-joke="0 interviews. The AI didn't think you were a culture fit."><span class="f-ic">💼</span> Interviews <span class="f-count" id="interviewsCount">0</span></a>
+        <a class="folder" id="offersFolder" data-joke="0 offers. Working exactly as intended."><span class="f-ic">🎉</span> Offers <span class="f-count" id="offersCount">0</span></a>
       </nav>
       <div class="sidebar-foot">
         <p>Storage almost full of "no."</p>
@@ -654,9 +696,32 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <span id="gameNext"></span>
     </div>
     <div class="game-best" id="gameBest"></div>
+    <button class="game-share" id="gameShare">📣 Share my résumé</button>
   </aside>
   <button class="game-pill" id="gamePill" hidden aria-label="Open Rejection Training">🎯 <span id="gamePillCount">0</span></button>
   <div class="game-toasts" id="gameToasts" aria-live="assertive"></div>
+
+  <!-- ===== Shareable Rejection Résumé ===== -->
+  <div class="modal-overlay" id="shareOverlay" hidden>
+    <div class="share-wrap" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+      <button class="about-close" id="shareClose" aria-label="Close">×</button>
+      <h2 id="shareTitle" class="share-h">Your Rejection Résumé</h2>
+      <div class="share-card" id="shareCard">
+        <div class="sc-top">UNEMPLOYABLE™ · REJECTION TRAINING</div>
+        <div class="sc-emoji" id="scEmoji">🐣</div>
+        <div class="sc-rank" id="scRank">Fresh Grad</div>
+        <div class="sc-count"><span id="scCount">0</span> rejections read</div>
+        <div class="sc-sub" id="scSub">Offers received: 0</div>
+        <div class="sc-url">unemployable-one.vercel.app</div>
+      </div>
+      <div class="share-actions">
+        <a class="share-btn primary" id="shareX" target="_blank" rel="noopener">𝕏 Share</a>
+        <button class="share-btn" id="shareCopy">Copy text</button>
+        <button class="share-btn" id="shareDownload">Download image</button>
+      </div>
+      <canvas id="shareCanvas" width="1200" height="630" aria-hidden="true"></canvas>
+    </div>
+  </div>
   <script>
 /* =============================================================
    UNEMPLOYABLE — endless inbox engine
@@ -1425,7 +1490,7 @@ document.getElementById("aboutClose").addEventListener("click", closeAbout);
 aboutOverlay.addEventListener("click", (e) => { if (e.target === aboutOverlay) closeAbout(); });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeModal(); closeAbout(); }
+  if (e.key === "Escape") { closeModal(); closeAbout(); closeShare(); }
 });
 
 /* ---------- Infinite scroll ---------- */
@@ -1558,6 +1623,7 @@ function recordOpen(e) {
   if (newIdx > prevIdx) {
     const r = RANKS[newIdx];
     gToast(`<span class="t-emoji">${r.emoji}</span> Level up — <strong>${r.name}</strong>`);
+    interviewFakeout();
   } else if (gTotal > 0 && gTotal % 25 === 0) {
     gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
   }
@@ -1573,6 +1639,89 @@ let hudMin = false;
 try { hudMin = localStorage.getItem("ue-hud-min") === "1"; } catch (e) {}
 setHudMin(hudMin);
 renderGame();
+
+/* ---------- Shareable Rejection Résumé ---------- */
+const SHARE_URL = "https://unemployable-one.vercel.app";
+const shareOverlay = document.getElementById("shareOverlay");
+const sEl = {
+  emoji: document.getElementById("scEmoji"), rank: document.getElementById("scRank"),
+  count: document.getElementById("scCount"), sub: document.getElementById("scSub"),
+  x: document.getElementById("shareX"), copy: document.getElementById("shareCopy"),
+  dl: document.getElementById("shareDownload"), canvas: document.getElementById("shareCanvas")
+};
+function shareText() {
+  const { r } = rankFor(gTotal);
+  return `I've read ${gTotal} job rejection${gTotal === 1 ? "" : "s"} on Unemployable. Rank: ${r.name} ${r.emoji}. Offers received: 0.`;
+}
+function openShare() {
+  const { r, idx } = rankFor(gTotal);
+  if (sEl.emoji) sEl.emoji.textContent = r.emoji;
+  if (sEl.rank) sEl.rank.textContent = r.name;
+  if (sEl.count) sEl.count.textContent = gTotal;
+  if (sEl.sub) sEl.sub.textContent = idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0";
+  if (sEl.x) sEl.x.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText())}&url=${encodeURIComponent(SHARE_URL)}`;
+  if (shareOverlay) { shareOverlay.hidden = false; document.body.style.overflow = "hidden"; }
+}
+function closeShare() { if (shareOverlay) { shareOverlay.hidden = true; document.body.style.overflow = ""; } }
+const gameShareBtn = document.getElementById("gameShare");
+if (gameShareBtn) gameShareBtn.addEventListener("click", openShare);
+const shareCloseBtn = document.getElementById("shareClose");
+if (shareCloseBtn) shareCloseBtn.addEventListener("click", closeShare);
+if (shareOverlay) shareOverlay.addEventListener("click", (e) => { if (e.target === shareOverlay) closeShare(); });
+if (sEl.copy) sEl.copy.addEventListener("click", () => {
+  const txt = shareText() + " " + SHARE_URL;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => gToast("📋 Copied to clipboard")).catch(() => gToast("📋 Copy failed — select manually"));
+  } else { gToast("📋 Clipboard unavailable"); }
+});
+if (sEl.dl) sEl.dl.addEventListener("click", drawAndDownload);
+function drawAndDownload() {
+  const cv = sEl.canvas; if (!cv || !cv.getContext) return;
+  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
+  const { r, idx } = rankFor(gTotal);
+  const g = ctx.createRadialGradient(W / 2, 0, 100, W / 2, 0, H * 1.4);
+  g.addColorStop(0, "#2a2b2e"); g.addColorStop(1, "#121315");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#9aa0a6"; ctx.font = "700 26px Arial"; ctx.fillText("UNEMPLOYABLE™ · REJECTION TRAINING", W / 2, 92);
+  ctx.font = "140px Arial"; ctx.fillText(r.emoji, W / 2, 285);
+  ctx.fillStyle = "#ffffff"; ctx.font = "800 62px Arial"; ctx.fillText(r.name, W / 2, 378);
+  ctx.fillStyle = "#f28b82"; ctx.font = "800 38px Arial"; ctx.fillText(`${gTotal} rejections read`, W / 2, 452);
+  ctx.fillStyle = "#9aa0a6"; ctx.font = "28px Arial"; ctx.fillText(idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0", W / 2, 502);
+  ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("unemployable-one.vercel.app", W / 2, 562);
+  cv.toBlob((blob) => {
+    if (!blob) { gToast("Download failed"); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "my-rejection-resume.png";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    gToast("⬇️ Saved your Rejection Résumé");
+  }, "image/png");
+}
+
+/* ---------- Sidebar reactions ---------- */
+let sentTally = 487;
+const sentEl = document.getElementById("sentCount");
+const composeBtn = document.getElementById("composeBtn");
+if (composeBtn) composeBtn.addEventListener("click", () => {
+  sentTally++;
+  if (sentEl) sentEl.textContent = sentTally;
+  const quips = ["fired into the void. 🫡", "auto-archived by their ATS.", "read by absolutely no one.", "instantly ghosted.", "added to the 'maybe later' pile (it's never later)."];
+  gToast(`📨 Application #${sentTally} ${quips[Math.floor(Math.random() * quips.length)]}`);
+});
+document.querySelectorAll(".folder[data-joke]").forEach((f) => {
+  f.addEventListener("click", (e) => { e.preventDefault(); gToast(f.getAttribute("data-joke")); });
+});
+let fakeoutTimer = null;
+function interviewFakeout() {
+  const el = document.getElementById("interviewsCount"); if (!el) return;
+  clearTimeout(fakeoutTimer);
+  el.classList.remove("struck"); el.classList.add("faking"); el.textContent = "1";
+  fakeoutTimer = setTimeout(() => {
+    el.classList.remove("faking"); el.classList.add("struck"); el.textContent = "0";
+    setTimeout(() => el.classList.remove("struck"), 1200);
+  }, 1000);
+}
 
 /* ---------- Go ---------- */
 loadBatch();

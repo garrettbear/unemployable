@@ -91,18 +91,18 @@
   <div class="layout">
     <!-- ===== Sidebar ===== -->
     <aside class="sidebar" id="sidebar">
-      <button class="compose">
+      <button class="compose" id="composeBtn">
         <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
         Apply again
       </button>
       <nav class="folders">
         <a class="folder active"><span class="f-ic">📥</span> Inbox <span class="f-count" id="inboxCount">∞</span></a>
-        <a class="folder"><span class="f-ic">⭐</span> Starred</a>
+        <a class="folder" data-joke="One starred rejection. You framed the nicest 'no.'"><span class="f-ic">⭐</span> Starred</a>
         <a class="folder"><span class="f-ic">🕓</span> Snoozed <span class="f-note">indefinitely</span></a>
-        <a class="folder"><span class="f-ic">📨</span> Sent <span class="f-count">487</span></a>
-        <a class="folder"><span class="f-ic">📝</span> Drafts <span class="f-count">3</span></a>
-        <a class="folder"><span class="f-ic">💼</span> Interviews <span class="f-count">0</span></a>
-        <a class="folder"><span class="f-ic">🎉</span> Offers <span class="f-count">0</span></a>
+        <a class="folder" id="sentFolder"><span class="f-ic">📨</span> Sent <span class="f-count" id="sentCount">487</span></a>
+        <a class="folder" data-joke="3 drafts you'll never send. 'Hi, I know it's been a while…'"><span class="f-ic">📝</span> Drafts <span class="f-count">3</span></a>
+        <a class="folder" id="interviewsFolder" data-joke="0 interviews. The AI didn't think you were a culture fit."><span class="f-ic">💼</span> Interviews <span class="f-count" id="interviewsCount">0</span></a>
+        <a class="folder" id="offersFolder" data-joke="0 offers. Working exactly as intended."><span class="f-ic">🎉</span> Offers <span class="f-count" id="offersCount">0</span></a>
       </nav>
       <div class="sidebar-foot">
         <p>Storage almost full of "no."</p>
@@ -180,9 +180,32 @@
       <span id="gameNext"></span>
     </div>
     <div class="game-best" id="gameBest"></div>
+    <button class="game-share" id="gameShare">📣 Share my résumé</button>
   </aside>
   <button class="game-pill" id="gamePill" hidden aria-label="Open Rejection Training">🎯 <span id="gamePillCount">0</span></button>
   <div class="game-toasts" id="gameToasts" aria-live="assertive"></div>
+
+  <!-- ===== Shareable Rejection Résumé ===== -->
+  <div class="modal-overlay" id="shareOverlay" hidden>
+    <div class="share-wrap" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+      <button class="about-close" id="shareClose" aria-label="Close">×</button>
+      <h2 id="shareTitle" class="share-h">Your Rejection Résumé</h2>
+      <div class="share-card" id="shareCard">
+        <div class="sc-top">UNEMPLOYABLE™ · REJECTION TRAINING</div>
+        <div class="sc-emoji" id="scEmoji">🐣</div>
+        <div class="sc-rank" id="scRank">Fresh Grad</div>
+        <div class="sc-count"><span id="scCount">0</span> rejections read</div>
+        <div class="sc-sub" id="scSub">Offers received: 0</div>
+        <div class="sc-url">unemployable-one.vercel.app</div>
+      </div>
+      <div class="share-actions">
+        <a class="share-btn primary" id="shareX" target="_blank" rel="noopener">𝕏 Share</a>
+        <button class="share-btn" id="shareCopy">Copy text</button>
+        <button class="share-btn" id="shareDownload">Download image</button>
+      </div>
+      <canvas id="shareCanvas" width="1200" height="630" aria-hidden="true"></canvas>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
