@@ -10,8 +10,8 @@
    2) Paste the form ID + that entry id below. Action URL ends in
       /formResponse (NOT /viewform).
    Until then the form still shows success, but nothing is recorded. */
-const GFORM_ACTION = "https://docs.google.com/forms/d/e/REPLACE_WITH_FORM_ID/formResponse";
-const GFORM_ENTRY  = "entry.REPLACE_WITH_FIELD_ID";
+const GFORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLScb5RaU6KfAhWmjYifP8sGAfHYI7xUYA14kFy-o8AaP4aoraw/formResponse";
+const GFORM_ENTRY  = "entry.774890617";
 
 function wireSignup(formId, noteId, okText) {
   const form = document.getElementById(formId);
