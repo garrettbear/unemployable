@@ -62,6 +62,7 @@ rejection copy. `FIRST_NAME` sets who the emails are addressed to.
 ### Easter eggs
 - One **CVS receipt** email near the top — a tribute to the original pen.
 - Type `hire` anywhere on the page.
+- Type `boss` to trigger the Final Boss "you got an offer!" confetti prank on demand.
 - Hit Enter in the search bar.
 - The "About" (ⓘ) button holds the full disclaimer + brand pitch.
 

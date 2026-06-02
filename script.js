@@ -824,9 +824,24 @@ function applyTheme(t) {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute("content", t === "dark" ? "#202124" : "#ffffff");
 }
-let theme = "light";
-try { theme = localStorage.getItem("ue-theme") || "light"; } catch (e) {}
+let theme;
+try { theme = localStorage.getItem("ue-theme"); } catch (e) {}
+if (!theme) {
+  // No saved preference → follow the OS (auto dark mode).
+  theme = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+}
 applyTheme(theme);
+// Keep following the OS until the user makes an explicit choice.
+if (window.matchMedia) {
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const onOsChange = (e) => {
+    let saved = null;
+    try { saved = localStorage.getItem("ue-theme"); } catch (err) {}
+    if (!saved) applyTheme(e.matches ? "dark" : "light");
+  };
+  if (mq.addEventListener) mq.addEventListener("change", onOsChange);
+  else if (mq.addListener) mq.addListener(onOsChange);
+}
 if (themeBtn) themeBtn.addEventListener("click", () => {
   theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
   applyTheme(theme);
@@ -1079,12 +1094,17 @@ loadBatch();
 loadBatch();
 updateCounter();
 
-/* Konami-ish: type "hire" anywhere for a surprise */
+/* Konami-ish keyword eggs: type "hire" or "boss" anywhere */
 let buf = "";
 document.addEventListener("keydown", (e) => {
   if (e.key.length === 1) buf = (buf + e.key.toLowerCase()).slice(-4);
   if (buf === "hire") {
     buf = "";
     alert("LOL. No.\n\n— Every company, 2024–2026");
+  }
+  if (buf === "boss") {
+    buf = "";
+    prankFired = false;   // allow re-triggering on demand
+    firePrank();
   }
 });
