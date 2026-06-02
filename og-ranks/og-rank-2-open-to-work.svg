@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Arial, sans-serif">
+  <defs><radialGradient id="bg" cx="50%" cy="0%" r="140%"><stop offset="0" stop-color="#2a2b2e"/><stop offset="1" stop-color="#121315"/></radialGradient></defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="600" y="96" text-anchor="middle" font-size="24" font-weight="700" fill="#9aa0a6">UNEMPLOYABLE&#8482;  &#183;  REJECTION TRAINING</text>
+  <text x="600" y="210" text-anchor="middle" font-size="22" font-weight="700" fill="#f28b82" letter-spacing="4">LEVEL 2 OF 9</text>
+  <text x="600" y="320" text-anchor="middle" font-size="64" font-weight="800" fill="#ffffff">Open to Work</text>
+  <circle cx="344" cy="470" r="12" fill="#f28b82"/><circle cx="408" cy="470" r="12" fill="#f28b82"/><circle cx="472" cy="470" r="12" fill="#3c4043"/><circle cx="536" cy="470" r="12" fill="#3c4043"/><circle cx="600" cy="470" r="12" fill="#3c4043"/><circle cx="664" cy="470" r="12" fill="#3c4043"/><circle cx="728" cy="470" r="12" fill="#3c4043"/><circle cx="792" cy="470" r="12" fill="#3c4043"/><circle cx="856" cy="470" r="12" fill="#3c4043"/>
+  <text x="600" y="540" text-anchor="middle" font-size="26" fill="#9aa0a6">Offers received: 0</text>
+  <text x="600" y="586" text-anchor="middle" font-size="22" fill="#71757c" letter-spacing="1">unemployable-one.vercel.app</text>
+  </svg>

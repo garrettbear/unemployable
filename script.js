@@ -899,6 +899,7 @@ function recordOpen(e) {
     const r = RANKS[newIdx];
     gToast(`<span class="t-emoji">${r.emoji}</span> Level up — <strong>${r.name}</strong>`);
     interviewFakeout();
+    if (newIdx === RANKS.length - 1) firePrank();
   } else if (gTotal > 0 && gTotal % 25 === 0) {
     gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
   }
@@ -997,6 +998,81 @@ function interviewFakeout() {
     setTimeout(() => el.classList.remove("struck"), 1200);
   }, 1000);
 }
+
+/* ---------- Confetti (no library) ---------- */
+function confettiBurst(durationMs) {
+  const cv = document.createElement("canvas");
+  cv.id = "confettiCanvas";
+  document.body.appendChild(cv);
+  const ctx = cv.getContext("2d");
+  let W, H;
+  function resize() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
+  resize();
+  window.addEventListener("resize", resize);
+  const colors = ["#f28b82", "#c5221f", "#fdd663", "#34a853", "#8ab4f8", "#ffffff"];
+  const N = 160;
+  const parts = [];
+  for (let i = 0; i < N; i++) {
+    parts.push({
+      x: Math.random() * W, y: -20 - Math.random() * H * 0.5,
+      vx: (Math.random() - 0.5) * 6, vy: 2 + Math.random() * 5,
+      w: 6 + Math.random() * 8, h: 8 + Math.random() * 10,
+      rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    });
+  }
+  const start = performance.now();
+  function frame(now) {
+    const elapsed = now - start;
+    ctx.clearRect(0, 0, W, H);
+    parts.forEach((p) => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.rot += p.vr;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha = Math.max(0, 1 - elapsed / durationMs);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    if (elapsed < durationMs) requestAnimationFrame(frame);
+    else { window.removeEventListener("resize", resize); cv.remove(); }
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Final Boss prank: the offer that wasn't ---------- */
+let prankFired = false;
+function firePrank() {
+  if (prankFired) return;
+  prankFired = true;
+  const overlay = document.getElementById("offerPrank");
+  const card = document.getElementById("offerCard");
+  const emoji = document.getElementById("offerEmoji");
+  const title = document.getElementById("offerTitle");
+  const msg = document.getElementById("offerMsg");
+  if (!overlay) return;
+  // Phase 1 — celebrate
+  if (card) card.classList.remove("rescinded");
+  if (emoji) emoji.textContent = "🎉";
+  if (title) title.textContent = "YOU GOT AN OFFER!";
+  if (msg) msg.textContent = "Congratulations, Garrett. After 487 applications, someone finally said yes.";
+  overlay.hidden = false;
+  document.body.style.overflow = "hidden";
+  confettiBurst(2600);
+  // Phase 2 — the rug pull
+  setTimeout(() => {
+    if (card) card.classList.add("rescinded");
+    if (emoji) emoji.textContent = "💀";
+    if (title) title.textContent = "OFFER RESCINDED";
+    if (msg) msg.textContent = "…just kidding. The role has been automated. The model starts Monday. Thank you for your interest.";
+  }, 2700);
+  // Phase 3 — close
+  setTimeout(() => { overlay.hidden = true; document.body.style.overflow = ""; }, 6400);
+}
+// allow click-to-dismiss the prank
+(function () {
+  const overlay = document.getElementById("offerPrank");
+  if (overlay) overlay.addEventListener("click", () => { overlay.hidden = true; document.body.style.overflow = ""; });
+})();
 
 /* ---------- Go ---------- */
 loadBatch();
