@@ -11,22 +11,54 @@
 const GFORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLScb5RaU6KfAhWmjYifP8sGAfHYI7xUYA14kFy-o8AaP4aoraw/formResponse";
 const GFORM_ENTRY  = "entry.774890617";
 
+const PAGE_LOADED = Date.now();
+// Pragmatic email format check — lenient enough to never reject a real address,
+// strict enough to catch typos and junk. (Deliverability needs a backend; this is format only.)
+function validEmail(s) {
+  if (s.length > 254) return false;
+  if (!/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/.test(s)) return false;
+  if (/\.{2,}|@.*@|^[.@]|[.@]$|\.@|@\./.test(s)) return false;
+  return true;
+}
+function succeed(form, note, okText) {
+  form.innerHTML = '<div class="signup-done" style="height:52px;display:flex;align-items:center;justify-content:center;width:100%;color:#fff;font-weight:700;font-size:15px;">✓ You\'re on the list.</div>';
+  if (note) { note.textContent = okText; note.classList.remove("err"); note.classList.add("ok"); }
+}
 function wireSignup(formId, noteId, okText) {
   const form = document.getElementById(formId);
   const note = document.getElementById(noteId);
   if (!form) return;
+  const baseNote = note ? note.textContent : "";
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const input = form.querySelector("input[type=email]");
-    const email = (input && input.value || "").trim();
-    if (!email) return;
+    const hp = form.querySelector(".hp");
+    const email = ((input && input.value) || "").trim();
+
+    // bot trap 1: honeypot filled → silently "succeed", never record
+    if (hp && hp.value) { succeed(form, note, okText); return; }
+    // bot trap 2: submitted implausibly fast (scripts, not humans)
+    if (Date.now() - PAGE_LOADED < 600) { succeed(form, note, okText); return; }
+
+    // real-human validation: gentle inline nudge, no hard gate
+    if (!validEmail(email)) {
+      if (note) { note.textContent = "Hmm — that doesn't look like a valid email. Mind double-checking?"; note.classList.remove("ok"); note.classList.add("err"); }
+      if (input) { input.focus(); input.select(); }
+      return;
+    }
+    if (note) { note.classList.remove("err"); note.textContent = baseNote; }
+
     if (!GFORM_ACTION.includes("REPLACE_WITH")) {
       const body = new URLSearchParams();
       body.append(GFORM_ENTRY, email);
       fetch(GFORM_ACTION, { method: "POST", mode: "no-cors", body }).catch(() => {});
     }
-    form.innerHTML = '<div class="signup-done" style="height:52px;display:flex;align-items:center;justify-content:center;width:100%;color:#fff;font-weight:700;font-size:15px;">✓ You\'re on the list.</div>';
-    if (note) { note.textContent = okText; note.classList.add("ok"); }
+    succeed(form, note, okText);
+  });
+  // clear the error the moment they start fixing it
+  const input = form.querySelector("input[type=email]");
+  if (input && note) input.addEventListener("input", () => {
+    if (note.classList.contains("err")) { note.classList.remove("err"); note.textContent = baseNote; }
   });
 }
 wireSignup("signupTop", "noteTop", "Done. We'll email you the moment the first drop lands.");

@@ -54,8 +54,9 @@
         <img class="hero-logo" src="img/logo-white.png" alt="UNEMPLOYABLE™" />
         <h1 class="hero-h1">You're not unemployed.<br><span class="accent">You're unemployable.</span></h1>
         <p class="hero-sub">The first drop is loading. Be first in line for the layoffs of fashion.</p>
-        <form class="signup" id="signupTop">
-          <input type="email" name="email" required placeholder="you@stillchecking.email" aria-label="Email address" />
+        <form class="signup" id="signupTop" novalidate>
+          <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@stillchecking.email" aria-label="Email address" />
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <button type="submit">Notify me</button>
         </form>
         <p class="signup-note" id="noteTop">No spam. Unlike recruiters, we actually follow up.</p>
@@ -103,8 +104,9 @@
     <section class="panel closing" id="notify" data-label="Get on the list">
       <div class="closing-inner">
         <h2 class="closing-h2">Get the drop before<br>the rejection emails do.</h2>
-        <form class="signup big" id="signupBottom">
-          <input type="email" name="email" required placeholder="you@stillchecking.email" aria-label="Email address" />
+        <form class="signup big" id="signupBottom" novalidate>
+          <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@stillchecking.email" aria-label="Email address" />
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <button type="submit">Notify me</button>
         </form>
         <p class="signup-note" id="noteBottom">First drop, early access, zero recruiter energy.</p>
