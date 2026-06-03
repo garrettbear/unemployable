@@ -517,6 +517,9 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .icon-btn { color: var(--text-soft); }
 :root[data-theme="dark"] .icon-btn:hover { background: rgba(232,234,237,.1); }
 :root[data-theme="dark"] .about-card { background: #2a2b2e; }
+:root[data-theme="dark"] .about-card p { color: #d6d8db; }                 /* was #3c4043 — invisible on dark */
+:root[data-theme="dark"] .about-shop { background: #e8eaed; color: #202124; }  /* was light-on-light */
+:root[data-theme="dark"] .about-shop:hover { background: var(--accent); color: #202124; }
 :root[data-theme="dark"] .mb-content { color: #e8eaed; }
 :root[data-theme="dark"] .mb-content .sig { color: var(--text-soft); }
 :root[data-theme="dark"] .mb-btn { background: transparent; color: var(--text-soft); border-color: var(--line); }
