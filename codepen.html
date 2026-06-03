@@ -155,6 +155,13 @@ a:focus-visible, button:focus-visible, input:focus-visible,
   transition: transform .12s, filter .2s;
 }
 .avatar-me:hover { transform: scale(1.08); filter: brightness(1.05); }
+/* one-time attention pulse while the coachmark is up */
+@keyframes avatarPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(197,34,31,.55); }
+  70%  { box-shadow: 0 0 0 13px rgba(197,34,31,0); }
+  100% { box-shadow: 0 0 0 0 rgba(197,34,31,0); }
+}
+.avatar-me.pulse { animation: avatarPulse 1.6s ease-out 4; }
 
 /* ===== Layout ===== */
 .layout { display: flex; height: calc(100vh - var(--topbar-h)); }
@@ -1915,12 +1922,13 @@ if (menuBtn) menuBtn.addEventListener("click", () => {
 /* ---------- First-visit coachmark: "click your avatar to personalize" ---------- */
 (function () {
   const cm = document.getElementById("coachmark");
+  const me = document.getElementById("meBtn");
   if (!cm) return;
   let seen = false;
   try { seen = localStorage.getItem("ue-coach") === "1"; } catch (e) {}
-  function dismiss() { cm.hidden = true; try { localStorage.setItem("ue-coach", "1"); } catch (e) {} }
+  function dismiss() { cm.hidden = true; if (me) me.classList.remove("pulse"); try { localStorage.setItem("ue-coach", "1"); } catch (e) {} }
   if (!seen) {
-    setTimeout(() => { cm.hidden = false; }, 1400);
+    setTimeout(() => { cm.hidden = false; if (me) me.classList.add("pulse"); }, 1400);
     setTimeout(dismiss, 13000);                 // auto-dismiss
   } else { cm.hidden = true; }
   const cx = document.getElementById("coachX");

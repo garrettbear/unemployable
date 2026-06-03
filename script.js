@@ -963,12 +963,13 @@ if (menuBtn) menuBtn.addEventListener("click", () => {
 /* ---------- First-visit coachmark: "click your avatar to personalize" ---------- */
 (function () {
   const cm = document.getElementById("coachmark");
+  const me = document.getElementById("meBtn");
   if (!cm) return;
   let seen = false;
   try { seen = localStorage.getItem("ue-coach") === "1"; } catch (e) {}
-  function dismiss() { cm.hidden = true; try { localStorage.setItem("ue-coach", "1"); } catch (e) {} }
+  function dismiss() { cm.hidden = true; if (me) me.classList.remove("pulse"); try { localStorage.setItem("ue-coach", "1"); } catch (e) {} }
   if (!seen) {
-    setTimeout(() => { cm.hidden = false; }, 1400);
+    setTimeout(() => { cm.hidden = false; if (me) me.classList.add("pulse"); }, 1400);
     setTimeout(dismiss, 13000);                 // auto-dismiss
   } else { cm.hidden = true; }
   const cx = document.getElementById("coachX");

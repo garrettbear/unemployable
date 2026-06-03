@@ -115,6 +115,13 @@ a:focus-visible, button:focus-visible, input:focus-visible,
   transition: transform .12s, filter .2s;
 }
 .avatar-me:hover { transform: scale(1.08); filter: brightness(1.05); }
+/* one-time attention pulse while the coachmark is up */
+@keyframes avatarPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(197,34,31,.55); }
+  70%  { box-shadow: 0 0 0 13px rgba(197,34,31,0); }
+  100% { box-shadow: 0 0 0 0 rgba(197,34,31,0); }
+}
+.avatar-me.pulse { animation: avatarPulse 1.6s ease-out 4; }
 
 /* ===== Layout ===== */
 .layout { display: flex; height: calc(100vh - var(--topbar-h)); }
