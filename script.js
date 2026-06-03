@@ -325,7 +325,21 @@ const SNIPPETS = [
   "The model rated you 'qualified, but redundant'…"
 ];
 
-const FIRST_NAME = "Garrett";
+/* ---------- Personalization (name + "dream job") ----------
+   Read from the URL (?name=Steve&job=CEO) first — so sharing your link shows
+   the recipient's name to whoever opens it — then localStorage, else default.
+   Sanitized to a safe charset so it's harmless in HTML and on canvas. */
+function cleanField(s, max) { return String(s || "").replace(/[<>&"'`]/g, "").replace(/\s+/g, " ").trim().slice(0, max); }
+let FIRST_NAME = "Garrett";
+let CUSTOM_ROLE = "";
+(function () {
+  const p = new URLSearchParams(location.search);
+  let n = p.get("name"), j = p.get("job");
+  try { if (n == null) n = localStorage.getItem("ue-name"); if (j == null) j = localStorage.getItem("ue-job"); } catch (e) {}
+  n = cleanField(n, 30); j = cleanField(j, 48);
+  if (n) FIRST_NAME = n;
+  if (j) CUSTOM_ROLE = j;
+})();
 
 /* ---------- Deterministic RNG so each row is stable ---------- */
 function mulberry32(a) {
@@ -351,7 +365,7 @@ function buildEmail(i) {
   // Pinned at the very top (most recent): Ramp — the one that stung the most.
   if (i === 0) c = COMPANIES.find((x) => x.name === "Ramp") || c;
   const cName = c.name, cDomain = c.domain, cColor = c.color;
-  const role = pick(rng, ROLES);
+  const role = (CUSTOM_ROLE && rng() < 0.5) ? CUSTOM_ROLE : pick(rng, ROLES);
   const [senderName, senderUser] = pick(rng, SENDERS);
   const tpl = TEMPLATES[Math.floor(rng() * TEMPLATES.length)];
   const snippet = pick(rng, SNIPPETS);
@@ -665,21 +679,23 @@ function syncTabUI(tab) {
     t.setAttribute("aria-selected", on ? "true" : "false");
   });
 }
-function switchTab(tab) {
-  if (tab === currentTab) { list.scrollTop = 0; return; }
-  currentTab = tab;
-  syncTabUI(tab);
-  // reset the stream
+function resetStream() {
   index = 0;
   cursorDate = new Date(START);
   for (const k in store) delete store[k];
   list.innerHTML = "";
-  const tl = document.querySelector(".toolbar-label");
-  if (tl) tl.textContent = TAB_LABELS[tab];
   loadBatch();
   loadBatch();
   updateCounter();
   list.scrollTop = 0;
+}
+function switchTab(tab) {
+  if (tab === currentTab) { list.scrollTop = 0; return; }
+  currentTab = tab;
+  syncTabUI(tab);
+  const tl = document.querySelector(".toolbar-label");
+  if (tl) tl.textContent = TAB_LABELS[tab];
+  resetStream();
 }
 document.querySelectorAll(".tab").forEach((t) => {
   t.setAttribute("role", "tab");
@@ -717,7 +733,7 @@ function openEmail(i) {
       <span class="mb-avatar" style="background:${e.color}">${e.company[0]}</span>
       <div class="mb-meta">
         <div class="mb-from">${e.senderName} <span class="mb-email">&lt;${e.senderEmail}&gt;</span></div>
-        <div class="mb-to">to me</div>
+        <div class="mb-to">to ${FIRST_NAME}</div>
       </div>
       <div class="mb-date">${fmtFull(e.date)}</div>
     </div>
@@ -740,11 +756,13 @@ function openEmail(i) {
       <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
     </div>
     <div class="mb-actions">
+      <button class="mb-btn primary" id="saveImgBtn">⬇ Save as image</button>
       <button class="mb-btn" id="replyBtn">↩ Reply</button>
       <button class="mb-btn" id="fwdBtn">↪ Forward to mom</button>
     </div>
   `;
 
+  modalBody.querySelector("#saveImgBtn").addEventListener("click", () => renderEmailImage(e));
   modalBody.querySelector("#replyBtn").addEventListener("click", () => {
     alert("This inbox is not monitored. It never was.");
   });
@@ -760,6 +778,85 @@ function closeModal() {
   overlay.hidden = true;
   document.body.style.overflow = "";
 }
+
+/* ---------- Save an email as a shareable PNG (canvas) ---------- */
+function renderEmailImage(e) {
+  const scale = 2, W = 1080, pad = 72, cw = W - pad * 2;
+  const FS_SUB = 40, FS_META = 22, FS_BODY = 27, LH_BODY = 41;
+  const cv = document.createElement("canvas");
+  const ctx = cv.getContext("2d");
+  function wrap(text, font, maxW) {
+    ctx.font = font;
+    const lines = [];
+    String(text).split("\n").forEach((seg) => {
+      const words = seg.split(" "); let line = "";
+      for (const w of words) {
+        const t = line ? line + " " + w : w;
+        if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+      }
+      lines.push(line);
+    });
+    return lines;
+  }
+  const sig = e.egg ? `\nThe ${e.sigCompany} Team`
+    : (e.label === "promo" || e.label === "social") ? `\n— ${e.sigCompany}`
+    : `\nThe ${e.sigCompany} Team · This inbox is not monitored`;
+  const paras = e.body.slice();
+  paras[paras.length - 1] += sig;
+  const subjLines = wrap(e.subject, `700 ${FS_SUB}px Arial`, cw);
+  const bodyBlocks = paras.map((p) => wrap(p, `${FS_BODY}px Arial`, cw));
+
+  let h = pad + subjLines.length * (FS_SUB + 8) + 20 + 80 + 30;
+  bodyBlocks.forEach((b) => { h += b.length * LH_BODY + 18; });
+  h += 60 + pad;
+  const H = Math.max(560, h);
+
+  cv.width = W * scale; cv.height = H * scale;
+  ctx.scale(scale, scale);
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+  ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+
+  let cy = pad;
+  ctx.fillStyle = "#202124"; ctx.font = `700 ${FS_SUB}px Arial`;
+  subjLines.forEach((ln) => { cy += FS_SUB; ctx.fillText(ln, pad, cy); cy += 8; });
+  cy += 22;
+
+  const av = 58;
+  ctx.fillStyle = e.color || "#777";
+  ctx.beginPath(); ctx.arc(pad + av / 2, cy + av / 2, av / 2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#fff"; ctx.font = "500 27px Arial"; ctx.textAlign = "center";
+  ctx.fillText((e.company[0] || "?"), pad + av / 2, cy + av / 2 + 10);
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#202124"; ctx.font = `700 ${FS_META}px Arial`;
+  ctx.fillText(e.senderName, pad + av + 18, cy + 23);
+  ctx.fillStyle = "#5f6368"; ctx.font = `${FS_META - 2}px Arial`;
+  ctx.fillText(`<${e.senderEmail}>  ·  to ${FIRST_NAME}`, pad + av + 18, cy + 49);
+  cy += av + 24;
+
+  ctx.strokeStyle = "#e8eaed"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad, cy); ctx.lineTo(W - pad, cy); ctx.stroke();
+  cy += 30;
+
+  ctx.fillStyle = "#3c4043"; ctx.font = `${FS_BODY}px Arial`;
+  bodyBlocks.forEach((b) => { b.forEach((ln) => { cy += LH_BODY; ctx.fillText(ln, pad, cy); }); cy += 18; });
+
+  const fy = H - pad + 12;
+  ctx.fillStyle = "#9aa0a6"; ctx.font = "700 20px Arial"; ctx.textAlign = "left";
+  ctx.fillText("UNEMPLOYABLE™", pad, fy);
+  ctx.fillStyle = "#c5221f"; ctx.textAlign = "right";
+  ctx.fillText("theunemployable.xyz", W - pad, fy);
+
+  cv.toBlob((blob) => {
+    if (!blob) { alert("Couldn't generate the image — try again."); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const slug = (e.company || "rejection").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    a.href = url; a.download = `unemployable-${slug}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    if (typeof gToast === "function") gToast("⬇️ Saved — go post it.");
+  }, "image/png");
+}
 document.getElementById("modalBack").addEventListener("click", closeModal);
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
 
@@ -773,7 +870,7 @@ document.getElementById("aboutClose").addEventListener("click", closeAbout);
 aboutOverlay.addEventListener("click", (e) => { if (e.target === aboutOverlay) closeAbout(); });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeModal(); closeAbout(); closeShare(); closeDrawer(); }
+  if (e.key === "Escape") { closeModal(); closeAbout(); closeShare(); closeDrawer(); closePersonalize(); }
 });
 
 /* ---------- Infinite scroll ---------- */
@@ -1122,6 +1219,57 @@ function firePrank() {
 
 /* ---------- Keep the copyright year current ---------- */
 document.querySelectorAll(".yr").forEach((el) => { el.textContent = new Date().getFullYear(); });
+
+/* ---------- Personalize / prank-a-friend ---------- */
+const pzOverlay = document.getElementById("personalizeOverlay");
+function updateMeAvatar() {
+  document.querySelectorAll(".avatar-me").forEach((a) => { a.textContent = (FIRST_NAME[0] || "G").toUpperCase(); });
+}
+function openPersonalize() {
+  const nIn = document.getElementById("pzName"), jIn = document.getElementById("pzJob"), note = document.getElementById("pzNote");
+  if (nIn) nIn.value = (FIRST_NAME === "Garrett" ? "" : FIRST_NAME);
+  if (jIn) jIn.value = CUSTOM_ROLE;
+  if (note) { note.textContent = ""; note.classList.remove("ok"); }
+  if (typeof closeDrawer === "function") closeDrawer();
+  if (pzOverlay) { pzOverlay.hidden = false; document.body.style.overflow = "hidden"; }
+  if (nIn) nIn.focus();
+}
+function closePersonalize() { if (pzOverlay) { pzOverlay.hidden = true; document.body.style.overflow = ""; } }
+function savePersonalize() {
+  FIRST_NAME = cleanField(document.getElementById("pzName").value, 30) || "Garrett";
+  CUSTOM_ROLE = cleanField(document.getElementById("pzJob").value, 48);
+  try { localStorage.setItem("ue-name", FIRST_NAME); localStorage.setItem("ue-job", CUSTOM_ROLE); } catch (e) {}
+  updateMeAvatar();
+  resetStream();   // regenerate every email with the new name / title
+}
+function shareLink() {
+  const u = new URL(location.origin + location.pathname);
+  if (FIRST_NAME && FIRST_NAME !== "Garrett") u.searchParams.set("name", FIRST_NAME);
+  if (CUSTOM_ROLE) u.searchParams.set("job", CUSTOM_ROLE);
+  return u.toString();
+}
+(function () {
+  const meBtn = document.getElementById("meBtn");
+  const meBtnDrawer = document.getElementById("meBtnDrawer");
+  const pzClose = document.getElementById("pzClose");
+  const pzApply = document.getElementById("pzApply");
+  const pzCopy = document.getElementById("pzCopy");
+  if (meBtn) meBtn.addEventListener("click", openPersonalize);
+  if (meBtnDrawer) meBtnDrawer.addEventListener("click", openPersonalize);
+  if (pzClose) pzClose.addEventListener("click", closePersonalize);
+  if (pzOverlay) pzOverlay.addEventListener("click", (e) => { if (e.target === pzOverlay) closePersonalize(); });
+  if (pzApply) pzApply.addEventListener("click", () => { savePersonalize(); closePersonalize(); gToast(`📨 Now rejecting: ${FIRST_NAME}`); });
+  if (pzCopy) pzCopy.addEventListener("click", () => {
+    savePersonalize();
+    const link = shareLink(), note = document.getElementById("pzNote");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link)
+        .then(() => { if (note) { note.textContent = "Link copied — send it to a friend."; note.classList.add("ok"); } })
+        .catch(() => { if (note) { note.textContent = link; } });
+    } else if (note) { note.textContent = link; }
+  });
+  updateMeAvatar();
+})();
 
 /* ---------- Go ---------- */
 loadBatch();

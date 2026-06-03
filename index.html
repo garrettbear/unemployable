@@ -86,7 +86,7 @@
       <button class="icon-btn" id="aboutBtn" aria-label="About this site">
         <svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
       </button>
-      <div class="avatar-me" title="garrett, professionally rejected">G</div>
+      <button class="avatar-me" id="meBtn" title="Personalize / prank a friend" aria-label="Personalize">G</button>
     </div>
   </header>
 
@@ -118,6 +118,7 @@
         <a class="folder" id="offersFolder" data-joke="0 offers. Working exactly as intended."><span class="f-ic">🎉</span> Offers <span class="f-count" id="offersCount">0</span></a>
       </nav>
       <nav class="drawer-extra mobile-only">
+        <button class="drawer-item" id="meBtnDrawer">🙂&nbsp;&nbsp;Personalize / prank a friend</button>
         <button class="drawer-item" id="aboutBtnDrawer">ⓘ&nbsp;&nbsp;About &amp; the joke</button>
         <a class="drawer-item" href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">🛍️&nbsp;&nbsp;Shop UNEMPLOYABLE™</a>
         <button class="drawer-item" id="themeBtnDrawer">🌙&nbsp;&nbsp;Dark mode</button>
@@ -155,6 +156,25 @@
         <span>Loading more rejection…</span>
       </div>
     </main>
+  </div>
+
+  <!-- ===== Personalize modal ===== -->
+  <div class="modal-overlay" id="personalizeOverlay" hidden>
+    <div class="about-card" role="dialog" aria-modal="true" aria-labelledby="pzTitle">
+      <button class="about-close" id="pzClose" aria-label="Close">×</button>
+      <h2 id="pzTitle">Make it personal</h2>
+      <p class="about-tag">prank a friend</p>
+      <p>Put a friend's name on every rejection, then share your link — they'll open it and watch the entire internet turn <em>them</em> down. Give them a "dream job" too, if you're feeling generous.</p>
+      <label class="pz-label" for="pzName">Name on the rejections</label>
+      <input class="pz-input" id="pzName" type="text" maxlength="30" placeholder="Garrett" autocomplete="off" />
+      <label class="pz-label" for="pzJob">Their “dream job” (optional)</label>
+      <input class="pz-input" id="pzJob" type="text" maxlength="48" placeholder="e.g. Chief Vibes Officer" autocomplete="off" />
+      <div class="pz-actions">
+        <button class="about-shop pz-apply" id="pzApply">Apply</button>
+        <button class="mb-btn" id="pzCopy">Copy shareable link</button>
+      </div>
+      <p class="pz-note" id="pzNote"></p>
+    </div>
   </div>
 
   <!-- drawer scrim (mobile) -->
