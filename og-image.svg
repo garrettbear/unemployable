@@ -94,9 +94,5 @@
   <!-- fade to imply endlessness -->
   <rect x="40" y="455" width="1120" height="141" fill="url(#fade)" />
 
-  <!-- title overlay -->
-  <g transform="translate(600,545)" text-anchor="middle">
-    <text y="0" font-size="58" font-weight="700" fill="#202124" letter-spacing="2">UNEMPLOYABLE</text>
-    <text y="34" font-size="20" fill="#c5221f" font-weight="700" letter-spacing="3">AN ENDLESS INBOX OF REJECTION</text>
-  </g>
+  <!-- logo composited in after render (see build step) -->
 </svg>
