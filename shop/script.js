@@ -14,14 +14,14 @@ const IMAGES = [
 (function () {
   const mosaic = document.getElementById("mosaic");
   if (!mosaic) return;
-  const COLS = 3, TILES = 3;
-  let i = 0;
-  const pick = (n) => IMAGES[((n % IMAGES.length) + IMAGES.length) % IMAGES.length];
+  const COLS = 3, N = IMAGES.length;
+  const TILES = Math.max(N, 4);            // every column holds the full set (incl. the mat)
   const cols = [];
   for (let c = 0; c < COLS; c++) {
     const col = document.createElement("div"); col.className = "col";
     const set = [];
-    for (let t = 0; t < TILES; t++) set.push(pick(i++ + c));
+    // rotate the order per column so columns stagger and never line up on the same shot
+    for (let t = 0; t < TILES; t++) set.push(IMAGES[(t + c) % N]);
     [...set, ...set].forEach((src) => {       // duplicate set → seamless vertical loop
       const tile = document.createElement("div"); tile.className = "tile";
       const img = new Image(); img.src = src; img.alt = ""; img.loading = "eager";
@@ -35,12 +35,13 @@ const IMAGES = [
   if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   // JS-driven motion: gentle idle drift + scroll burst that eases back.
-  const DIR = [-1, 1, -1];          // idle drift direction per column
+  const DIR = [-1, 1, -1];          // each column drifts (and scrolls) its own way
   const BASE = 16;                  // px/sec — the slow idle drift
-  const offs = cols.map(() => Math.random() * 240);
   let half = cols.map(() => 1);
   const measure = () => { half = cols.map((c) => Math.max(1, c.scrollHeight / 2)); };
   measure();
+  // stagger each column to a different vertical start so they don't align
+  const offs = cols.map((c, k) => Math.random() * half[k]);
   window.addEventListener("load", measure);
   window.addEventListener("resize", measure);
 
@@ -51,7 +52,8 @@ const IMAGES = [
     if (Math.abs(impulse) < 0.008) impulse = 0;
     for (let k = 0; k < cols.length; k++) {
       const h = half[k];
-      offs[k] = (((offs[k] + DIR[k] * BASE * dt + impulse) % h) + h) % h;
+      // scroll moves each column along ITS direction → not all the same way
+      offs[k] = (((offs[k] + DIR[k] * (BASE * dt + impulse)) % h) + h) % h;
       cols[k].style.transform = `translate3d(0, ${(-offs[k]).toFixed(2)}px, 0)`;
     }
     requestAnimationFrame(frame);
@@ -59,7 +61,7 @@ const IMAGES = [
   requestAnimationFrame(frame);
 
   // scroll / wheel / touch feed the impulse (capped so a big flick can't launch it)
-  const clamp = (v) => Math.max(-90, Math.min(90, v));
+  const clamp = (v) => Math.max(-60, Math.min(60, v));
   addEventListener("wheel", (e) => { impulse = clamp(impulse + e.deltaY * 0.10); }, { passive: true });
   let ty = 0;
   addEventListener("touchstart", (e) => { ty = e.touches[0].clientY; }, { passive: true });

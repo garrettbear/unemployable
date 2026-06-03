@@ -91,9 +91,12 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(14px, 1.6vw, 17px); color: rgba(255,255,255,.78); max-width: 440px; line-height: 1.5;
   opacity: 0; animation: rise 1s .32s cubic-bezier(.2,.7,.2,1) forwards;
 }
-.hero-inbox { font-size: 14px; color: rgba(255,255,255,.62); transition: color .2s; margin-top: 2px; }
-.hero-inbox:hover { color: #fff; }
-.hero-inbox strong { color: var(--blue); font-weight: 700; }
+.hero-inbox { font-size: 14px; color: rgba(255,255,255,.62); margin-top: 2px; }
+.hero-inbox strong {
+  color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;
+  border-radius: 3px; padding: 1px 4px; transition: background .15s, color .15s;
+}
+.hero-inbox:hover strong { background: var(--blue); color: #fff; text-decoration: none; }
 
 /* ===== Signup ===== */
 .signup {
@@ -116,12 +119,15 @@ a { color: inherit; text-decoration: none; }
 .signup button:hover { transform: translateY(-1px); filter: brightness(1.15); }
 .signup .hp { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .signup-note { font-size: 12.5px; color: #6a6a6a; opacity: 0; animation: rise 1s .6s cubic-bezier(.2,.7,.2,1) forwards; }
-.signup-note.ok { color: var(--blue); font-weight: 600; }
+.signup-note.ok { color: #fff; font-weight: 600; }
 .signup-note.err { color: #ff5b5b; font-weight: 600; }
 
 .foot { font-size: 12px; color: #7a7a7a; line-height: 1.6; margin-top: 6px; }
-.foot a { color: var(--blue); }
-.foot a:hover { text-decoration: underline; }
+.foot a {
+  color: #fff; text-decoration: underline; text-underline-offset: 2px;
+  border-radius: 3px; padding: 0 3px; transition: background .15s, color .15s;
+}
+.foot a:hover { background: var(--blue); color: #fff; text-decoration: none; }
 
 /* ===== Bottom ticker ===== */
 .ticker {
