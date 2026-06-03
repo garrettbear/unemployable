@@ -23,12 +23,19 @@ try {
 /* ---------- Sponsored slot ----------
    When someone buys the spot, set AD.on = true and fill the fields.
    Until then a tasteful "advertise here" row shows and collects inquiries. */
+const AD_SPEC = "1200 × 628px";   // recommended creative size (standard social-ad ratio, 1.91:1)
 const AD = {
-  on: false,
+  on: false,                      // flip true when the spot is sold
   advertiser: "ZipRecruiter",
   color: "#1A8754",
   subject: "Your next rejection could be from us!",
   snippet: "Post your résumé and get ignored at scale.",
+  image: "",                      // creative URL — 1200×628 PNG/JPG (host in /ads or a CDN)
+  body: [
+    "Hi there,",
+    "Millions of jobs. One of them might even reply. Post your résumé on ZipRecruiter and let the rejection come to you — faster, and at scale.",
+  ],
+  cta: "Get started",
   url: "https://www.ziprecruiter.com/?utm_source=unemployable&utm_medium=sponsored&utm_campaign=inbox",
 };
 const AD_INQUIRY = "mailto:garrett@201lab.com?subject=Advertising%20on%20UNEMPLOYABLE%E2%84%A2&body=Hi%20Garrett%2C%20we%27d%20like%20to%20advertise%20on%20theunemployable.xyz.";
@@ -752,7 +759,6 @@ function renderAdRow() {
       <span class="er-sender">${AD.advertiser}</span>
       <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">${AD.subject}</span><span class="er-snippet">${AD.snippet}</span></span>
       <span class="er-date">Sponsored</span>`;
-    li.addEventListener("click", () => { track("ad_click", { advertiser: AD.advertiser }); window.open(AD.url, "_blank", "noopener"); });
   } else {
     li.classList.add("ad-empty");
     li.innerHTML = `
@@ -760,8 +766,8 @@ function renderAdRow() {
       <span class="er-sender">Advertise here</span>
       <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">Your brand, in front of the chronically rejected.</span><span class="er-snippet">Sponsor the inbox — tap to inquire.</span></span>
       <span class="er-date">Sponsored</span>`;
-    li.addEventListener("click", () => { track("ad_inquiry"); window.location.href = AD_INQUIRY; });
   }
+  li.addEventListener("click", openAd);
   li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); li.click(); } });
   return li;
 }
@@ -843,7 +849,7 @@ function openEmail(i) {
         : e.label === "social" ? "Can't announce a new role? Announce a new <strong>look</strong>:"
         : "Rejected again? You're not unemployed. You're <strong>UNEMPLOYABLE™</strong>."
       }</p>
-      <a href="${e.rick ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : 'https://shop.theunemployable.xyz'}" target="_blank" rel="noopener">${e.rick ? '✅ Accept your offer →' : 'Shop the brand →'}</a>
+      <a href="${e.rick ? RICK : 'https://shop.theunemployable.xyz'}" ${e.rick ? 'id="offerCta"' : 'target="_blank" rel="noopener"'}>${e.rick ? '✅ Accept your offer →' : 'Shop the brand →'}</a>
     </div>
     <div class="mb-actions">
       <button class="mb-btn primary" id="saveImgBtn">📤 Share / Save image</button>
@@ -859,6 +865,8 @@ function openEmail(i) {
   modalBody.querySelector("#fwdBtn").addEventListener("click", () => {
     alert("Forwarded. She still thinks you should 'just call the manager.'");
   });
+  const offerCta = modalBody.querySelector("#offerCta");
+  if (offerCta) offerCta.addEventListener("click", (ev) => { ev.preventDefault(); rickroll("🎺 Offer accepted!"); });
 
   overlay.hidden = false;
   document.body.style.overflow = "hidden";
@@ -867,6 +875,57 @@ function openEmail(i) {
 function closeModal() {
   overlay.hidden = true;
   document.body.style.overflow = "";
+}
+
+/* The sponsored slot opens as a real (better-looking) email. */
+function openAd() {
+  modalBody.parentElement.classList.remove("egg");
+  if (AD.on) {
+    track("ad_open", { advertiser: AD.advertiser });
+    modalBody.innerHTML = `
+      <h1 class="mb-subject"><span class="er-label lbl-ad">Ad</span> ${AD.subject}</h1>
+      <div class="mb-head">
+        <span class="mb-avatar" style="background:${AD.color}">${AD.advertiser[0]}</span>
+        <div class="mb-meta">
+          <div class="mb-from">${AD.advertiser} <span class="mb-email">&lt;sponsored@${slugDomain(AD.advertiser)}&gt;</span></div>
+          <div class="mb-to">to ${FIRST_NAME} · Sponsored</div>
+        </div>
+      </div>
+      ${AD.image ? `<a class="ad-creative-link" href="${AD.url}" target="_blank" rel="noopener" id="adImg"><img class="ad-creative" src="${AD.image}" alt="${AD.advertiser} advertisement"></a>` : ""}
+      <div class="mb-content">${AD.body.map((p) => `<p>${p}</p>`).join("")}</div>
+      <div class="mb-cta">
+        <a href="${AD.url}" target="_blank" rel="noopener" id="adCta">${AD.cta} →</a>
+      </div>
+      <p class="ad-disc">Sponsored · <a href="${AD_INQUIRY}">Advertise on UNEMPLOYABLE™</a></p>`;
+    const cta = modalBody.querySelector("#adCta");
+    const img = modalBody.querySelector("#adImg");
+    const fire = () => track("ad_click", { advertiser: AD.advertiser });
+    if (cta) cta.addEventListener("click", fire);
+    if (img) img.addEventListener("click", fire);
+  } else {
+    track("ad_inquiry_open");
+    modalBody.innerHTML = `
+      <h1 class="mb-subject"><span class="er-label lbl-ad">Ad</span> This spot is for sale.</h1>
+      <div class="mb-head">
+        <span class="mb-avatar" style="background:var(--accent)">📣</span>
+        <div class="mb-meta">
+          <div class="mb-from">UNEMPLOYABLE™ Ads <span class="mb-email">&lt;ads@theunemployable.xyz&gt;</span></div>
+          <div class="mb-to">to ${FIRST_NAME} · Sponsored</div>
+        </div>
+      </div>
+      <div class="ad-spec-box"><span>Your ad here</span><small>${AD_SPEC} · PNG or JPG</small></div>
+      <div class="mb-content">
+        <p>Put your brand in front of thousands of chronically-rejected (highly-employable, actually) people — right where they're already doom-scrolling.</p>
+        <p>One sponsored slot, pinned to the top of the inbox. Send a <strong>${AD_SPEC}</strong> creative and a link, and we'll make it look like a real email — only better-looking than the ones they're used to.</p>
+      </div>
+      <div class="mb-cta">
+        <a href="${AD_INQUIRY}" id="adInq">Advertise with us →</a>
+      </div>`;
+    const inq = modalBody.querySelector("#adInq");
+    if (inq) inq.addEventListener("click", () => track("ad_inquiry"));
+  }
+  overlay.hidden = false;
+  document.body.style.overflow = "hidden";
 }
 
 /* ---------- Share an image (native sheet on mobile → Instagram/Stories/X) or download ---------- */
@@ -1406,10 +1465,36 @@ updateCounter();
    Easter eggs
    =========================================================== */
 const RICK = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+const RICK_EMBED = "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1&playsinline=1";
+function closeRick() {
+  const o = document.getElementById("rickOverlay");
+  if (o) { o.querySelector(".rick-frame").innerHTML = ""; o.hidden = true; }
+  document.body.style.overflow = "";
+}
 function rickroll(msg) {
   track("rickroll");
   if (typeof gToast === "function") gToast(msg || "🎺 Never gonna give you up…");
-  window.open(RICK, "_blank", "noopener");
+  let o = document.getElementById("rickOverlay");
+  if (!o) {
+    o = document.createElement("div");
+    o.id = "rickOverlay";
+    o.className = "rick-overlay";
+    o.hidden = true;
+    o.innerHTML = `
+      <div class="rick-modal" role="dialog" aria-label="You've been rickrolled">
+        <button class="rick-close" aria-label="Close" title="Never gonna close you up">×</button>
+        <div class="rick-frame"></div>
+        <p class="rick-cap">🎺 Congratulations — your one (1) offer was a Rick Astley video. <a href="${RICK}" target="_blank" rel="noopener">Open on YouTube →</a></p>
+      </div>`;
+    document.body.appendChild(o);
+    o.addEventListener("click", (e) => { if (e.target === o) closeRick(); });
+    o.querySelector(".rick-close").addEventListener("click", closeRick);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeRick(); });
+  }
+  o.querySelector(".rick-frame").innerHTML =
+    `<iframe src="${RICK_EMBED}" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  o.hidden = false;
+  document.body.style.overflow = "hidden";
 }
 
 /* keyword eggs — type these anywhere */
@@ -1446,3 +1531,67 @@ document.addEventListener("keydown", (e) => {
   const foot = document.querySelector(".sidebar-foot");
   if (foot) foot.addEventListener("click", () => gToast("Cleared 0 bytes. The rejections are forever."));
 })();
+
+/* ===========================================================
+   Waitlist signup (same Google-Form capture as the shop)
+   — anti-bot, keepalive, offline retry. Reuses track().
+   =========================================================== */
+const GFORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLScb5RaU6KfAhWmjYifP8sGAfHYI7xUYA14kFy-o8AaP4aoraw/formResponse";
+const GFORM_ENTRY  = "entry.774890617";
+/* Optional redundant capture (Web3Forms/Formspree) — flip on, no other changes. */
+const ESP_ENDPOINT = "";
+const ESP_KEY = "";
+function postESP(email) {
+  if (!ESP_ENDPOINT) return Promise.resolve();
+  const body = new URLSearchParams(); body.append("email", email);
+  if (ESP_KEY) { body.append("access_key", ESP_KEY); body.append("subject", "New UNEMPLOYABLE waitlist signup"); }
+  return fetch(ESP_ENDPOINT, { method: "POST", mode: "no-cors", keepalive: true, body }).catch(() => {});
+}
+const PAGE_LOADED = Date.now();
+const OUTBOX = "ue-outbox";
+function _ob() { try { return JSON.parse(localStorage.getItem(OUTBOX) || "[]"); } catch (e) { return []; } }
+function _save(a) { try { localStorage.setItem(OUTBOX, JSON.stringify(a.slice(-2000))); } catch (e) {} }
+function enqueue(email) { const o = _ob(); if (!o.includes(email)) { o.push(email); _save(o); } }
+function dequeue(email) { _save(_ob().filter((e) => e !== email)); }
+function postEmail(email) {
+  const body = new URLSearchParams(); body.append(GFORM_ENTRY, email);
+  return fetch(GFORM_ACTION, { method: "POST", mode: "no-cors", body, keepalive: true });
+}
+function deliver(email) { enqueue(email); postESP(email); return postEmail(email).then(() => dequeue(email)).catch(() => {}); }
+function flushOutbox() { _ob().forEach((email) => postEmail(email).then(() => dequeue(email)).catch(() => {})); }
+flushOutbox();
+setInterval(flushOutbox, 20000);
+window.addEventListener("online", flushOutbox);
+
+function validEmail(s) {
+  if (s.length > 254) return false;
+  if (!/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/.test(s)) return false;
+  if (/\.{2,}|@.*@|^[.@]|[.@]$|\.@|@\./.test(s)) return false;
+  return true;
+}
+function succeedSignup(form, note, okText) {
+  track("waitlist_signup");
+  form.innerHTML = '<div class="signup-done">✓ You\'re on the list.</div>';
+  if (note) { note.textContent = okText; note.classList.remove("err"); note.classList.add("ok"); }
+}
+function wireSignup(formId, noteId, okText) {
+  const form = document.getElementById(formId); const note = document.getElementById(noteId);
+  if (!form) return; const baseNote = note ? note.textContent : "";
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = form.querySelector("input[type=email]"); const hp = form.querySelector(".hp");
+    const email = ((input && input.value) || "").trim();
+    if (hp && hp.value) { succeedSignup(form, note, okText); return; }                 // honeypot
+    if (Date.now() - PAGE_LOADED < 600) { succeedSignup(form, note, okText); return; } // too fast = bot
+    if (!validEmail(email)) {
+      if (note) { note.textContent = "Hmm — that doesn't look like a valid email. Mind double-checking?"; note.classList.remove("ok"); note.classList.add("err"); }
+      if (input) { input.focus(); input.select(); } return;
+    }
+    if (note) { note.classList.remove("err"); note.textContent = baseNote; }
+    deliver(email);
+    succeedSignup(form, note, okText);
+  });
+  const input = form.querySelector("input[type=email]");
+  if (input && note) input.addEventListener("input", () => { if (note.classList.contains("err")) { note.classList.remove("err"); note.textContent = baseNote; } });
+}
+wireSignup("signupAbout", "noteAbout", "Done. We'll email you the moment the first drop lands.");
