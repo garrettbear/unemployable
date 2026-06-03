@@ -134,7 +134,9 @@ function validEmail(s) {
   if (/\.{2,}|@.*@|^[.@]|[.@]$|\.@|@\./.test(s)) return false;
   return true;
 }
+function track(name, data) { try { if (window.va) window.va("event", Object.assign({ name }, data || {})); } catch (e) {} }
 function succeed(form, note, okText) {
+  track("waitlist_signup");
   form.innerHTML = '<div style="height:44px;display:flex;align-items:center;justify-content:center;width:100%;color:#fff;font-weight:700;font-size:15px;">✓ You\'re on the list.</div>';
   if (note) { note.textContent = okText; note.classList.remove("err"); note.classList.add("ok"); }
 }

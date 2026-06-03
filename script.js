@@ -11,6 +11,28 @@
    Add a name to REAL_COMPANIES and it just works — domain + avatar
    color are generated automatically. Override the look for specific
    brands in the BRAND map below.                                       */
+/* ---------- Analytics (Vercel custom events; no-op if disabled) ---------- */
+function track(name, data) { try { if (window.va) window.va("event", Object.assign({ name }, data || {})); } catch (e) {} }
+
+/* a hello for the curious (and the recruiters) */
+try {
+  console.log("%cUNEMPLOYABLE™ v1.0", "color:#c5221f;font-weight:800;font-size:16px");
+  console.log("%cYou opened the console — most initiative you've shown all week.\nType “boss” on the page for a surprise. Built by garrettbear.com", "color:#888;font-size:12px");
+} catch (e) {}
+
+/* ---------- Sponsored slot ----------
+   When someone buys the spot, set AD.on = true and fill the fields.
+   Until then a tasteful "advertise here" row shows and collects inquiries. */
+const AD = {
+  on: false,
+  advertiser: "ZipRecruiter",
+  color: "#1A8754",
+  subject: "Your next rejection could be from us!",
+  snippet: "Post your résumé and get ignored at scale.",
+  url: "https://www.ziprecruiter.com/?utm_source=unemployable&utm_medium=sponsored&utm_campaign=inbox",
+};
+const AD_INQUIRY = "mailto:garrett@201lab.com?subject=Advertising%20on%20UNEMPLOYABLE%E2%84%A2&body=Hi%20Garrett%2C%20we%27d%20like%20to%20advertise%20on%20theunemployable.xyz.";
+
 const REAL_COMPANIES = [
   "Google", "Meta", "Facebook", "X", "Amazon", "Microsoft", "Mozilla", "IBM", "Intuit",
   "Disney", "PlayStation", "Roku", "Vimeo", "Yelp", "Nextdoor", "Reddit",
@@ -718,6 +740,33 @@ function syncTabUI(tab) {
     t.setAttribute("aria-selected", on ? "true" : "false");
   });
 }
+/* Sponsored row pinned at the top of the Primary inbox (Gmail-style ad). */
+function renderAdRow() {
+  const li = document.createElement("li");
+  li.className = "email-row ad-row read";
+  li.tabIndex = 0; li.setAttribute("role", "button");
+  if (AD.on) {
+    li.setAttribute("aria-label", `Sponsored: ${AD.advertiser} — ${AD.subject}`);
+    li.innerHTML = `
+      <span class="er-avatar" style="background:${AD.color}">${AD.advertiser[0]}</span>
+      <span class="er-sender">${AD.advertiser}</span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">${AD.subject}</span><span class="er-snippet">${AD.snippet}</span></span>
+      <span class="er-date">Sponsored</span>`;
+    li.addEventListener("click", () => { track("ad_click", { advertiser: AD.advertiser }); window.open(AD.url, "_blank", "noopener"); });
+  } else {
+    li.classList.add("ad-empty");
+    li.innerHTML = `
+      <span class="er-avatar" style="background:var(--accent)">📣</span>
+      <span class="er-sender">Advertise here</span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">Your brand, in front of the chronically rejected.</span><span class="er-snippet">Sponsor the inbox — tap to inquire.</span></span>
+      <span class="er-date">Sponsored</span>`;
+    li.addEventListener("click", () => { track("ad_inquiry"); window.location.href = AD_INQUIRY; });
+  }
+  li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); li.click(); } });
+  return li;
+}
+function mountAd() { if (currentTab === "primary") list.insertBefore(renderAdRow(), list.firstChild); }
+
 function resetStream() {
   index = 0;
   cursorDate = new Date(START);
@@ -725,6 +774,7 @@ function resetStream() {
   list.innerHTML = "";
   loadBatch();
   loadBatch();
+  mountAd();
   updateCounter();
   list.scrollTop = 0;
 }
@@ -822,6 +872,7 @@ function closeModal() {
 /* ---------- Share an image (native sheet on mobile → Instagram/Stories/X) or download ---------- */
 function shareOrDownload(blob, filename, text) {
   if (!blob) { alert("Couldn't generate the image — try again."); return; }
+  track("share_image", { file: filename });
   let file = null;
   try { file = new File([blob], filename, { type: "image/png" }); } catch (e) {}
   if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
@@ -1312,6 +1363,7 @@ function savePersonalize() {
   CUSTOM_ROLE = cleanField(document.getElementById("pzJob").value, 160);
   parseRoles();
   try { localStorage.setItem("ue-name", FIRST_NAME); localStorage.setItem("ue-job", CUSTOM_ROLE); } catch (e) {}
+  track("personalize", { hasJob: CUSTOM_ROLES.length > 0 });
   updateMeAvatar();
   resetStream();   // regenerate every email with the new name / title
 }
@@ -1347,6 +1399,7 @@ function shareLink() {
 /* ---------- Go ---------- */
 loadBatch();
 loadBatch();
+mountAd();
 updateCounter();
 
 /* ===========================================================
@@ -1354,6 +1407,7 @@ updateCounter();
    =========================================================== */
 const RICK = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 function rickroll(msg) {
+  track("rickroll");
   if (typeof gToast === "function") gToast(msg || "🎺 Never gonna give you up…");
   window.open(RICK, "_blank", "noopener");
 }

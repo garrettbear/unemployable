@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — UNEMPLOYABLE™</title>
+  <meta name="description" content="Terms of Service for theunemployable.xyz — a satire site and clothing brand." />
+  <meta name="robots" content="index,follow" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#f6f8fc;--card:#fff;--text:#202124;--soft:#5f6368;--line:#e8eaed;--accent:#c5221f}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:"Inter",system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.65}
+    .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+    .logo{font-weight:800;letter-spacing:.4px;font-size:18px;text-decoration:none;color:var(--text)}
+    .logo sup{font-size:10px}
+    .back{font-size:13px;color:var(--soft);text-decoration:none}
+    .back:hover{color:var(--text)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:40px 36px}
+    h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+    .sub{color:var(--soft);font-size:13px;margin:6px 0 26px}
+    h2{font-size:16px;font-weight:700;margin:24px 0 8px}
+    p,li{font-size:14.5px;color:#3c4043;margin-bottom:12px}
+    ul{padding-left:20px}
+    a{color:var(--accent)}
+    .foot{margin-top:34px;font-size:12px;color:#80868b;text-align:center}
+    .foot a{color:#80868b}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="logo" href="https://theunemployable.xyz">UNEMPLOYABLE<sup>™</sup></a>
+      <a class="back" href="https://theunemployable.xyz">← Back to the inbox</a>
+    </div>
+    <div class="card">
+      <h1>Terms of Service</h1>
+      <p class="sub">Last updated: <span id="d"></span></p>
+
+      <p>Welcome to UNEMPLOYABLE™ (<a href="https://theunemployable.xyz">theunemployable.xyz</a> and <a href="https://shop.theunemployable.xyz">shop.theunemployable.xyz</a>, the “Site”). By using the Site you agree to these Terms. If you don't agree, that's okay — you can leave, which is more than most employers let you do.</p>
+
+      <h2>1. It's satire</h2>
+      <p>The Site is a work of comedy and social commentary. It is <strong>not</strong> Gmail and is <strong>not affiliated with, endorsed by, or sponsored by</strong> Google, or by any company, brand, or logo referenced on the Site. All emails, senders, and “rejections” are <strong>fictional and auto-generated</strong>. Company names are used nominatively to parody the universally identical job-rejection experience. Any resemblance to a real message you received is coincidental — because they all say the same thing.</p>
+
+      <h2>2. Use of the Site</h2>
+      <p>The Site is provided for personal, non-commercial entertainment. Don't use it to harass, defame, or impersonate anyone, don't scrape or hammer it, and don't try to break it. The personalization feature lets you put a name on the rejections; only use names you have the right to use, and keep it good-natured.</p>
+
+      <h2>3. Intellectual property</h2>
+      <p>The UNEMPLOYABLE™ name, brand, designs, copy, and artwork are owned by their creator and may not be copied, resold, or used commercially without permission. The code is the author's; the jokes are everyone's pain.</p>
+
+      <h2>4. Products &amp; orders</h2>
+      <p>Merchandise is “coming soon.” When the shop launches, purchases, shipping, returns, and refunds will be governed by the terms shown at checkout and by the third-party commerce provider that fulfills orders. Joining the waitlist is not an order and obligates no one.</p>
+
+      <h2>5. No warranties</h2>
+      <p>The Site is provided “as is,” without warranties of any kind. We don't guarantee it will get you a job, a date, or inner peace. To the fullest extent permitted by law, we are not liable for any damages arising from your use of the Site.</p>
+
+      <h2>6. Links</h2>
+      <p>The Site links to third-party sites (the shop, social media, and — occasionally, as a joke — a certain music video). We're not responsible for third-party content.</p>
+
+      <h2>7. Changes</h2>
+      <p>We may update these Terms at any time. Continued use after changes means you accept them.</p>
+
+      <h2>8. Contact</h2>
+      <p>Questions? <a href="mailto:garrett@201lab.com">garrett@201lab.com</a>.</p>
+    </div>
+    <p class="foot">© <span id="yr">2026</span> UNEMPLOYABLE™ · <a href="/careers">Careers</a> · <a href="/privacy">Privacy</a> · built by <a href="https://garrettbear.com">Garrett Bear</a></p>
+  </div>
+  <script>
+    var n=new Date();
+    document.getElementById("yr").textContent=n.getFullYear();
+    document.getElementById("d").textContent=n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  </script>
+</body>
+</html>

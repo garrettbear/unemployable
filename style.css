@@ -195,6 +195,10 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 }
 .about-credit a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .about-credit a:hover { text-decoration: underline; }
+.about-links { margin: 8px 0 0; font-size: 11px; color: var(--text-faint); }
+.about-links a { color: var(--text-faint); text-decoration: underline; }
+.about-links a:hover { color: var(--accent); }
+.about-links .ver { opacity: .7; }
 .about-follow { font-size: 13px; color: var(--text-soft); margin: 4px 0 14px; }
 .about-follow a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .about-follow a:hover { text-decoration: underline; }
@@ -270,6 +274,11 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .lbl-final    { background: #fef7e0; color: #b06000; }
 .lbl-promo    { background: #e8f0fe; color: #1a73e8; }
 .lbl-social   { background: #e6f4ea; color: #137333; }
+.lbl-ad       { background: transparent; color: #5f6368; border: 1px solid #dadce0; }
+/* sponsored row — subtle tint + tiny "Ad" chip, Gmail-style */
+.ad-row { background: #f6faff; }
+.ad-row:hover { background: #eef5ff; }
+.ad-empty { cursor: pointer; }
 .er-date { width: 70px; flex: none; text-align: right; font-size: 12px; color: var(--text-soft); }
 .email-row.unread .er-date { font-weight: 700; color: var(--text); }
 .er-date .row-hover-ic { display: none; }
@@ -543,6 +552,9 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .lbl-final { background: #3a3320; color: #fdd663; }
 :root[data-theme="dark"] .lbl-promo { background: #1f2a3d; color: #8ab4f8; }
 :root[data-theme="dark"] .lbl-social { background: #1e2e22; color: #81c995; }
+:root[data-theme="dark"] .lbl-ad { background: transparent; color: #9aa0a6; border-color: #3c4043; }
+:root[data-theme="dark"] .ad-row { background: #1c2530; }
+:root[data-theme="dark"] .ad-row:hover { background: #20303f; }
 :root[data-theme="dark"] .mb-cta { background: var(--accent-soft); }
 :root[data-theme="dark"] .mb-cta a { background: #e8eaed; color: #202124; }
 :root[data-theme="dark"] .mb-cta a:hover { background: var(--accent); }

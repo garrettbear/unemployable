@@ -235,6 +235,10 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 }
 .about-credit a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .about-credit a:hover { text-decoration: underline; }
+.about-links { margin: 8px 0 0; font-size: 11px; color: var(--text-faint); }
+.about-links a { color: var(--text-faint); text-decoration: underline; }
+.about-links a:hover { color: var(--accent); }
+.about-links .ver { opacity: .7; }
 .about-follow { font-size: 13px; color: var(--text-soft); margin: 4px 0 14px; }
 .about-follow a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .about-follow a:hover { text-decoration: underline; }
@@ -310,6 +314,11 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .lbl-final    { background: #fef7e0; color: #b06000; }
 .lbl-promo    { background: #e8f0fe; color: #1a73e8; }
 .lbl-social   { background: #e6f4ea; color: #137333; }
+.lbl-ad       { background: transparent; color: #5f6368; border: 1px solid #dadce0; }
+/* sponsored row — subtle tint + tiny "Ad" chip, Gmail-style */
+.ad-row { background: #f6faff; }
+.ad-row:hover { background: #eef5ff; }
+.ad-empty { cursor: pointer; }
 .er-date { width: 70px; flex: none; text-align: right; font-size: 12px; color: var(--text-soft); }
 .email-row.unread .er-date { font-weight: 700; color: var(--text); }
 .er-date .row-hover-ic { display: none; }
@@ -583,6 +592,9 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .lbl-final { background: #3a3320; color: #fdd663; }
 :root[data-theme="dark"] .lbl-promo { background: #1f2a3d; color: #8ab4f8; }
 :root[data-theme="dark"] .lbl-social { background: #1e2e22; color: #81c995; }
+:root[data-theme="dark"] .lbl-ad { background: transparent; color: #9aa0a6; border-color: #3c4043; }
+:root[data-theme="dark"] .ad-row { background: #1c2530; }
+:root[data-theme="dark"] .ad-row:hover { background: #20303f; }
 :root[data-theme="dark"] .mb-cta { background: var(--accent-soft); }
 :root[data-theme="dark"] .mb-cta a { background: #e8eaed; color: #202124; }
 :root[data-theme="dark"] .mb-cta a:hover { background: var(--accent); }
@@ -899,6 +911,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <p class="disclaimer"><strong>Disclaimer:</strong> This is satire. It is not Gmail, it is not affiliated with or endorsed by Google or any company shown. All emails are fictional and auto-generated for comedy. Company names are used nominatively to parody the universal job-hunt experience. No real rejection emails are reproduced. Any resemblance to the soul-crushing message you got last Tuesday is purely because they all write the exact same thing. Made with spite and love by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a>.</p>
       <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
       <p class="copyright">© <span class="yr">2026</span> UNEMPLOYABLE™ · All rights reserved (the only thing we've got).</p>
+      <p class="about-links"><a href="/careers" target="_blank" rel="noopener">Careers</a> · <a href="/terms" target="_blank" rel="noopener">Terms</a> · <a href="/privacy" target="_blank" rel="noopener">Privacy</a> · <span class="ver">v1.0</span></p>
     </div>
   </div>
 
@@ -970,6 +983,28 @@ a:focus-visible, button:focus-visible, input:focus-visible,
    Add a name to REAL_COMPANIES and it just works — domain + avatar
    color are generated automatically. Override the look for specific
    brands in the BRAND map below.                                       */
+/* ---------- Analytics (Vercel custom events; no-op if disabled) ---------- */
+function track(name, data) { try { if (window.va) window.va("event", Object.assign({ name }, data || {})); } catch (e) {} }
+
+/* a hello for the curious (and the recruiters) */
+try {
+  console.log("%cUNEMPLOYABLE™ v1.0", "color:#c5221f;font-weight:800;font-size:16px");
+  console.log("%cYou opened the console — most initiative you've shown all week.\nType “boss” on the page for a surprise. Built by garrettbear.com", "color:#888;font-size:12px");
+} catch (e) {}
+
+/* ---------- Sponsored slot ----------
+   When someone buys the spot, set AD.on = true and fill the fields.
+   Until then a tasteful "advertise here" row shows and collects inquiries. */
+const AD = {
+  on: false,
+  advertiser: "ZipRecruiter",
+  color: "#1A8754",
+  subject: "Your next rejection could be from us!",
+  snippet: "Post your résumé and get ignored at scale.",
+  url: "https://www.ziprecruiter.com/?utm_source=unemployable&utm_medium=sponsored&utm_campaign=inbox",
+};
+const AD_INQUIRY = "mailto:garrett@201lab.com?subject=Advertising%20on%20UNEMPLOYABLE%E2%84%A2&body=Hi%20Garrett%2C%20we%27d%20like%20to%20advertise%20on%20theunemployable.xyz.";
+
 const REAL_COMPANIES = [
   "Google", "Meta", "Facebook", "X", "Amazon", "Microsoft", "Mozilla", "IBM", "Intuit",
   "Disney", "PlayStation", "Roku", "Vimeo", "Yelp", "Nextdoor", "Reddit",
@@ -1677,6 +1712,33 @@ function syncTabUI(tab) {
     t.setAttribute("aria-selected", on ? "true" : "false");
   });
 }
+/* Sponsored row pinned at the top of the Primary inbox (Gmail-style ad). */
+function renderAdRow() {
+  const li = document.createElement("li");
+  li.className = "email-row ad-row read";
+  li.tabIndex = 0; li.setAttribute("role", "button");
+  if (AD.on) {
+    li.setAttribute("aria-label", `Sponsored: ${AD.advertiser} — ${AD.subject}`);
+    li.innerHTML = `
+      <span class="er-avatar" style="background:${AD.color}">${AD.advertiser[0]}</span>
+      <span class="er-sender">${AD.advertiser}</span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">${AD.subject}</span><span class="er-snippet">${AD.snippet}</span></span>
+      <span class="er-date">Sponsored</span>`;
+    li.addEventListener("click", () => { track("ad_click", { advertiser: AD.advertiser }); window.open(AD.url, "_blank", "noopener"); });
+  } else {
+    li.classList.add("ad-empty");
+    li.innerHTML = `
+      <span class="er-avatar" style="background:var(--accent)">📣</span>
+      <span class="er-sender">Advertise here</span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">Your brand, in front of the chronically rejected.</span><span class="er-snippet">Sponsor the inbox — tap to inquire.</span></span>
+      <span class="er-date">Sponsored</span>`;
+    li.addEventListener("click", () => { track("ad_inquiry"); window.location.href = AD_INQUIRY; });
+  }
+  li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); li.click(); } });
+  return li;
+}
+function mountAd() { if (currentTab === "primary") list.insertBefore(renderAdRow(), list.firstChild); }
+
 function resetStream() {
   index = 0;
   cursorDate = new Date(START);
@@ -1684,6 +1746,7 @@ function resetStream() {
   list.innerHTML = "";
   loadBatch();
   loadBatch();
+  mountAd();
   updateCounter();
   list.scrollTop = 0;
 }
@@ -1781,6 +1844,7 @@ function closeModal() {
 /* ---------- Share an image (native sheet on mobile → Instagram/Stories/X) or download ---------- */
 function shareOrDownload(blob, filename, text) {
   if (!blob) { alert("Couldn't generate the image — try again."); return; }
+  track("share_image", { file: filename });
   let file = null;
   try { file = new File([blob], filename, { type: "image/png" }); } catch (e) {}
   if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
@@ -2271,6 +2335,7 @@ function savePersonalize() {
   CUSTOM_ROLE = cleanField(document.getElementById("pzJob").value, 160);
   parseRoles();
   try { localStorage.setItem("ue-name", FIRST_NAME); localStorage.setItem("ue-job", CUSTOM_ROLE); } catch (e) {}
+  track("personalize", { hasJob: CUSTOM_ROLES.length > 0 });
   updateMeAvatar();
   resetStream();   // regenerate every email with the new name / title
 }
@@ -2306,6 +2371,7 @@ function shareLink() {
 /* ---------- Go ---------- */
 loadBatch();
 loadBatch();
+mountAd();
 updateCounter();
 
 /* ===========================================================
@@ -2313,6 +2379,7 @@ updateCounter();
    =========================================================== */
 const RICK = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 function rickroll(msg) {
+  track("rickroll");
   if (typeof gToast === "function") gToast(msg || "🎺 Never gonna give you up…");
   window.open(RICK, "_blank", "noopener");
 }

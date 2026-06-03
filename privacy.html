@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — UNEMPLOYABLE™</title>
+  <meta name="description" content="Privacy Policy for theunemployable.xyz — what we collect (barely anything) and how we use it." />
+  <meta name="robots" content="index,follow" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#f6f8fc;--card:#fff;--text:#202124;--soft:#5f6368;--line:#e8eaed;--accent:#c5221f}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:"Inter",system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.65}
+    .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+    .logo{font-weight:800;letter-spacing:.4px;font-size:18px;text-decoration:none;color:var(--text)}
+    .logo sup{font-size:10px}
+    .back{font-size:13px;color:var(--soft);text-decoration:none}
+    .back:hover{color:var(--text)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:40px 36px}
+    h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+    .sub{color:var(--soft);font-size:13px;margin:6px 0 26px}
+    h2{font-size:16px;font-weight:700;margin:24px 0 8px}
+    p,li{font-size:14.5px;color:#3c4043;margin-bottom:12px}
+    ul{padding-left:20px}
+    a{color:var(--accent)}
+    .foot{margin-top:34px;font-size:12px;color:#80868b;text-align:center}
+    .foot a{color:#80868b}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="logo" href="https://theunemployable.xyz">UNEMPLOYABLE<sup>™</sup></a>
+      <a class="back" href="https://theunemployable.xyz">← Back to the inbox</a>
+    </div>
+    <div class="card">
+      <h1>Privacy Policy</h1>
+      <p class="sub">Last updated: <span id="d"></span></p>
+
+      <p>Short version: we collect almost nothing, and we don't sell what little we have. Here's the detail.</p>
+
+      <h2>What we collect</h2>
+      <ul>
+        <li><strong>Your email — only if you join the waitlist.</strong> When you submit the “Notify me” form, your email address is stored so we can tell you when the first drop launches. That's the only personal information we ask for.</li>
+        <li><strong>Anonymous, aggregate usage stats.</strong> We use privacy-friendly analytics (Vercel Web Analytics) to count page views and see which features people use. It's <strong>cookieless</strong>, doesn't track you across other sites, and doesn't collect personally identifying information.</li>
+      </ul>
+
+      <h2>What we don't do</h2>
+      <p>We don't sell, rent, or trade your email. We don't run ad-tracking cookies. We don't build a profile on you. (We have enough rejection to deal with.)</p>
+
+      <h2>How your email is stored</h2>
+      <p>Waitlist emails are collected through Google Forms and stored in Google Sheets. Their handling is also subject to Google's privacy policy. We use your email solely to send occasional updates about the brand and the first product drop.</p>
+
+      <h2>On-device storage</h2>
+      <p>The Site uses your browser's local storage to remember your preferences — your chosen name, dark/light mode, and your “Rejection Training” score. This data stays on your device and is never sent to us.</p>
+
+      <h2>Third parties</h2>
+      <p>We rely on a few services to run the Site: <strong>Vercel</strong> (hosting + cookieless analytics), <strong>Google</strong> (waitlist form/sheet), and — when the shop launches — a commerce provider for orders. Each has its own privacy policy.</p>
+
+      <h2>Your choices</h2>
+      <p>Want off the list, or want your data removed? Email <a href="mailto:garrett@201lab.com">garrett@201lab.com</a> and we'll take care of it. You can also clear the Site's on-device data anytime by clearing your browser storage.</p>
+
+      <h2>Children</h2>
+      <p>The Site isn't directed at children under 13 and we don't knowingly collect their information.</p>
+
+      <h2>Changes</h2>
+      <p>If this policy changes, we'll update the date above.</p>
+
+      <h2>Contact</h2>
+      <p><a href="mailto:garrett@201lab.com">garrett@201lab.com</a></p>
+    </div>
+    <p class="foot">© <span id="yr">2026</span> UNEMPLOYABLE™ · <a href="/careers">Careers</a> · <a href="/terms">Terms</a> · built by <a href="https://garrettbear.com">Garrett Bear</a></p>
+  </div>
+  <script>
+    var n=new Date();
+    document.getElementById("yr").textContent=n.getFullYear();
+    document.getElementById("d").textContent=n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  </script>
+</body>
+</html>
