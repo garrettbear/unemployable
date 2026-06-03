@@ -17,6 +17,7 @@ const IMAGES = [
   const COLS = 3, TILES = 3;
   let i = 0;
   const pick = (n) => IMAGES[((n % IMAGES.length) + IMAGES.length) % IMAGES.length];
+  const cols = [];
   for (let c = 0; c < COLS; c++) {
     const col = document.createElement("div"); col.className = "col";
     const set = [];
@@ -27,7 +28,44 @@ const IMAGES = [
       tile.appendChild(img); col.appendChild(tile);
     });
     mosaic.appendChild(col);
+    cols.push(col);
   }
+
+  // Respect reduced-motion: leave it static.
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  // JS-driven motion: gentle idle drift + scroll burst that eases back.
+  const DIR = [-1, 1, -1];          // idle drift direction per column
+  const BASE = 16;                  // px/sec — the slow idle drift
+  const offs = cols.map(() => Math.random() * 240);
+  let half = cols.map(() => 1);
+  const measure = () => { half = cols.map((c) => Math.max(1, c.scrollHeight / 2)); };
+  measure();
+  window.addEventListener("load", measure);
+  window.addEventListener("resize", measure);
+
+  let impulse = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    impulse *= 0.90;                                  // ease the scroll burst back to idle
+    if (Math.abs(impulse) < 0.008) impulse = 0;
+    for (let k = 0; k < cols.length; k++) {
+      const h = half[k];
+      offs[k] = (((offs[k] + DIR[k] * BASE * dt + impulse) % h) + h) % h;
+      cols[k].style.transform = `translate3d(0, ${(-offs[k]).toFixed(2)}px, 0)`;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // scroll / wheel / touch feed the impulse (capped so a big flick can't launch it)
+  const clamp = (v) => Math.max(-90, Math.min(90, v));
+  addEventListener("wheel", (e) => { impulse = clamp(impulse + e.deltaY * 0.10); }, { passive: true });
+  let ty = 0;
+  addEventListener("touchstart", (e) => { ty = e.touches[0].clientY; }, { passive: true });
+  addEventListener("touchmove", (e) => {
+    const y = e.touches[0].clientY; impulse = clamp(impulse + (ty - y) * 0.5); ty = y;
+  }, { passive: true });
 })();
 
 /* ---------- Ticker ---------- */
