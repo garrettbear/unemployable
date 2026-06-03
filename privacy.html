@@ -39,7 +39,7 @@
     </div>
     <div class="card">
       <h1>Privacy Policy</h1>
-      <p class="sub">Last updated: <span id="d"></span></p>
+      <p class="sub">Last updated: June 3, 2026</p>
 
       <p>Short version: we collect almost nothing, and we don't sell what little we have. Here's the detail.</p>
 
@@ -75,10 +75,6 @@
     </div>
     <p class="foot">© <span id="yr">2026</span> UNEMPLOYABLE™ · <a href="/careers">Careers</a> · <a href="/terms">Terms</a> · built by <a href="https://garrettbear.com">Garrett Bear</a></p>
   </div>
-  <script>
-    var n=new Date();
-    document.getElementById("yr").textContent=n.getFullYear();
-    document.getElementById("d").textContent=n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
-  </script>
+  <script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
 </body>
 </html>

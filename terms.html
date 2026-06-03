@@ -39,7 +39,7 @@
     </div>
     <div class="card">
       <h1>Terms of Service</h1>
-      <p class="sub">Last updated: <span id="d"></span></p>
+      <p class="sub">Last updated: June 3, 2026</p>
 
       <p>Welcome to UNEMPLOYABLE™ (<a href="https://theunemployable.xyz">theunemployable.xyz</a> and <a href="https://shop.theunemployable.xyz">shop.theunemployable.xyz</a>, the “Site”). By using the Site you agree to these Terms. If you don't agree, that's okay — you can leave, which is more than most employers let you do.</p>
 
@@ -69,10 +69,6 @@
     </div>
     <p class="foot">© <span id="yr">2026</span> UNEMPLOYABLE™ · <a href="/careers">Careers</a> · <a href="/privacy">Privacy</a> · built by <a href="https://garrettbear.com">Garrett Bear</a></p>
   </div>
-  <script>
-    var n=new Date();
-    document.getElementById("yr").textContent=n.getFullYear();
-    document.getElementById("d").textContent=n.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
-  </script>
+  <script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
 </body>
 </html>
