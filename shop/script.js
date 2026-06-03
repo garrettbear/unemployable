@@ -92,16 +92,19 @@ document.querySelectorAll("#yr").forEach((el) => { el.textContent = new Date().g
 const GFORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLScb5RaU6KfAhWmjYifP8sGAfHYI7xUYA14kFy-o8AaP4aoraw/formResponse";
 const GFORM_ENTRY  = "entry.774890617";
 
-/* OPTIONAL redundant capture — paste a Klaviyo / Beehiiv / Formspree / Apps-Script
-   URL here and signups also go there. Leave "" and it stays off (no-op). */
+/* OPTIONAL redundant capture — flip on in seconds, no other code changes.
+   • Web3Forms (free, unlimited, no real account): get an access key at web3forms.com,
+       ESP_ENDPOINT = "https://api.web3forms.com/submit";  ESP_KEY = "your-access-key";
+   • Formspree / Apps Script / other: set ESP_ENDPOINT to its URL, leave ESP_KEY "".
+   Leave both "" and it stays off (no-op). */
 const ESP_ENDPOINT = "";
+const ESP_KEY = "";
 function postESP(email) {
   if (!ESP_ENDPOINT) return Promise.resolve();
-  return fetch(ESP_ENDPOINT, {
-    method: "POST", mode: "no-cors", keepalive: true,
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "email=" + encodeURIComponent(email)
-  }).catch(() => {});
+  const body = new URLSearchParams();
+  body.append("email", email);
+  if (ESP_KEY) { body.append("access_key", ESP_KEY); body.append("subject", "New UNEMPLOYABLE waitlist signup"); }
+  return fetch(ESP_ENDPOINT, { method: "POST", mode: "no-cors", keepalive: true, body }).catch(() => {});
 }
 const PAGE_LOADED = Date.now();
 
