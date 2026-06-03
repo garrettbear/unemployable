@@ -22,10 +22,10 @@ a { color: inherit; text-decoration: none; }
    Bigger than the viewport so the outer products bleed off the
    edges (cut off on the sides), shown whole + large with black gaps. */
 .mosaic {
-  position: fixed; inset: -14vh -20vw; z-index: 0;
-  display: flex; gap: 3vw; pointer-events: none;
+  position: fixed; inset: -16vh -30vw; z-index: 0;   /* wide overscan → big products that bleed off the sides */
+  display: flex; gap: 2.4vw; pointer-events: none;
 }
-.col { flex: 1; display: flex; flex-direction: column; gap: 3vw; will-change: transform; min-width: 0; }
+.col { flex: 1; display: flex; flex-direction: column; gap: 2.4vw; will-change: transform; min-width: 0; }
 .col:nth-child(1) { animation: up 82s linear infinite; }
 .col:nth-child(2) { animation: down 96s linear infinite; }
 .col:nth-child(3) { animation: up 72s linear infinite; }
@@ -34,6 +34,7 @@ a { color: inherit; text-decoration: none; }
 }
 .tile img {
   width: 100%; height: 100%; object-fit: contain; display: block;
+  scale: 1.12;                                       /* fill the frame, trim the black padding */
   animation: breathe 26s ease-in-out infinite alternate;
 }
 .tile:nth-child(even) img { animation-duration: 31s; }
@@ -137,13 +138,13 @@ a { color: inherit; text-decoration: none; }
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .mosaic { inset: -10vh -26vw; gap: 4vw; }
+  .mosaic { inset: -12vh -40vw; gap: 3vw; }
 }
 @media (max-width: 640px) {
   :root { --nav-h: 56px; }
   .nav { padding: 0 16px; } .nav-logo img { height: 15px; } .nav-right { gap: 12px; } .nav-inbox { display: none; }
-  /* one calm column of whole products on phones */
-  .mosaic { inset: -6vh 8vw; gap: 6vw; }
+  /* one big column of whole products on phones, bleeding off both sides */
+  .mosaic { inset: -4vh -10vw; gap: 6vw; }
   .col:nth-child(1), .col:nth-child(3) { display: none; }
   .col:nth-child(2) { flex: 1; }
 }

@@ -6,6 +6,7 @@
    Add product shots here (relative paths). The grid repeats and
    scatters them; outer ones bleed off the viewport edges. */
 const IMAGES = [
+  "img/tee-freelance.jpg",
   "img/tee-tagline.jpg",
   "img/tee-survive.jpg",
   "img/mat-office.jpg"
