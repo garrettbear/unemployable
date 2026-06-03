@@ -954,7 +954,30 @@ function openDrawer() { if (sidebar) sidebar.classList.add("open"); if (scrim) s
 function closeDrawer() { if (sidebar) sidebar.classList.remove("open"); if (scrim) scrim.hidden = true; }
 function toggleDrawer() { (sidebar && sidebar.classList.contains("open")) ? closeDrawer() : openDrawer(); }
 const menuBtn = document.getElementById("menuBtn");
-if (menuBtn) menuBtn.addEventListener("click", toggleDrawer);
+if (menuBtn) menuBtn.addEventListener("click", () => {
+  // mobile: slide-in drawer · desktop: collapse/expand the sidebar (like Gmail)
+  if (window.matchMedia && window.matchMedia("(max-width: 900px)").matches) toggleDrawer();
+  else document.body.classList.toggle("nav-collapsed");
+});
+
+/* ---------- First-visit coachmark: "click your avatar to personalize" ---------- */
+(function () {
+  const cm = document.getElementById("coachmark");
+  if (!cm) return;
+  let seen = false;
+  try { seen = localStorage.getItem("ue-coach") === "1"; } catch (e) {}
+  function dismiss() { cm.hidden = true; try { localStorage.setItem("ue-coach", "1"); } catch (e) {} }
+  if (!seen) {
+    setTimeout(() => { cm.hidden = false; }, 1400);
+    setTimeout(dismiss, 13000);                 // auto-dismiss
+  } else { cm.hidden = true; }
+  const cx = document.getElementById("coachX");
+  if (cx) cx.addEventListener("click", dismiss);
+  ["meBtn", "meBtnDrawer"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("click", dismiss);
+  });
+})();
 if (scrim) scrim.addEventListener("click", closeDrawer);
 // tapping a folder closes the drawer
 if (sidebar) sidebar.querySelectorAll(".folder").forEach((f) => f.addEventListener("click", closeDrawer));

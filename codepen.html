@@ -159,6 +159,27 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 /* ===== Layout ===== */
 .layout { display: flex; height: calc(100vh - var(--topbar-h)); }
 
+/* Desktop: hamburger collapses the sidebar (Gmail-style) */
+@media (min-width: 901px) {
+  .sidebar { transition: width .22s ease, padding .22s ease, opacity .2s ease; }
+  body.nav-collapsed .sidebar { width: 0; padding-left: 0; padding-right: 0; overflow: hidden; opacity: 0; }
+}
+
+/* ===== First-visit coachmark (points at the avatar) ===== */
+.coachmark {
+  position: fixed; top: 56px; right: 14px; z-index: 70; width: 252px;
+  background: #202124; color: #fff; border-radius: 12px; padding: 13px 30px 13px 15px;
+  box-shadow: var(--shadow); font-family: "Roboto", Arial, sans-serif; animation: coachIn .3s ease;
+}
+.coachmark[hidden] { display: none; }
+.coachmark strong { display: block; font-size: 14px; color: var(--accent); margin-bottom: 4px; }
+.coachmark p { margin: 0; font-size: 12.5px; line-height: 1.45; color: rgba(255,255,255,.88); }
+.coach-arrow { position: absolute; top: -6px; right: 16px; width: 13px; height: 13px; background: #202124; transform: rotate(45deg); border-radius: 2px; }
+.coach-x { position: absolute; top: 5px; right: 8px; background: none; border: none; color: rgba(255,255,255,.7); font-size: 18px; line-height: 1; cursor: pointer; padding: 2px; }
+.coach-x:hover { color: #fff; }
+@keyframes coachIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) { .coachmark { top: 52px; right: 8px; width: 220px; } }
+
 /* ===== Sidebar ===== */
 .sidebar {
   width: var(--sidebar-w);
@@ -919,6 +940,14 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <h2 id="offerTitle">YOU GOT AN OFFER!</h2>
       <p id="offerMsg">Congratulations, Garrett. After 487 applications, someone finally said yes.</p>
     </div>
+  </div>
+
+  <!-- first-visit hint pointing at the avatar -->
+  <div class="coachmark" id="coachmark" hidden>
+    <span class="coach-arrow"></span>
+    <button class="coach-x" id="coachX" aria-label="Dismiss">×</button>
+    <strong>👋 Make it yours</strong>
+    <p>Tap your avatar to put your name — or a friend's — on every rejection, then share the link.</p>
   </div>
   <script>
 /* =============================================================
@@ -1877,7 +1906,30 @@ function openDrawer() { if (sidebar) sidebar.classList.add("open"); if (scrim) s
 function closeDrawer() { if (sidebar) sidebar.classList.remove("open"); if (scrim) scrim.hidden = true; }
 function toggleDrawer() { (sidebar && sidebar.classList.contains("open")) ? closeDrawer() : openDrawer(); }
 const menuBtn = document.getElementById("menuBtn");
-if (menuBtn) menuBtn.addEventListener("click", toggleDrawer);
+if (menuBtn) menuBtn.addEventListener("click", () => {
+  // mobile: slide-in drawer · desktop: collapse/expand the sidebar (like Gmail)
+  if (window.matchMedia && window.matchMedia("(max-width: 900px)").matches) toggleDrawer();
+  else document.body.classList.toggle("nav-collapsed");
+});
+
+/* ---------- First-visit coachmark: "click your avatar to personalize" ---------- */
+(function () {
+  const cm = document.getElementById("coachmark");
+  if (!cm) return;
+  let seen = false;
+  try { seen = localStorage.getItem("ue-coach") === "1"; } catch (e) {}
+  function dismiss() { cm.hidden = true; try { localStorage.setItem("ue-coach", "1"); } catch (e) {} }
+  if (!seen) {
+    setTimeout(() => { cm.hidden = false; }, 1400);
+    setTimeout(dismiss, 13000);                 // auto-dismiss
+  } else { cm.hidden = true; }
+  const cx = document.getElementById("coachX");
+  if (cx) cx.addEventListener("click", dismiss);
+  ["meBtn", "meBtnDrawer"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("click", dismiss);
+  });
+})();
 if (scrim) scrim.addEventListener("click", closeDrawer);
 // tapping a folder closes the drawer
 if (sidebar) sidebar.querySelectorAll(".folder").forEach((f) => f.addEventListener("click", closeDrawer));

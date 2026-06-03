@@ -119,6 +119,27 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 /* ===== Layout ===== */
 .layout { display: flex; height: calc(100vh - var(--topbar-h)); }
 
+/* Desktop: hamburger collapses the sidebar (Gmail-style) */
+@media (min-width: 901px) {
+  .sidebar { transition: width .22s ease, padding .22s ease, opacity .2s ease; }
+  body.nav-collapsed .sidebar { width: 0; padding-left: 0; padding-right: 0; overflow: hidden; opacity: 0; }
+}
+
+/* ===== First-visit coachmark (points at the avatar) ===== */
+.coachmark {
+  position: fixed; top: 56px; right: 14px; z-index: 70; width: 252px;
+  background: #202124; color: #fff; border-radius: 12px; padding: 13px 30px 13px 15px;
+  box-shadow: var(--shadow); font-family: "Roboto", Arial, sans-serif; animation: coachIn .3s ease;
+}
+.coachmark[hidden] { display: none; }
+.coachmark strong { display: block; font-size: 14px; color: var(--accent); margin-bottom: 4px; }
+.coachmark p { margin: 0; font-size: 12.5px; line-height: 1.45; color: rgba(255,255,255,.88); }
+.coach-arrow { position: absolute; top: -6px; right: 16px; width: 13px; height: 13px; background: #202124; transform: rotate(45deg); border-radius: 2px; }
+.coach-x { position: absolute; top: 5px; right: 8px; background: none; border: none; color: rgba(255,255,255,.7); font-size: 18px; line-height: 1; cursor: pointer; padding: 2px; }
+.coach-x:hover { color: #fff; }
+@keyframes coachIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) { .coachmark { top: 52px; right: 8px; width: 220px; } }
+
 /* ===== Sidebar ===== */
 .sidebar {
   width: var(--sidebar-w);
