@@ -434,12 +434,12 @@ const PROMO = [
     s: "Learn to be Employable from people born employed",
     snippet: "30 lessons taught by founders who 'just dropped out'…",
     body: ["Hi Garrett,", "Learn resilience from a billionaire who was given a small loan of one million dollars.", "This week: \"Networking,\" \"Grit,\" and \"Why You Should Have Founded a Company in 2009.\"", "Only $180/year. Certificate not recognized by anyone."] },
-  { c: "UNEMPLOYABLE", d: "garrettbear.com", color: "#111111", from: "UNEMPLOYABLE™", user: "shop",
+  { c: "UNEMPLOYABLE", d: "theunemployable.xyz", color: "#111111", from: "UNEMPLOYABLE™", user: "shop",
     s: "Your dream job, 90% off (it's a hoodie)",
     snippet: "The only offer letter you'll get this year ships in 3–5 days…",
     body: ["Hi Garrett,", "We can't get you hired, but we can get you a hoodie that explains the situation.", "New drop — the \"AI Took My Job\" collection: \"Replaced by a Prompt\" tee, \"94% Confidence, 0% Empathy\" crewneck, and the \"Still More Human Than Required\" dad hat.", "This is the only place that wants you."],
     cta: "shop" },
-  { c: "UNEMPLOYABLE", d: "garrettbear.com", color: "#c5221f", from: "UNEMPLOYABLE™", user: "drop",
+  { c: "UNEMPLOYABLE", d: "theunemployable.xyz", color: "#c5221f", from: "UNEMPLOYABLE™", user: "drop",
     s: "🤖 New: the 'AI Took My Job' collection just dropped",
     snippet: "Wear the layoff. Before a model wears your old badge…",
     body: ["Hi Garrett,", "They automated the role. We immortalized the feeling.", "Featuring: \"I Was Beta. They Shipped Someone Else,\" \"Trained My Replacement (It Was Software),\" and \"Hello, I'm Human (Apparently a Downside).\"", "Ethically sourced cotton. Unethically sourced job market."],
@@ -737,7 +737,7 @@ function openEmail(i) {
         : e.label === "social" ? "Can't announce a new role? Announce a new <strong>look</strong>:"
         : "Rejected again? You're not unemployed. You're <strong>UNEMPLOYABLE™</strong>."
       }</p>
-      <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop the brand →</a>
+      <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
     </div>
     <div class="mb-actions">
       <button class="mb-btn" id="replyBtn">↩ Reply</button>
@@ -943,7 +943,7 @@ function recordOpen(e) {
     interviewFakeout();
     if (newIdx === RANKS.length - 1) firePrank();
   } else if (gTotal > 0 && gTotal % 25 === 0) {
-    gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
+    gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
   }
 }
 function setHudMin(min) {

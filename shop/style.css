@@ -22,8 +22,8 @@ a { color: inherit; text-decoration: none; }
    Bigger than the viewport so the outer products bleed off the
    edges (cut off on the sides), shown whole + large with black gaps. */
 .mosaic {
-  position: fixed; inset: -16vh -30vw; z-index: 0;   /* wide overscan → big products that bleed off the sides */
-  display: flex; gap: 2.4vw; pointer-events: none;
+  position: fixed; inset: -12vh -14vw; z-index: 0;   /* overscan → big products that bleed off the sides */
+  display: flex; align-items: flex-start; gap: 2.4vw; pointer-events: none;
 }
 .col { flex: 1; display: flex; flex-direction: column; gap: 2.4vw; will-change: transform; min-width: 0; }
 .col:nth-child(1) { animation: up 82s linear infinite; }
@@ -31,10 +31,11 @@ a { color: inherit; text-decoration: none; }
 .col:nth-child(3) { animation: up 72s linear infinite; }
 .tile {
   position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: transparent;
+  flex: 0 0 auto;                                    /* don't let the column squish the tiles */
 }
 .tile img {
   width: 100%; height: 100%; object-fit: contain; display: block;
-  scale: 1.12;                                       /* fill the frame, trim the black padding */
+  scale: 1.08;                                       /* trim a little black padding */
   animation: breathe 26s ease-in-out infinite alternate;
 }
 .tile:nth-child(even) img { animation-duration: 31s; }

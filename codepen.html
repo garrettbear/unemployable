@@ -702,7 +702,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
     </div>
 
     <div class="topbar-right">
-      <a class="shop-cta" href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>
+      <a class="shop-cta" href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>
       <button class="icon-btn" id="themeBtn" aria-label="Toggle dark theme" title="Toggle dark theme"></button>
       <button class="icon-btn" id="aboutBtn" aria-label="About this site">
         <svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
@@ -740,7 +740,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       </nav>
       <nav class="drawer-extra mobile-only">
         <button class="drawer-item" id="aboutBtnDrawer">ⓘ&nbsp;&nbsp;About &amp; the joke</button>
-        <a class="drawer-item" href="https://garrettbear.com" target="_blank" rel="noopener">🛍️&nbsp;&nbsp;Shop UNEMPLOYABLE™</a>
+        <a class="drawer-item" href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">🛍️&nbsp;&nbsp;Shop UNEMPLOYABLE™</a>
         <button class="drawer-item" id="themeBtnDrawer">🌙&nbsp;&nbsp;Dark mode</button>
       </nav>
       <div class="sidebar-foot">
@@ -817,7 +817,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <p>You've spent 1.5 years getting the same email from every company on earth. "We've decided to move forward with other candidates." "We'll keep your resume on file." "This was a difficult decision."</p>
       <p>It wasn't a difficult decision. It was an automated one. So here's an inbox that never ends — scroll back through the entire genre of corporate "no," all the way down.</p>
       <p>Then go buy the merch, because if no one will employ you, you might as well be <strong>Unemployable</strong> on purpose.</p>
-      <a class="about-shop" href="https://garrettbear.com" target="_blank" rel="noopener">Shop the brand →</a>
+      <a class="about-shop" href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
       <p class="about-credit">Designed &amp; built by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a> — a product designer &amp; front-end dev who is, ironically, <strong>available for hire</strong>. <a href="https://garrettbear.com" target="_blank" rel="noopener">Hire him before the algorithm does →</a></p>
       <p class="disclaimer"><strong>Disclaimer:</strong> This is satire. It is not Gmail, it is not affiliated with or endorsed by Google or any company shown. All emails are fictional and auto-generated for comedy. Company names are used nominatively to parody the universal job-hunt experience. No real rejection emails are reproduced. Any resemblance to the soul-crushing message you got last Tuesday is purely because they all write the exact same thing. Made with spite and love by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a>.</p>
       <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
@@ -1308,12 +1308,12 @@ const PROMO = [
     s: "Learn to be Employable from people born employed",
     snippet: "30 lessons taught by founders who 'just dropped out'…",
     body: ["Hi Garrett,", "Learn resilience from a billionaire who was given a small loan of one million dollars.", "This week: \"Networking,\" \"Grit,\" and \"Why You Should Have Founded a Company in 2009.\"", "Only $180/year. Certificate not recognized by anyone."] },
-  { c: "UNEMPLOYABLE", d: "garrettbear.com", color: "#111111", from: "UNEMPLOYABLE™", user: "shop",
+  { c: "UNEMPLOYABLE", d: "theunemployable.xyz", color: "#111111", from: "UNEMPLOYABLE™", user: "shop",
     s: "Your dream job, 90% off (it's a hoodie)",
     snippet: "The only offer letter you'll get this year ships in 3–5 days…",
     body: ["Hi Garrett,", "We can't get you hired, but we can get you a hoodie that explains the situation.", "New drop — the \"AI Took My Job\" collection: \"Replaced by a Prompt\" tee, \"94% Confidence, 0% Empathy\" crewneck, and the \"Still More Human Than Required\" dad hat.", "This is the only place that wants you."],
     cta: "shop" },
-  { c: "UNEMPLOYABLE", d: "garrettbear.com", color: "#c5221f", from: "UNEMPLOYABLE™", user: "drop",
+  { c: "UNEMPLOYABLE", d: "theunemployable.xyz", color: "#c5221f", from: "UNEMPLOYABLE™", user: "drop",
     s: "🤖 New: the 'AI Took My Job' collection just dropped",
     snippet: "Wear the layoff. Before a model wears your old badge…",
     body: ["Hi Garrett,", "They automated the role. We immortalized the feeling.", "Featuring: \"I Was Beta. They Shipped Someone Else,\" \"Trained My Replacement (It Was Software),\" and \"Hello, I'm Human (Apparently a Downside).\"", "Ethically sourced cotton. Unethically sourced job market."],
@@ -1611,7 +1611,7 @@ function openEmail(i) {
         : e.label === "social" ? "Can't announce a new role? Announce a new <strong>look</strong>:"
         : "Rejected again? You're not unemployed. You're <strong>UNEMPLOYABLE™</strong>."
       }</p>
-      <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop the brand →</a>
+      <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
     </div>
     <div class="mb-actions">
       <button class="mb-btn" id="replyBtn">↩ Reply</button>
@@ -1817,7 +1817,7 @@ function recordOpen(e) {
     interviewFakeout();
     if (newIdx === RANKS.length - 1) firePrank();
   } else if (gTotal > 0 && gTotal % 25 === 0) {
-    gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://garrettbear.com" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
+    gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
   }
 }
 function setHudMin(min) {

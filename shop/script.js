@@ -33,7 +33,7 @@ const IMAGES = [
 /* ---------- Ticker ---------- */
 (function () {
   const track = document.getElementById("tickerTrack"); if (!track) return;
-  const phrases = ["COMING SOON", "● UNEMPLOYABLE™", "● WEAR THE LAYOFF", "● NOT MOVING FORWARD WITH OTHER CANDIDATES", "● DROP 01", "● PRE-REJECTED"];
+  const phrases = ["COMING SOON", "● UNEMPLOYABLE™", "● WEAR THE LAYOFF", "● MOVING FORWARD WITH OTHER CANDIDATES", "● DROP 01", "● PRE-REJECTED"];
   const half = phrases.map((p) => `<span>${p}</span>`).join("");
   track.innerHTML = half + half;
 })();
