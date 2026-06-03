@@ -816,8 +816,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <p>Put a friend's name on every rejection, then share your link — they'll open it and watch the entire internet turn <em>them</em> down. Give them a "dream job" too, if you're feeling generous.</p>
       <label class="pz-label" for="pzName">Name on the rejections</label>
       <input class="pz-input" id="pzName" type="text" maxlength="30" placeholder="Garrett" autocomplete="off" />
-      <label class="pz-label" for="pzJob">Their “dream job” (optional)</label>
-      <input class="pz-input" id="pzJob" type="text" maxlength="48" placeholder="e.g. Chief Vibes Officer" autocomplete="off" />
+      <label class="pz-label" for="pzJob">Their “dream jobs” (optional — separate with commas)</label>
+      <input class="pz-input" id="pzJob" type="text" maxlength="160" placeholder="e.g. Chief Vibes Officer, Beer Taster, Nap Consultant" autocomplete="off" />
       <div class="pz-actions">
         <button class="about-shop pz-apply" id="pzApply">Apply</button>
         <button class="mb-btn" id="pzCopy">Copy shareable link</button>
@@ -1254,14 +1254,20 @@ const SNIPPETS = [
    Sanitized to a safe charset so it's harmless in HTML and on canvas. */
 function cleanField(s, max) { return String(s || "").replace(/[<>&"'`]/g, "").replace(/\s+/g, " ").trim().slice(0, max); }
 let FIRST_NAME = "Garrett";
-let CUSTOM_ROLE = "";
+let CUSTOM_ROLE = "";      // raw comma-separated string (for storage + share link)
+let CUSTOM_ROLES = [];     // parsed list of titles
+function parseRoles() {
+  CUSTOM_ROLES = CUSTOM_ROLE.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 10);
+  CUSTOM_ROLE = CUSTOM_ROLES.join(", ");   // normalize for storage, input, and share link
+}
 (function () {
   const p = new URLSearchParams(location.search);
   let n = p.get("name"), j = p.get("job");
   try { if (n == null) n = localStorage.getItem("ue-name"); if (j == null) j = localStorage.getItem("ue-job"); } catch (e) {}
-  n = cleanField(n, 30); j = cleanField(j, 48);
+  n = cleanField(n, 30); j = cleanField(j, 160);
   if (n) FIRST_NAME = n;
   if (j) CUSTOM_ROLE = j;
+  parseRoles();
 })();
 
 /* ---------- Deterministic RNG so each row is stable ---------- */
@@ -1288,7 +1294,9 @@ function buildEmail(i) {
   // Pinned at the very top (most recent): Ramp — the one that stung the most.
   if (i === 0) c = COMPANIES.find((x) => x.name === "Ramp") || c;
   const cName = c.name, cDomain = c.domain, cColor = c.color;
-  const role = (CUSTOM_ROLE && rng() < 0.5) ? CUSTOM_ROLE : pick(rng, ROLES);
+  const role = (CUSTOM_ROLES.length && rng() < 0.55)
+    ? CUSTOM_ROLES[Math.floor(rng() * CUSTOM_ROLES.length)]
+    : pick(rng, ROLES);
   const [senderName, senderUser] = pick(rng, SENDERS);
   const tpl = TEMPLATES[Math.floor(rng() * TEMPLATES.length)];
   const snippet = pick(rng, SNIPPETS);
@@ -2168,7 +2176,8 @@ function openPersonalize() {
 function closePersonalize() { if (pzOverlay) { pzOverlay.hidden = true; document.body.style.overflow = ""; } }
 function savePersonalize() {
   FIRST_NAME = cleanField(document.getElementById("pzName").value, 30) || "Garrett";
-  CUSTOM_ROLE = cleanField(document.getElementById("pzJob").value, 48);
+  CUSTOM_ROLE = cleanField(document.getElementById("pzJob").value, 160);
+  parseRoles();
   try { localStorage.setItem("ue-name", FIRST_NAME); localStorage.setItem("ue-job", CUSTOM_ROLE); } catch (e) {}
   updateMeAvatar();
   resetStream();   // regenerate every email with the new name / title
