@@ -92,6 +92,27 @@ document.querySelectorAll("#yr").forEach((el) => { el.textContent = new Date().g
 const GFORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLScb5RaU6KfAhWmjYifP8sGAfHYI7xUYA14kFy-o8AaP4aoraw/formResponse";
 const GFORM_ENTRY  = "entry.774890617";
 const PAGE_LOADED = Date.now();
+
+/* ---- Resilient delivery (no setup required) ----
+   keepalive:true → the request still completes if the tab closes right after submit.
+   localStorage outbox → a send that fails (flaky mobile signal, offline) is queued
+   and retried on the next visit / when back online, so signups aren't silently lost. */
+const OUTBOX = "ue-outbox";
+function _ob() { try { return JSON.parse(localStorage.getItem(OUTBOX) || "[]"); } catch (e) { return []; } }
+function _save(a) { try { localStorage.setItem(OUTBOX, JSON.stringify(a.slice(-2000))); } catch (e) {} }
+function enqueue(email) { const o = _ob(); if (!o.includes(email)) { o.push(email); _save(o); } }
+function dequeue(email) { _save(_ob().filter((e) => e !== email)); }
+function postEmail(email) {
+  if (GFORM_ACTION.includes("REPLACE_WITH")) return Promise.resolve();
+  const body = new URLSearchParams(); body.append(GFORM_ENTRY, email);
+  return fetch(GFORM_ACTION, { method: "POST", mode: "no-cors", body, keepalive: true });
+}
+function deliver(email) { enqueue(email); return postEmail(email).then(() => dequeue(email)).catch(() => {}); }
+function flushOutbox() { _ob().forEach((email) => postEmail(email).then(() => dequeue(email)).catch(() => {})); }
+flushOutbox();
+setInterval(flushOutbox, 20000);
+window.addEventListener("online", flushOutbox);
+
 function validEmail(s) {
   if (s.length > 254) return false;
   if (!/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/.test(s)) return false;
@@ -116,10 +137,7 @@ function wireSignup(formId, noteId, okText) {
       if (input) { input.focus(); input.select(); } return;
     }
     if (note) { note.classList.remove("err"); note.textContent = baseNote; }
-    if (!GFORM_ACTION.includes("REPLACE_WITH")) {
-      const body = new URLSearchParams(); body.append(GFORM_ENTRY, email);
-      fetch(GFORM_ACTION, { method: "POST", mode: "no-cors", body }).catch(() => {});
-    }
+    deliver(email);
     succeed(form, note, okText);
   });
   const input = form.querySelector("input[type=email]");
