@@ -438,6 +438,35 @@ function buildEgg() {
   };
 }
 
+/* ---------- The "real offer" email (it is a rickroll) ---------- */
+const EGG2_INDEX = 11;
+function buildOfferEgg() {
+  const date = new Date(cursorDate);
+  return {
+    i: EGG2_INDEX,
+    company: "Dream Job", domain: "dreamjob.inc", color: "#1a73e8",
+    role: "Senior Everything",
+    senderName: "Dream Job Inc. Recruiting",
+    senderEmail: "offers@dreamjob.inc",
+    subject: "🎉 We'd like to offer you the position!",
+    body: [
+      "Hi " + FIRST_NAME + ",",
+      "After reviewing thousands of applicants, we're thrilled to extend you an official, real, actually-paid job offer. We know — finally.",
+      "The compensation exceeds your expectations. The team can't wait to meet you. Start whenever you'd like.",
+      "Click the button below to accept and begin the rest of your life.",
+      "Genuinely, finally, congratulations,"
+    ],
+    sigCompany: "Dream Job Inc.",
+    label: "final",
+    snippet: "We're thrilled to extend you an official offer. Click below to accept…",
+    date,
+    unread: true,
+    starred: true,
+    egg: true,
+    rick: true
+  };
+}
+
 /* ---------- Promotions tab: the dream, 90% off ---------- */
 const PROMO = [
   { c: "LinkedIn Premium", d: "linkedin.com", color: "#0A66C2", from: "LinkedIn", user: "premium",
@@ -658,8 +687,10 @@ function buildRow(i) {
   if (currentTab === "promotions") return buildPool(i, PROMO, "promo");
   if (currentTab === "social") return buildPool(i, SOCIAL, "social");
   // primary
-  const email = (i === EGG_INDEX) ? buildEgg() : buildEmail(i);
-  if (i === EGG_INDEX) cursorDate = new Date(cursorDate.getTime() - 8 * 3600 * 1000);
+  let email;
+  if (i === EGG_INDEX) { email = buildEgg(); cursorDate = new Date(cursorDate.getTime() - 8 * 3600 * 1000); }
+  else if (i === EGG2_INDEX) { email = buildOfferEgg(); cursorDate = new Date(cursorDate.getTime() - 8 * 3600 * 1000); }
+  else email = buildEmail(i);
   return email;
 }
 
@@ -756,12 +787,13 @@ function openEmail(i) {
     </div>
     <div class="mb-cta">
       <p>${
-        e.egg ? "At least someone wants you around. Wear it with pride:"
+        e.rick ? "This one's real. Click to accept your offer:"
+        : e.egg ? "At least someone wants you around. Wear it with pride:"
         : e.label === "promo" ? "Skip the upsell. Buy something honest instead:"
         : e.label === "social" ? "Can't announce a new role? Announce a new <strong>look</strong>:"
         : "Rejected again? You're not unemployed. You're <strong>UNEMPLOYABLE™</strong>."
       }</p>
-      <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
+      <a href="${e.rick ? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' : 'https://shop.theunemployable.xyz'}" target="_blank" rel="noopener">${e.rick ? '✅ Accept your offer →' : 'Shop the brand →'}</a>
     </div>
     <div class="mb-actions">
       <button class="mb-btn primary" id="saveImgBtn">📤 Share / Save image</button>
@@ -1293,17 +1325,46 @@ loadBatch();
 loadBatch();
 updateCounter();
 
-/* Konami-ish keyword eggs: type "hire" or "boss" anywhere */
+/* ===========================================================
+   Easter eggs
+   =========================================================== */
+const RICK = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+function rickroll(msg) {
+  if (typeof gToast === "function") gToast(msg || "🎺 Never gonna give you up…");
+  window.open(RICK, "_blank", "noopener");
+}
+
+/* keyword eggs — type these anywhere */
 let buf = "";
 document.addEventListener("keydown", (e) => {
-  if (e.key.length === 1) buf = (buf + e.key.toLowerCase()).slice(-4);
-  if (buf === "hire") {
-    buf = "";
-    alert("LOL. No.\n\n— Every company, 2024–2026");
-  }
-  if (buf === "boss") {
-    buf = "";
-    prankFired = false;   // allow re-triggering on demand
-    firePrank();
-  }
+  if (e.key.length === 1) buf = (buf + e.key.toLowerCase()).slice(-12);
+  if (buf.endsWith("hire")) { buf = ""; alert("LOL. No.\n\n— Every company, 2024–2026"); }
+  else if (buf.endsWith("boss")) { buf = ""; prankFired = false; firePrank(); }
+  else if (buf.endsWith("offer")) { buf = ""; rickroll("🎺 An offer! …never gonna give you up."); }
+  else if (buf.endsWith("raise")) { buf = ""; gToast("A raise? In this economy? 😂"); }
+  else if (buf.endsWith("fired")) { buf = ""; gToast("You can't be fired from unemployment. Small wins."); }
+  else if (buf.endsWith("rich")) { buf = ""; gToast("💸 Net worth recalculated: still you."); }
 });
+
+/* Konami code (↑↑↓↓←→←→ B A) → confetti + achievement */
+const KONAMI = ["arrowup","arrowup","arrowdown","arrowdown","arrowleft","arrowright","arrowleft","arrowright","b","a"];
+let kpos = 0;
+document.addEventListener("keydown", (e) => {
+  const k = e.key.toLowerCase();
+  if (k === KONAMI[kpos]) {
+    if (++kpos === KONAMI.length) {
+      kpos = 0;
+      if (typeof confettiBurst === "function") confettiBurst(2800);
+      gToast("🏆 Achievement unlocked: Professionally Unemployable");
+    }
+  } else { kpos = (k === KONAMI[0]) ? 1 : 0; }
+});
+
+/* The "Offers" folder — your one and only offer is a rickroll.
+   Plus a couple more clickable gags. */
+(function () {
+  const off = document.getElementById("offersFolder");
+  if (off) off.addEventListener("click", (e) => { e.preventDefault(); rickroll("🎺 You have 1 offer!"); });
+  const foot = document.querySelector(".sidebar-foot");
+  if (foot) foot.addEventListener("click", () => gToast("Cleared 0 bytes. The rejections are forever."));
+})();
