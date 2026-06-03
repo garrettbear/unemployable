@@ -167,6 +167,9 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 }
 .about-credit a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .about-credit a:hover { text-decoration: underline; }
+.about-follow { font-size: 13px; color: var(--text-soft); margin: 4px 0 14px; }
+.about-follow a { color: var(--accent); font-weight: 700; text-decoration: none; }
+.about-follow a:hover { text-decoration: underline; }
 
 /* ===== Inbox ===== */
 .inbox {

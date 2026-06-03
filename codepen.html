@@ -207,6 +207,9 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 }
 .about-credit a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .about-credit a:hover { text-decoration: underline; }
+.about-follow { font-size: 13px; color: var(--text-soft); margin: 4px 0 14px; }
+.about-follow a { color: var(--accent); font-weight: 700; text-decoration: none; }
+.about-follow a:hover { text-decoration: underline; }
 
 /* ===== Inbox ===== */
 .inbox {
@@ -863,6 +866,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <p>It wasn't a difficult decision. It was an automated one. So here's an inbox that never ends — scroll back through the entire genre of corporate "no," all the way down.</p>
       <p>Then go buy the merch, because if no one will employ you, you might as well be <strong>Unemployable</strong> on purpose.</p>
       <a class="about-shop" href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
+      <p class="about-follow">Follow the descent on Instagram: <a href="https://www.instagram.com/theunemployable.xyz" target="_blank" rel="noopener">@theunemployable.xyz</a></p>
       <p class="about-credit">Designed &amp; built by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a> — a product designer &amp; front-end dev who is, ironically, <strong>available for hire</strong>. <a href="https://garrettbear.com" target="_blank" rel="noopener">Hire him before the algorithm does →</a></p>
       <p class="disclaimer"><strong>Disclaimer:</strong> This is satire. It is not Gmail, it is not affiliated with or endorsed by Google or any company shown. All emails are fictional and auto-generated for comedy. Company names are used nominatively to parody the universal job-hunt experience. No real rejection emails are reproduced. Any resemblance to the soul-crushing message you got last Tuesday is purely because they all write the exact same thing. Made with spite and love by <a href="https://garrettbear.com" target="_blank" rel="noopener">Garrett Bear</a>.</p>
       <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
@@ -902,7 +906,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
       <div class="share-actions">
         <a class="share-btn primary" id="shareX" target="_blank" rel="noopener">𝕏 Share</a>
         <button class="share-btn" id="shareCopy">Copy text</button>
-        <button class="share-btn" id="shareDownload">Download image</button>
+        <button class="share-btn" id="shareDownload">Share / Save</button>
       </div>
       <canvas id="shareCanvas" width="1200" height="630" aria-hidden="true"></canvas>
     </div>
@@ -1675,7 +1679,7 @@ function openEmail(i) {
       <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
     </div>
     <div class="mb-actions">
-      <button class="mb-btn primary" id="saveImgBtn">⬇ Save as image</button>
+      <button class="mb-btn primary" id="saveImgBtn">📤 Share / Save image</button>
       <button class="mb-btn" id="replyBtn">↩ Reply</button>
       <button class="mb-btn" id="fwdBtn">↪ Forward to mom</button>
     </div>
@@ -1696,6 +1700,25 @@ function openEmail(i) {
 function closeModal() {
   overlay.hidden = true;
   document.body.style.overflow = "";
+}
+
+/* ---------- Share an image (native sheet on mobile → Instagram/Stories/X) or download ---------- */
+function shareOrDownload(blob, filename, text) {
+  if (!blob) { alert("Couldn't generate the image — try again."); return; }
+  let file = null;
+  try { file = new File([blob], filename, { type: "image/png" }); } catch (e) {}
+  if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+    navigator.share({ files: [file], text })
+      .then(() => { if (typeof gToast === "function") gToast("📤 Shared"); })
+      .catch(() => {});   // user cancelled — do nothing
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  if (typeof gToast === "function") gToast("⬇️ Saved — go post it.");
 }
 
 /* ---------- Save an email as a shareable PNG (canvas) ---------- */
@@ -1766,14 +1789,8 @@ function renderEmailImage(e) {
   ctx.fillText("theunemployable.xyz", W - pad, fy);
 
   cv.toBlob((blob) => {
-    if (!blob) { alert("Couldn't generate the image — try again."); return; }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
     const slug = (e.company || "rejection").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    a.href = url; a.download = `unemployable-${slug}.png`;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-    if (typeof gToast === "function") gToast("⬇️ Saved — go post it.");
+    shareOrDownload(blob, `unemployable-${slug}.png`, "I'm getting rejected on theunemployable.xyz — make your own.");
   }, "image/png");
 }
 document.getElementById("modalBack").addEventListener("click", closeModal);
@@ -2024,12 +2041,7 @@ function drawAndDownload() {
   ctx.fillStyle = "#9aa0a6"; ctx.font = "28px Arial"; ctx.fillText(idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0", W / 2, 502);
   ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("theunemployable.xyz", W / 2, 562);
   cv.toBlob((blob) => {
-    if (!blob) { gToast("Download failed"); return; }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = "my-rejection-resume.png";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-    gToast("⬇️ Saved your Rejection Résumé");
+    shareOrDownload(blob, "my-rejection-resume.png", `My Rejection Résumé: ${rankFor(gTotal).r.name}. ${gTotal} rejections read, 0 offers. theunemployable.xyz`);
   }, "image/png");
 }
 

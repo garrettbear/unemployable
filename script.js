@@ -756,7 +756,7 @@ function openEmail(i) {
       <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop the brand →</a>
     </div>
     <div class="mb-actions">
-      <button class="mb-btn primary" id="saveImgBtn">⬇ Save as image</button>
+      <button class="mb-btn primary" id="saveImgBtn">📤 Share / Save image</button>
       <button class="mb-btn" id="replyBtn">↩ Reply</button>
       <button class="mb-btn" id="fwdBtn">↪ Forward to mom</button>
     </div>
@@ -777,6 +777,25 @@ function openEmail(i) {
 function closeModal() {
   overlay.hidden = true;
   document.body.style.overflow = "";
+}
+
+/* ---------- Share an image (native sheet on mobile → Instagram/Stories/X) or download ---------- */
+function shareOrDownload(blob, filename, text) {
+  if (!blob) { alert("Couldn't generate the image — try again."); return; }
+  let file = null;
+  try { file = new File([blob], filename, { type: "image/png" }); } catch (e) {}
+  if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+    navigator.share({ files: [file], text })
+      .then(() => { if (typeof gToast === "function") gToast("📤 Shared"); })
+      .catch(() => {});   // user cancelled — do nothing
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  if (typeof gToast === "function") gToast("⬇️ Saved — go post it.");
 }
 
 /* ---------- Save an email as a shareable PNG (canvas) ---------- */
@@ -847,14 +866,8 @@ function renderEmailImage(e) {
   ctx.fillText("theunemployable.xyz", W - pad, fy);
 
   cv.toBlob((blob) => {
-    if (!blob) { alert("Couldn't generate the image — try again."); return; }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
     const slug = (e.company || "rejection").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    a.href = url; a.download = `unemployable-${slug}.png`;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-    if (typeof gToast === "function") gToast("⬇️ Saved — go post it.");
+    shareOrDownload(blob, `unemployable-${slug}.png`, "I'm getting rejected on theunemployable.xyz — make your own.");
   }, "image/png");
 }
 document.getElementById("modalBack").addEventListener("click", closeModal);
@@ -1105,12 +1118,7 @@ function drawAndDownload() {
   ctx.fillStyle = "#9aa0a6"; ctx.font = "28px Arial"; ctx.fillText(idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0", W / 2, 502);
   ctx.fillStyle = "#71757c"; ctx.font = "24px Arial"; ctx.fillText("theunemployable.xyz", W / 2, 562);
   cv.toBlob((blob) => {
-    if (!blob) { gToast("Download failed"); return; }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = "my-rejection-resume.png";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-    gToast("⬇️ Saved your Rejection Résumé");
+    shareOrDownload(blob, "my-rejection-resume.png", `My Rejection Résumé: ${rankFor(gTotal).r.name}. ${gTotal} rejections read, 0 offers. theunemployable.xyz`);
   }, "image/png");
 }
 
