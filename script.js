@@ -190,6 +190,19 @@ function rolesForCats(cats) {
   cats.forEach((c) => { if (ROLE_CATEGORIES[c]) out.push(...ROLE_CATEGORIES[c]); });
   return out;
 }
+/* Absurd titles for flavor, and the generic default pool a non-personalized
+   visitor gets: a broad cross-section of real jobs (rejected from everything)
+   plus jokes — funnier and not tied to any one person's career. */
+const JOKE_ROLES = [
+  "Chief Vibes Officer", "Nap Consultant", "Professional Beta Tester", "Senior Vibes Engineer",
+  "Head of Touching Grass", "VP of Almost", "Freelance Disappointment", "Junior Adult",
+  "Chief Reply Guy", "Aspiring LinkedIn Influencer", "Beer Taster", "Director of Wishful Thinking",
+  "Part-Time Genius", "Full-Time Applicant", "Professional Ghostee", "Overqualified Intern",
+];
+const DEFAULT_POOL = [].concat(
+  ...Object.values(ROLE_CATEGORIES).map((arr) => arr.slice(0, 4)),  // a few from every field
+  JOKE_ROLES, JOKE_ROLES,                                            // weight the jokes a touch
+);
 
 /* Sender personas */
 const SENDERS = [
@@ -394,8 +407,13 @@ const SNIPPETS = [
    the recipient's name to whoever opens it — then localStorage, else default.
    Sanitized to a safe charset so it's harmless in HTML and on canvas. */
 function cleanField(s, max) { return String(s || "").replace(/[<>&"'`]/g, "").replace(/\s+/g, " ").trim().slice(0, max); }
-let FULL_NAME = "Garrett";  // what the user typed (first or "First Last")
-let FIRST_NAME = "Garrett";
+// First-time visitors get a rotating funny default (new one each visit). The
+// user's own name — from their saved profile or share link — overrides it.
+const DEFAULT_NAMES = ["Noah Callbacks", "Hugh Nemployed", "Anita Job", "Pat Pending", "Connie Date", "Les Hire", "Ona Watchlist", "Will Power", "Sal Aryless"];
+const randomDefaultName = () => DEFAULT_NAMES[Math.floor(Math.random() * DEFAULT_NAMES.length)];
+let IS_DEFAULT_NAME = true;
+let FULL_NAME = randomDefaultName();
+let FIRST_NAME = "Noah";
 let LAST_NAME = "";
 let CUSTOM_ROLE = "";       // freeform roles, comma-separated (storage + share link)
 let CUSTOM_ROLES = [];      // parsed freeform list
@@ -438,7 +456,7 @@ function nameVariant(rng) {
   const j = cleanField(g("job", "ue-job"), 200);
   const cats = g("cats", "ue-cats") || "";
   const cos = cleanField(g("cos", "ue-cos"), 200);
-  if (n) FULL_NAME = n;
+  if (n) { FULL_NAME = n; IS_DEFAULT_NAME = false; }
   CUSTOM_ROLE = j || "";
   SELECTED_CATS = String(cats).split(",").map((s) => s.trim()).filter((c) => ROLE_CATEGORIES[c]).slice(0, 12);
   CUSTOM_COMPANIES = String(cos).split(",").map((s) => cleanField(s, 40)).filter(Boolean).slice(0, 12);
@@ -468,12 +486,13 @@ function buildEmail(i) {
   const userCos = userCompanyObjs();
   // Sprinkle the user's own companies in (~40%); otherwise a real one.
   let c = (userCos.length && rng() < 0.4) ? userCos[Math.floor(rng() * userCos.length)] : pick(rng, COMPANIES);
-  // Pin the top slot: the user's first company if they added one, else Ramp.
-  if (i === 0) c = userCos.length ? userCos[0] : (COMPANIES.find((x) => x.name === "Ramp") || c);
+  // Pin the top slot to the user's first company, if they added one.
+  if (i === 0 && userCos.length) c = userCos[0];
   const cName = c.name, cDomain = c.domain, cColor = c.color;
   // Personalized? Reject across the WHOLE chosen pool (categories + freeform).
+  // Otherwise the broad, funny generic pool.
   const pool = activeRolePool();
-  const role = pool ? pool[Math.floor(rng() * pool.length)] : pick(rng, ROLES);
+  const role = pool ? pool[Math.floor(rng() * pool.length)] : pick(rng, DEFAULT_POOL);
   const [senderName, senderUser] = pick(rng, SENDERS);
   const tpl = TEMPLATES[Math.floor(rng() * TEMPLATES.length)];
   const snippet = pick(rng, SNIPPETS);
@@ -1538,7 +1557,7 @@ function renderPz() { renderCats(); renderChips("pzRoleChips", pzRoles, "role");
 
 function openPersonalize() {
   const nIn = document.getElementById("pzName"), note = document.getElementById("pzNote");
-  if (nIn) nIn.value = (FULL_NAME === "Garrett" ? "" : FULL_NAME);
+  if (nIn) nIn.value = IS_DEFAULT_NAME ? "" : FULL_NAME;
   pzCats = SELECTED_CATS.slice(); pzRoles = CUSTOM_ROLES.slice(); pzCos = CUSTOM_COMPANIES.slice();
   const rIn = document.getElementById("pzRoleInput"), cIn = document.getElementById("pzCoInput");
   if (rIn) rIn.value = ""; if (cIn) cIn.value = "";
@@ -1551,13 +1570,15 @@ function openPersonalize() {
 function closePersonalize() { if (pzOverlay) { pzOverlay.hidden = true; document.body.style.overflow = ""; } }
 
 function savePersonalize() {
-  FULL_NAME = cleanField(document.getElementById("pzName").value, 40) || "Garrett";
+  const typedName = cleanField(document.getElementById("pzName").value, 40);
+  IS_DEFAULT_NAME = !typedName;
+  FULL_NAME = typedName || randomDefaultName();
   SELECTED_CATS = pzCats.slice();
   CUSTOM_ROLES = pzRoles.slice(); CUSTOM_ROLE = CUSTOM_ROLES.join(", ");
   CUSTOM_COMPANIES = pzCos.slice();
   parseName(); parseRoles();
   try {
-    localStorage.setItem("ue-name", FULL_NAME);
+    localStorage.setItem("ue-name", typedName);
     localStorage.setItem("ue-job", CUSTOM_ROLE);
     localStorage.setItem("ue-cats", SELECTED_CATS.join(","));
     localStorage.setItem("ue-cos", CUSTOM_COMPANIES.join(","));
@@ -1568,7 +1589,7 @@ function savePersonalize() {
 }
 function shareLink() {
   const u = new URL(location.origin + location.pathname);
-  if (FULL_NAME && FULL_NAME !== "Garrett") u.searchParams.set("name", FULL_NAME);
+  if (!IS_DEFAULT_NAME && FULL_NAME) u.searchParams.set("name", FULL_NAME);
   if (CUSTOM_ROLE) u.searchParams.set("job", CUSTOM_ROLE);
   if (SELECTED_CATS.length) u.searchParams.set("cats", SELECTED_CATS.join(","));
   if (CUSTOM_COMPANIES.length) u.searchParams.set("cos", CUSTOM_COMPANIES.join(","));
