@@ -408,6 +408,25 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .pz-note { font-size: 12.5px; color: var(--text-faint); margin-top: 12px; min-height: 16px; }
 .pz-note.ok { color: var(--accent); font-weight: 700; }
 
+/* personalize: scroll, intro, hint, categories, chips */
+.pz-card { max-height: 88vh; overflow-y: auto; }
+.pz-intro { font-size: 14px; line-height: 1.6; }
+.pz-hint { font-size: 12px; color: var(--text-faint); margin: 6px 0 0; line-height: 1.4; }
+.pz-cats { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+.pz-cat {
+  cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--text-soft);
+  border-radius: 100px; padding: 7px 13px; font-size: 13px; font-weight: 600; font-family: inherit; transition: all .12s;
+}
+.pz-cat:hover { border-color: var(--text-faint); }
+.pz-cat.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.pz-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.pz-chip {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); color: var(--accent);
+  border-radius: 100px; padding: 5px 6px 5px 13px; font-size: 13px; font-weight: 700;
+}
+.pz-chip button { border: none; background: rgba(0,0,0,.12); color: inherit; cursor: pointer; width: 18px; height: 18px; border-radius: 50%; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; font-family: inherit; }
+.pz-chip button:hover { background: rgba(0,0,0,.25); }
+
 /* Easter-egg email styling */
 .egg .mb-content { font-family: "Courier New", monospace; }
 
@@ -609,6 +628,10 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .mb-btn.primary { background: var(--accent); color: #202124; border-color: var(--accent); }
 :root[data-theme="dark"] .mb-btn.primary:hover { background: #f6a59e; }
 :root[data-theme="dark"] .pz-input { background: #1f1f1f; }
+:root[data-theme="dark"] .pz-cat { background: #1f1f1f; color: #bdc1c6; }
+:root[data-theme="dark"] .pz-cat.on { background: #3a1a18; color: #f6a59e; border-color: #f6a59e; }
+:root[data-theme="dark"] .pz-chip { background: #3a1a18; color: #f6a59e; }
+:root[data-theme="dark"] .pz-chip button { background: rgba(255,255,255,.14); }
 :root[data-theme="dark"] .logo-mark rect { fill: #2a2b2e; stroke: #3c4043; }
 /* keep promo/social chips readable on dark */
 :root[data-theme="dark"] .lbl-ghosted { background: #3c4043; color: #bdc1c6; }

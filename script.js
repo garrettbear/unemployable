@@ -162,6 +162,35 @@ const ROLES = [
   "Design Engineer", "Senior Designer, Anything Really"
 ];
 
+/* ---------- Job-title taxonomy ----------
+   Pick a category in Personalize and the inbox rejects you across the whole
+   spread of roles in it. Add your own too. Keep each list varied in seniority. */
+const ROLE_CATEGORIES = {
+  "Sales": ["Sales Development Rep", "Account Executive", "Senior Account Executive", "Enterprise Account Executive", "Account Manager", "Sales Manager", "Regional Sales Manager", "Director of Sales", "VP of Sales", "Inside Sales Rep", "Sales Engineer", "Business Development Rep", "Head of Business Development", "Channel Sales Manager", "Sales Operations Analyst", "Chief Revenue Officer"],
+  "Marketing": ["Marketing Coordinator", "Marketing Manager", "Senior Marketing Manager", "Growth Marketer", "Performance Marketing Manager", "Content Marketer", "SEO Specialist", "Brand Manager", "Product Marketing Manager", "Demand Generation Manager", "Social Media Manager", "Email Marketing Specialist", "Marketing Director", "VP of Marketing", "Chief Marketing Officer", "Field Marketing Manager"],
+  "Software Engineering": ["Software Engineer", "Senior Software Engineer", "Staff Software Engineer", "Frontend Engineer", "Backend Engineer", "Full-Stack Engineer", "Mobile Engineer (iOS)", "Android Engineer", "DevOps Engineer", "Site Reliability Engineer", "Platform Engineer", "Engineering Manager", "Principal Engineer", "Security Engineer", "Machine Learning Engineer", "QA Engineer"],
+  "Design": ["Product Designer", "Senior Product Designer", "UX Designer", "UI Designer", "UX Researcher", "Visual Designer", "Brand Designer", "Design Systems Designer", "Design Engineer", "Motion Designer", "Graphic Designer", "Design Lead", "Head of Design", "Interaction Designer", "Service Designer"],
+  "Product": ["Associate Product Manager", "Product Manager", "Senior Product Manager", "Group Product Manager", "Principal Product Manager", "Director of Product", "VP of Product", "Technical Product Manager", "Growth Product Manager", "Product Operations Manager", "Chief Product Officer"],
+  "Data & Analytics": ["Data Analyst", "Senior Data Analyst", "Data Scientist", "Senior Data Scientist", "Data Engineer", "Analytics Engineer", "Business Intelligence Analyst", "Machine Learning Scientist", "Research Scientist", "Head of Data", "Quantitative Analyst"],
+  "Operations": ["Operations Coordinator", "Operations Manager", "Business Operations Manager", "Program Manager", "Project Manager", "Senior Project Manager", "Supply Chain Manager", "Logistics Coordinator", "Chief Operating Officer", "Strategy & Ops Lead", "Procurement Specialist"],
+  "Finance & Accounting": ["Staff Accountant", "Senior Accountant", "Financial Analyst", "Senior Financial Analyst", "Controller", "Accounting Manager", "FP&A Manager", "Bookkeeper", "Payroll Specialist", "Auditor", "Treasury Analyst", "VP of Finance", "Chief Financial Officer"],
+  "People & HR": ["Recruiter", "Technical Recruiter", "Senior Recruiter", "HR Generalist", "HR Manager", "People Operations Manager", "Talent Acquisition Lead", "HR Business Partner", "Head of People", "Compensation Analyst", "Learning & Development Manager", "Chief People Officer"],
+  "Customer Support": ["Customer Support Rep", "Customer Success Manager", "Senior Customer Success Manager", "Support Engineer", "Technical Support Specialist", "Customer Experience Manager", "Head of Customer Success", "Onboarding Specialist", "Community Manager"],
+  "Healthcare": ["Registered Nurse", "Nurse Practitioner", "Medical Assistant", "Physician Assistant", "Pharmacy Technician", "Pharmacist", "Physical Therapist", "Clinical Research Coordinator", "Healthcare Administrator", "Medical Biller", "Phlebotomist", "Dental Hygienist"],
+  "Legal": ["Paralegal", "Legal Assistant", "Associate Attorney", "Corporate Counsel", "Senior Counsel", "Compliance Analyst", "Contracts Manager", "Legal Operations Manager", "General Counsel"],
+  "Education": ["Teacher", "Substitute Teacher", "Teaching Assistant", "Instructional Designer", "Curriculum Developer", "School Counselor", "Academic Advisor", "Professor (Adjunct)", "Education Program Manager", "Tutor"],
+  "Hospitality & Food": ["Server", "Bartender", "Barista", "Line Cook", "Sous Chef", "Executive Chef", "Restaurant Manager", "Host", "Catering Manager", "Hotel Front Desk Agent", "Event Coordinator", "Pizza Maker"],
+  "Retail": ["Sales Associate", "Cashier", "Store Manager", "Assistant Store Manager", "Visual Merchandiser", "Inventory Specialist", "District Manager", "Buyer", "Loss Prevention Associate", "Stock Associate"],
+  "Construction & Trades": ["Laborer", "Carpenter", "Electrician", "Plumber", "HVAC Technician", "Welder", "Heavy Equipment Operator", "Project Superintendent", "Estimator", "Foreman", "Construction Project Manager", "Site Engineer"],
+  "Creative & Media": ["Copywriter", "Senior Copywriter", "Content Creator", "Video Editor", "Photographer", "Art Director", "Creative Director", "Social Media Creator", "Producer", "Podcast Producer", "Illustrator", "Animator"],
+  "Executive & Admin": ["Executive Assistant", "Administrative Assistant", "Office Manager", "Chief of Staff", "Receptionist", "Operations Assistant", "Personal Assistant", "Facilities Coordinator"],
+};
+function rolesForCats(cats) {
+  const out = [];
+  cats.forEach((c) => { if (ROLE_CATEGORIES[c]) out.push(...ROLE_CATEGORIES[c]); });
+  return out;
+}
+
 /* Sender personas */
 const SENDERS = [
   ["Talent Acquisition", "talent"], ["Recruiting Team", "recruiting"],
@@ -365,21 +394,55 @@ const SNIPPETS = [
    the recipient's name to whoever opens it — then localStorage, else default.
    Sanitized to a safe charset so it's harmless in HTML and on canvas. */
 function cleanField(s, max) { return String(s || "").replace(/[<>&"'`]/g, "").replace(/\s+/g, " ").trim().slice(0, max); }
+let FULL_NAME = "Garrett";  // what the user typed (first or "First Last")
 let FIRST_NAME = "Garrett";
-let CUSTOM_ROLE = "";      // raw comma-separated string (for storage + share link)
-let CUSTOM_ROLES = [];     // parsed list of titles
+let LAST_NAME = "";
+let CUSTOM_ROLE = "";       // freeform roles, comma-separated (storage + share link)
+let CUSTOM_ROLES = [];      // parsed freeform list
+let SELECTED_CATS = [];     // chosen taxonomy categories
+let CUSTOM_COMPANIES = [];  // user-added company names (e.g. "Red Bull")
+
+function parseName() {
+  const parts = String(FULL_NAME).trim().split(/\s+/).filter(Boolean);
+  FIRST_NAME = parts[0] || "Garrett";
+  LAST_NAME = parts.length > 1 ? parts.slice(1).join(" ") : "";
+}
 function parseRoles() {
-  CUSTOM_ROLES = CUSTOM_ROLE.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 10);
-  CUSTOM_ROLE = CUSTOM_ROLES.join(", ");   // normalize for storage, input, and share link
+  CUSTOM_ROLES = CUSTOM_ROLE.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 12);
+  CUSTOM_ROLE = CUSTOM_ROLES.join(", ");
+}
+// Active role pool = freeform titles + every role in the selected categories.
+function activeRolePool() {
+  const pool = CUSTOM_ROLES.concat(rolesForCats(SELECTED_CATS));
+  return pool.length ? pool : null;
+}
+// User companies as { name, domain, color } so they can reject you by name.
+function userCompanyObjs() {
+  return CUSTOM_COMPANIES.map((name) => {
+    const o = BRAND[name];
+    return { name, domain: o ? o[0] : slugDomain(name), color: o ? o[1] : autoColor(name) };
+  });
+}
+// How a given rejection addresses you — varies once a last name exists so it
+// reads like a real (careless) recruiter: Garrett Bear / G. Bear / Garrett B. / Garrett.
+function nameVariant(rng) {
+  if (!LAST_NAME) return FIRST_NAME;
+  const fi = FIRST_NAME[0].toUpperCase(), li = LAST_NAME[0].toUpperCase();
+  const opts = [FULL_NAME, FULL_NAME, `${fi}. ${LAST_NAME}`, `${FIRST_NAME} ${li}.`, FIRST_NAME];
+  return opts[Math.floor(rng() * opts.length)];
 }
 (function () {
   const p = new URLSearchParams(location.search);
-  let n = p.get("name"), j = p.get("job");
-  try { if (n == null) n = localStorage.getItem("ue-name"); if (j == null) j = localStorage.getItem("ue-job"); } catch (e) {}
-  n = cleanField(n, 30); j = cleanField(j, 160);
-  if (n) FIRST_NAME = n;
-  if (j) CUSTOM_ROLE = j;
-  parseRoles();
+  const g = (k, lsk) => { let v = p.get(k); try { if (v == null) v = localStorage.getItem(lsk); } catch (e) {} return v; };
+  const n = cleanField(g("name", "ue-name"), 40);
+  const j = cleanField(g("job", "ue-job"), 200);
+  const cats = g("cats", "ue-cats") || "";
+  const cos = cleanField(g("cos", "ue-cos"), 200);
+  if (n) FULL_NAME = n;
+  CUSTOM_ROLE = j || "";
+  SELECTED_CATS = String(cats).split(",").map((s) => s.trim()).filter((c) => ROLE_CATEGORIES[c]).slice(0, 12);
+  CUSTOM_COMPANIES = String(cos).split(",").map((s) => cleanField(s, 40)).filter(Boolean).slice(0, 12);
+  parseName(); parseRoles();
 })();
 
 /* ---------- Deterministic RNG so each row is stable ---------- */
@@ -402,13 +465,15 @@ let cursorDate = new Date(START);
 
 function buildEmail(i) {
   const rng = mulberry32(i * 2654435761 + 12345);
-  let c = pick(rng, COMPANIES);
-  // Pinned at the very top (most recent): Ramp — the one that stung the most.
-  if (i === 0) c = COMPANIES.find((x) => x.name === "Ramp") || c;
+  const userCos = userCompanyObjs();
+  // Sprinkle the user's own companies in (~40%); otherwise a real one.
+  let c = (userCos.length && rng() < 0.4) ? userCos[Math.floor(rng() * userCos.length)] : pick(rng, COMPANIES);
+  // Pin the top slot: the user's first company if they added one, else Ramp.
+  if (i === 0) c = userCos.length ? userCos[0] : (COMPANIES.find((x) => x.name === "Ramp") || c);
   const cName = c.name, cDomain = c.domain, cColor = c.color;
-  const role = (CUSTOM_ROLES.length && rng() < 0.55)
-    ? CUSTOM_ROLES[Math.floor(rng() * CUSTOM_ROLES.length)]
-    : pick(rng, ROLES);
+  // Personalized? Reject across the WHOLE chosen pool (categories + freeform).
+  const pool = activeRolePool();
+  const role = pool ? pool[Math.floor(rng() * pool.length)] : pick(rng, ROLES);
   const [senderName, senderUser] = pick(rng, SENDERS);
   const tpl = TEMPLATES[Math.floor(rng() * TEMPLATES.length)];
   const snippet = pick(rng, SNIPPETS);
@@ -420,7 +485,9 @@ function buildEmail(i) {
   }
   const date = new Date(cursorDate);
 
-  const fill = (s) => s.replaceAll("{label}", role).replaceAll("{company}", cName).replaceAll("{first}", FIRST_NAME);
+  const toName = nameVariant(rng);
+  const greetName = (LAST_NAME && rng() < 0.18) ? FULL_NAME : FIRST_NAME;
+  const fill = (s) => s.replaceAll("{label}", role).replaceAll("{company}", cName).replaceAll("{first}", greetName);
 
   return {
     i,
@@ -428,6 +495,7 @@ function buildEmail(i) {
     domain: cDomain,
     color: cColor,
     role,
+    to: toName,
     senderName: `${cName} ${senderName}`,
     senderEmail: `${senderUser}@${cDomain}`,
     subject: fill(tpl.subject),
@@ -866,7 +934,7 @@ function openEmail(i) {
       <span class="mb-avatar" style="background:${e.color}">${e.company[0]}</span>
       <div class="mb-meta">
         <div class="mb-from">${e.senderName} <span class="mb-email">&lt;${e.senderEmail}&gt;</span></div>
-        <div class="mb-to">to ${FIRST_NAME}</div>
+        <div class="mb-to">to ${e.to || FIRST_NAME}</div>
       </div>
       <div class="mb-date">${fmtFull(e.date)}</div>
     </div>
@@ -1043,7 +1111,7 @@ function renderEmailImage(e) {
   ctx.fillStyle = "#202124"; ctx.font = `700 ${FS_META}px Arial`;
   ctx.fillText(e.senderName, pad + av + 18, cy + 23);
   ctx.fillStyle = "#5f6368"; ctx.font = `${FS_META - 2}px Arial`;
-  ctx.fillText(`<${e.senderEmail}>  ·  to ${FIRST_NAME}`, pad + av + 18, cy + 49);
+  ctx.fillText(`<${e.senderEmail}>  ·  to ${e.to || FIRST_NAME}`, pad + av + 18, cy + 49);
   cy += av + 24;
 
   ctx.strokeStyle = "#e8eaed"; ctx.lineWidth = 1;
@@ -1446,34 +1514,64 @@ function firePrank() {
 /* ---------- Keep the copyright year current ---------- */
 document.querySelectorAll(".yr").forEach((el) => { el.textContent = new Date().getFullYear(); });
 
-/* ---------- Personalize / prank-a-friend ---------- */
+/* ---------- Personalize / build your rejection profile ---------- */
 const pzOverlay = document.getElementById("personalizeOverlay");
+let pzCats = [], pzRoles = [], pzCos = [];   // working copies while the modal is open
+
 function updateMeAvatar() {
   document.querySelectorAll(".avatar-me").forEach((a) => { a.textContent = (FIRST_NAME[0] || "G").toUpperCase(); });
 }
+const pzEsc = (s) => String(s).replace(/[<>&"]/g, "");
+function renderCats() {
+  const wrap = document.getElementById("pzCats"); if (!wrap) return;
+  wrap.innerHTML = Object.keys(ROLE_CATEGORIES).map((cat) =>
+    `<button type="button" class="pz-cat${pzCats.includes(cat) ? " on" : ""}" data-cat="${pzEsc(cat)}">${pzEsc(cat)}</button>`
+  ).join("");
+}
+function renderChips(elId, arr, kind) {
+  const wrap = document.getElementById(elId); if (!wrap) return;
+  wrap.innerHTML = arr.map((v, idx) =>
+    `<span class="pz-chip">${pzEsc(v)}<button type="button" aria-label="Remove" data-kind="${kind}" data-idx="${idx}">×</button></span>`
+  ).join("");
+}
+function renderPz() { renderCats(); renderChips("pzRoleChips", pzRoles, "role"); renderChips("pzCoChips", pzCos, "co"); }
+
 function openPersonalize() {
-  const nIn = document.getElementById("pzName"), jIn = document.getElementById("pzJob"), note = document.getElementById("pzNote");
-  if (nIn) nIn.value = (FIRST_NAME === "Garrett" ? "" : FIRST_NAME);
-  if (jIn) jIn.value = CUSTOM_ROLE;
+  const nIn = document.getElementById("pzName"), note = document.getElementById("pzNote");
+  if (nIn) nIn.value = (FULL_NAME === "Garrett" ? "" : FULL_NAME);
+  pzCats = SELECTED_CATS.slice(); pzRoles = CUSTOM_ROLES.slice(); pzCos = CUSTOM_COMPANIES.slice();
+  const rIn = document.getElementById("pzRoleInput"), cIn = document.getElementById("pzCoInput");
+  if (rIn) rIn.value = ""; if (cIn) cIn.value = "";
   if (note) { note.textContent = ""; note.classList.remove("ok"); }
+  renderPz();
   if (typeof closeDrawer === "function") closeDrawer();
   if (pzOverlay) { pzOverlay.hidden = false; document.body.style.overflow = "hidden"; }
   if (nIn) nIn.focus();
 }
 function closePersonalize() { if (pzOverlay) { pzOverlay.hidden = true; document.body.style.overflow = ""; } }
+
 function savePersonalize() {
-  FIRST_NAME = cleanField(document.getElementById("pzName").value, 30) || "Garrett";
-  CUSTOM_ROLE = cleanField(document.getElementById("pzJob").value, 160);
-  parseRoles();
-  try { localStorage.setItem("ue-name", FIRST_NAME); localStorage.setItem("ue-job", CUSTOM_ROLE); } catch (e) {}
-  track("personalize", { hasJob: CUSTOM_ROLES.length > 0 });
+  FULL_NAME = cleanField(document.getElementById("pzName").value, 40) || "Garrett";
+  SELECTED_CATS = pzCats.slice();
+  CUSTOM_ROLES = pzRoles.slice(); CUSTOM_ROLE = CUSTOM_ROLES.join(", ");
+  CUSTOM_COMPANIES = pzCos.slice();
+  parseName(); parseRoles();
+  try {
+    localStorage.setItem("ue-name", FULL_NAME);
+    localStorage.setItem("ue-job", CUSTOM_ROLE);
+    localStorage.setItem("ue-cats", SELECTED_CATS.join(","));
+    localStorage.setItem("ue-cos", CUSTOM_COMPANIES.join(","));
+  } catch (e) {}
+  track("personalize", { cats: SELECTED_CATS.length, roles: CUSTOM_ROLES.length, cos: CUSTOM_COMPANIES.length });
   updateMeAvatar();
-  resetStream();   // regenerate every email with the new name / title
+  resetStream();   // regenerate every email with the new profile
 }
 function shareLink() {
   const u = new URL(location.origin + location.pathname);
-  if (FIRST_NAME && FIRST_NAME !== "Garrett") u.searchParams.set("name", FIRST_NAME);
+  if (FULL_NAME && FULL_NAME !== "Garrett") u.searchParams.set("name", FULL_NAME);
   if (CUSTOM_ROLE) u.searchParams.set("job", CUSTOM_ROLE);
+  if (SELECTED_CATS.length) u.searchParams.set("cats", SELECTED_CATS.join(","));
+  if (CUSTOM_COMPANIES.length) u.searchParams.set("cos", CUSTOM_COMPANIES.join(","));
   return u.toString();
 }
 (function () {
@@ -1482,12 +1580,42 @@ function shareLink() {
   const pzClose = document.getElementById("pzClose");
   const pzApply = document.getElementById("pzApply");
   const pzCopy = document.getElementById("pzCopy");
+  const rIn = document.getElementById("pzRoleInput");
+  const cIn = document.getElementById("pzCoInput");
   if (meBtn) meBtn.addEventListener("click", openPersonalize);
   if (meBtnDrawer) meBtnDrawer.addEventListener("click", openPersonalize);
   if (pzClose) pzClose.addEventListener("click", closePersonalize);
   if (pzOverlay) pzOverlay.addEventListener("click", (e) => { if (e.target === pzOverlay) closePersonalize(); });
-  if (pzApply) pzApply.addEventListener("click", () => { savePersonalize(); closePersonalize(); gToast(`📨 Now rejecting: ${FIRST_NAME}`); });
+
+  const catsWrap = document.getElementById("pzCats");
+  if (catsWrap) catsWrap.addEventListener("click", (e) => {
+    const b = e.target.closest(".pz-cat"); if (!b) return;
+    const cat = b.dataset.cat;
+    pzCats = pzCats.includes(cat) ? pzCats.filter((c) => c !== cat) : pzCats.concat(cat);
+    renderCats();
+  });
+  ["pzRoleChips", "pzCoChips"].forEach((id) => {
+    const w = document.getElementById(id);
+    if (w) w.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-idx]"); if (!btn) return;
+      const idx = +btn.dataset.idx;
+      if (btn.dataset.kind === "role") { pzRoles.splice(idx, 1); renderChips("pzRoleChips", pzRoles, "role"); }
+      else { pzCos.splice(idx, 1); renderChips("pzCoChips", pzCos, "co"); }
+    });
+  });
+  const addRole = () => { const v = cleanField(rIn.value, 50); if (v && pzRoles.length < 12 && !pzRoles.includes(v)) pzRoles.push(v); rIn.value = ""; renderChips("pzRoleChips", pzRoles, "role"); };
+  const addCo = () => { const v = cleanField(cIn.value, 40); if (v && pzCos.length < 12 && !pzCos.includes(v)) pzCos.push(v); cIn.value = ""; renderChips("pzCoChips", pzCos, "co"); };
+  if (rIn) rIn.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addRole(); } });
+  if (cIn) cIn.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addCo(); } });
+
+  if (pzApply) pzApply.addEventListener("click", () => {
+    if (rIn && rIn.value.trim()) addRole();
+    if (cIn && cIn.value.trim()) addCo();
+    savePersonalize(); closePersonalize(); gToast(`📨 Now rejecting: ${FIRST_NAME}`);
+  });
   if (pzCopy) pzCopy.addEventListener("click", () => {
+    if (rIn && rIn.value.trim()) addRole();
+    if (cIn && cIn.value.trim()) addCo();
     savePersonalize();
     const link = shareLink(), note = document.getElementById("pzNote");
     if (navigator.clipboard && navigator.clipboard.writeText) {
