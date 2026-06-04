@@ -24,21 +24,27 @@ try {
    When someone buys the spot, set AD.on = true and fill the fields.
    Until then a tasteful "advertise here" row shows and collects inquiries. */
 const AD_SPEC = "1200 × 628px";   // recommended creative size (standard social-ad ratio, 1.91:1)
+// Live ad is pulled from the auction (ads.theunemployable.xyz / Supabase).
+const SUPA_URL = "https://yozxnwdczoapoghqtuuv.supabase.co";
+const SUPA_ANON = "sb_publishable_a9apMerkeTnS7e0XvN2YJg_4AZ3ibLu";
+const AUCTION_URL = "https://ads.theunemployable.xyz";
 const AD = {
-  on: false,                      // flip true when the spot is sold
-  advertiser: "ZipRecruiter",
-  color: "#1A8754",
-  subject: "Your next rejection could be from us!",
-  snippet: "Post your résumé and get ignored at scale.",
-  image: "",                      // creative URL — 1200×628 PNG/JPG (host in /ads or a CDN)
-  body: [
-    "Hi there,",
-    "Millions of jobs. One of them might even reply. Post your résumé on ZipRecruiter and let the rejection come to you — faster, and at scale.",
-  ],
-  cta: "Get started",
-  url: "https://www.ziprecruiter.com/?utm_source=unemployable&utm_medium=sponsored&utm_campaign=inbox",
+  on: false,            // true once a live paid ad is loaded
+  real: false,          // true = a genuine paid ad (vs the house "advertise here" card)
+  price: 500,           // current throne price (cents) for the "take it for $X" CTA
+  amountPaid: 0,        // what the current holder paid
+  advertiser: "Advertise here",
+  color: "#5f6368",
+  subject: "",
+  snippet: "",
+  image: "",
+  body: [],
+  cta: "Learn more",
+  url: AUCTION_URL,
 };
-const AD_INQUIRY = "mailto:garrett@201lab.com?subject=Advertising%20on%20UNEMPLOYABLE%E2%84%A2&body=Hi%20Garrett%2C%20we%27d%20like%20to%20advertise%20on%20theunemployable.xyz.";
+const AD_INQUIRY = "mailto:garrett@201lab.com?subject=Advertising%20on%20UNEMPLOYABLE%E2%84%A2";
+const centsUSD = (c) => `$${(c / 100).toLocaleString("en-US", { minimumFractionDigits: c % 100 ? 2 : 0 })}`;
+const nextBidCents = (c) => c + Math.max(100, Math.ceil(c * 0.05));
 
 const REAL_COMPANIES = [
   "Google", "Meta", "Facebook", "X", "Amazon", "Microsoft", "Mozilla", "IBM", "Intuit",
@@ -753,18 +759,18 @@ function renderAdRow() {
   li.className = "email-row ad-row read";
   li.tabIndex = 0; li.setAttribute("role", "button");
   if (AD.on) {
-    li.setAttribute("aria-label", `Sponsored: ${AD.advertiser} — ${AD.subject}`);
+    li.setAttribute("aria-label", `Sponsored real ad: ${AD.advertiser} — ${AD.subject}. Tap to take this spot.`);
     li.innerHTML = `
       <span class="er-avatar" style="background:${AD.color}">${AD.advertiser[0]}</span>
       <span class="er-sender">${AD.advertiser}</span>
-      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">${AD.subject}</span><span class="er-snippet">${AD.snippet}</span></span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">${AD.subject}</span><span class="er-snippet">${AD.snippet} · <span class="ad-take">👑 take this spot from ${centsUSD(nextBidCents(AD.price))} →</span></span></span>
       <span class="er-date">Sponsored</span>`;
   } else {
     li.classList.add("ad-empty");
     li.innerHTML = `
       <span class="er-avatar" style="background:var(--accent)">📣</span>
       <span class="er-sender">Advertise here</span>
-      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">Your brand, in front of the chronically rejected.</span><span class="er-snippet">Sponsor the inbox — tap to inquire.</span></span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">Your brand, at the top of the inbox — from ${centsUSD(AD.price)}.</span><span class="er-snippet">A real ad auction: pay to take the spot, hold it until you're outbid. <span class="ad-take">Claim it →</span></span></span>
       <span class="er-date">Sponsored</span>`;
   }
   li.addEventListener("click", openAd);
@@ -772,6 +778,38 @@ function renderAdRow() {
   return li;
 }
 function mountAd() { if (currentTab === "primary") list.insertBefore(renderAdRow(), list.firstChild); }
+function refreshAd() { list.querySelectorAll(".ad-row").forEach((el) => el.remove()); mountAd(); }
+
+/* Pull the live ad + current price from the auction. Falls back to the house
+   "advertise here" card if nothing's sold or the fetch fails — inbox always works. */
+async function loadLiveAd() {
+  try {
+    const h = { apikey: SUPA_ANON, Authorization: `Bearer ${SUPA_ANON}` };
+    const [adRes, slotRes] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/live_ad?select=*`, { headers: h }),
+      fetch(`${SUPA_URL}/rest/v1/slot_state?id=eq.1&select=current_price_cents`, { headers: h }),
+    ]);
+    if (slotRes.ok) { const s = await slotRes.json(); if (s[0]) AD.price = s[0].current_price_cents; }
+    if (adRes.ok) {
+      const a = await adRes.json();
+      if (a && a[0]) {
+        const ad = a[0];
+        AD.on = true; AD.real = true;
+        AD.advertiser = ad.brand || "Sponsor";
+        AD.subject = ad.headline || "";
+        AD.snippet = (ad.body || "").slice(0, 80);
+        AD.body = (ad.body || "").split(/\n+/).filter(Boolean);
+        AD.url = ad.url || AUCTION_URL;
+        AD.image = ad.image_path ? `${SUPA_URL}/storage/v1/object/public/ad-creatives/${ad.image_path}` : "";
+        AD.amountPaid = ad.amount_paid_cents || 0;
+        AD.color = (typeof autoColor === "function") ? autoColor(AD.advertiser) : "#5f6368";
+      } else { AD.on = false; AD.real = false; }
+    }
+  } catch (e) { /* keep the house placeholder */ }
+  refreshAd();
+}
+loadLiveAd();
+setInterval(loadLiveAd, 30000);
 
 function resetStream() {
   index = 0;
@@ -896,12 +934,18 @@ function openAd() {
       <div class="mb-cta">
         <a href="${AD.url}" target="_blank" rel="noopener" id="adCta">${AD.cta} →</a>
       </div>
-      <p class="ad-disc">Sponsored · <a href="${AD_INQUIRY}">Advertise on UNEMPLOYABLE™</a></p>`;
+      <div class="ad-takeover">
+        <p>👑 This is a <strong>real paid ad</strong>. ${AD.advertiser} is holding the #1 spot${AD.amountPaid ? ` for ${centsUSD(AD.amountPaid)}` : ""}.</p>
+        <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adTake">Outbid them — take the throne from ${centsUSD(nextBidCents(AD.price))} →</a>
+      </div>
+      <p class="ad-disc">A real ad, placed through the UNEMPLOYABLE™ ad auction.</p>`;
     const cta = modalBody.querySelector("#adCta");
     const img = modalBody.querySelector("#adImg");
     const fire = () => track("ad_click", { advertiser: AD.advertiser });
     if (cta) cta.addEventListener("click", fire);
     if (img) img.addEventListener("click", fire);
+    const take = modalBody.querySelector("#adTake");
+    if (take) take.addEventListener("click", () => track("ad_takeover_click"));
   } else {
     track("ad_inquiry_open");
     modalBody.innerHTML = `
@@ -913,13 +957,13 @@ function openAd() {
           <div class="mb-to">to ${FIRST_NAME} · Sponsored</div>
         </div>
       </div>
-      <div class="ad-spec-box"><span>Your ad here</span><small>${AD_SPEC} · PNG or JPG</small></div>
+      <div class="ad-spec-box"><span>Your ad here</span><small>${AD_SPEC} · from ${centsUSD(AD.price)}</small></div>
       <div class="mb-content">
         <p>Put your brand in front of thousands of chronically-rejected (highly-employable, actually) people — right where they're already doom-scrolling.</p>
-        <p>One sponsored slot, pinned to the top of the inbox. Send a <strong>${AD_SPEC}</strong> creative and a link, and we'll make it look like a real email — only better-looking than the ones they're used to.</p>
+        <p>It's a live auction: pay to take the #1 slot and <strong>hold it until someone outbids you</strong>. No minimum time, no upper limit.</p>
       </div>
       <div class="mb-cta">
-        <a href="${AD_INQUIRY}" id="adInq">Advertise with us →</a>
+        <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adInq">Claim this spot — from ${centsUSD(AD.price)} →</a>
       </div>`;
     const inq = modalBody.querySelector("#adInq");
     if (inq) inq.addEventListener("click", () => track("ad_inquiry"));
