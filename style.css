@@ -276,7 +276,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .lbl-social   { background: #e6f4ea; color: #137333; }
 .lbl-ad       { background: transparent; color: #5f6368; border: 1px solid #dadce0; }
 /* sponsored row — subtle tint + tiny "Ad" chip, Gmail-style */
-.ad-row { background: #f6faff; }
+/* Pinned: stays stuck to the top of the inbox as the list scrolls (advertiser value). */
+.ad-row { background: #f6faff; position: sticky; top: 0; z-index: 3; box-shadow: 0 2px 8px rgba(0,0,0,.07), inset 0 -1px 0 #d6e4ff; }
 .ad-row:hover { background: #eef5ff; }
 
 /* Ad creative inside the opened sponsored email */
@@ -652,7 +653,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .lbl-promo { background: #1f2a3d; color: #8ab4f8; }
 :root[data-theme="dark"] .lbl-social { background: #1e2e22; color: #81c995; }
 :root[data-theme="dark"] .lbl-ad { background: transparent; color: #9aa0a6; border-color: #3c4043; }
-:root[data-theme="dark"] .ad-row { background: #1c2530; }
+:root[data-theme="dark"] .ad-row { background: #1c2530; box-shadow: 0 2px 8px rgba(0,0,0,.45), inset 0 -1px 0 #2c4159; }
 :root[data-theme="dark"] .ad-row:hover { background: #20303f; }
 :root[data-theme="dark"] .ad-spec-box { background: #1c2530; border-color: #3c4043; }
 :root[data-theme="dark"] .ad-take { color: #8ab4f8; }
