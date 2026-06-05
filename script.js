@@ -1405,6 +1405,18 @@ function gToast(html, cls) {
   gEl.toasts.appendChild(d);
   setTimeout(() => d.remove(), 3600);
 }
+/* One-time nudge after someone's a few rejections deep: share your inbox. */
+function shareNudge() {
+  if (!gEl.toasts) return;
+  try { if (localStorage.getItem("ue-share-nudged") === "1") return; localStorage.setItem("ue-share-nudged", "1"); } catch (e) {}
+  const d = document.createElement("div");
+  d.className = "game-toast shop";
+  d.innerHTML = `<span class="t-emoji">💀</span> Enjoying your downfall? <a href="#" id="nudgeShare">Share your inbox →</a>`;
+  gEl.toasts.appendChild(d);
+  const a = d.querySelector("#nudgeShare");
+  if (a) a.addEventListener("click", (ev) => { ev.preventDefault(); if (typeof openShare === "function") openShare(); d.remove(); });
+  setTimeout(() => d.remove(), 9000);
+}
 function renderGame() {
   const { r, idx } = rankFor(gTotal);
   const next = RANKS[idx + 1];
@@ -1438,6 +1450,7 @@ function recordOpen(e) {
   } else if (gTotal > 0 && gTotal % 25 === 0) {
     gToast(`<span class="t-emoji">🛍️</span> ${gTotal} rejections deep. Treat yourself → <a href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">Shop UNEMPLOYABLE™</a>`, "shop");
   }
+  if (gTotal === 5) shareNudge();
 }
 function setHudMin(min) {
   if (gEl.hud) gEl.hud.classList.toggle("hidden", min);
@@ -1470,7 +1483,8 @@ function openShare() {
   if (sEl.rank) sEl.rank.textContent = r.name;
   if (sEl.count) sEl.count.textContent = gTotal;
   if (sEl.sub) sEl.sub.textContent = idx >= RANKS.length - 1 ? "You win. There is no prize." : "Offers received: 0";
-  if (sEl.x) sEl.x.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText())}&url=${encodeURIComponent(SHARE_URL)}`;
+  const shareUrl = (typeof shareLink === "function") ? shareLink() : SHARE_URL;
+  if (sEl.x) sEl.x.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText())}&url=${encodeURIComponent(shareUrl)}`;
   if (shareOverlay) { shareOverlay.hidden = false; document.body.style.overflow = "hidden"; }
 }
 function closeShare() { if (shareOverlay) { shareOverlay.hidden = true; document.body.style.overflow = ""; } }
@@ -1480,7 +1494,7 @@ const shareCloseBtn = document.getElementById("shareClose");
 if (shareCloseBtn) shareCloseBtn.addEventListener("click", closeShare);
 if (shareOverlay) shareOverlay.addEventListener("click", (e) => { if (e.target === shareOverlay) closeShare(); });
 if (sEl.copy) sEl.copy.addEventListener("click", () => {
-  const txt = shareText() + " " + SHARE_URL;
+  const txt = shareText() + " " + ((typeof shareLink === "function") ? shareLink() : SHARE_URL);
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(txt).then(() => gToast("📋 Copied to clipboard")).catch(() => gToast("📋 Copy failed — select manually"));
   } else { gToast("📋 Clipboard unavailable"); }
