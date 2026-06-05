@@ -1788,3 +1788,18 @@ function wireSignup(formId, noteId, okText) {
   if (input && note) input.addEventListener("input", () => { if (note.classList.contains("err")) { note.classList.remove("err"); note.textContent = baseNote; } });
 }
 wireSignup("signupAbout", "noteAbout", "Done. We'll email you the moment the first drop lands.");
+wireSignup("signupNews", "noteNews", "You're in. Check your inbox for something that isn't a rejection.");
+
+/* ---------- Newsletter modal ---------- */
+(function () {
+  const overlay = document.getElementById("newsletterOverlay");
+  if (!overlay) return;
+  const open = () => { if (typeof closeDrawer === "function") closeDrawer(); overlay.hidden = false; document.body.style.overflow = "hidden"; const i = overlay.querySelector("input[type=email]"); if (i) setTimeout(() => i.focus(), 50); };
+  const close = () => { overlay.hidden = true; document.body.style.overflow = ""; };
+  const nb = document.getElementById("newsBtnDrawer");
+  if (nb) nb.addEventListener("click", open);
+  const nc = document.getElementById("newsClose");
+  if (nc) nc.addEventListener("click", close);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) close(); });
+})();

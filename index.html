@@ -124,6 +124,7 @@
       <nav class="drawer-extra">
         <button class="drawer-item" id="meBtnDrawer">🙂&nbsp;&nbsp;Personalize / prank a friend</button>
         <button class="drawer-item" id="aboutBtnDrawer">ⓘ&nbsp;&nbsp;About &amp; the joke</button>
+        <button class="drawer-item" id="newsBtnDrawer">📧&nbsp;&nbsp;Get the newsletter</button>
         <a class="drawer-item" href="https://shop.theunemployable.xyz" target="_blank" rel="noopener">🛍️&nbsp;&nbsp;Shop UNEMPLOYABLE™</a>
         <button class="drawer-item" id="themeBtnDrawer">🌙&nbsp;&nbsp;Dark mode</button>
       </nav>
@@ -188,6 +189,25 @@
         <button class="mb-btn" id="pzCopy">Copy shareable link</button>
       </div>
       <p class="pz-note" id="pzNote"></p>
+    </div>
+  </div>
+
+  <!-- ===== Newsletter modal ===== -->
+  <div class="modal-overlay" id="newsletterOverlay" hidden>
+    <div class="about-card" role="dialog" aria-modal="true" aria-labelledby="newsTitle">
+      <button class="about-close" id="newsClose" aria-label="Close">×</button>
+      <h2 id="newsTitle">📧 The UNEMPLOYABLE™ newsletter</h2>
+      <p class="about-tag">one email, zero recruiters</p>
+      <p>The only inbox that actually follows up. We'll email you when the shop drops, the site does something dumb, or there's a new way to be rejected. No spam — unlike LinkedIn.</p>
+      <div class="about-waitlist">
+        <form class="signup" id="signupNews" novalidate>
+          <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@stillchecking.email" aria-label="Email address" />
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button type="submit">Sign me up</button>
+        </form>
+        <p class="signup-note" id="noteNews">No spam. Unlike recruiters, we actually follow up.</p>
+        <p class="form-fallback">Box not working? <a href="https://docs.google.com/forms/d/e/1FAIpQLScb5RaU6KfAhWmjYifP8sGAfHYI7xUYA14kFy-o8AaP4aoraw/viewform" target="_blank" rel="noopener">Sign up on the form directly →</a></p>
+      </div>
     </div>
   </div>
 
