@@ -230,6 +230,61 @@ const TEMPLATES = [
   },
   {
     label: "rejected",
+    subject: "Update on your {label} application",
+    body: [
+      "Hi {first},",
+      "Thank you for applying for the {label} role at {company}.",
+      "After careful consideration, we've decided to move forward with an AI that does about 70% of the job for $20 a month. It never asks for PTO, dental, or to be 'seen as a person.'",
+      "We'll keep your résumé on file — by which we mean a folder we will never open again.",
+      "Wishing you the best in this economy,"
+    ]
+  },
+  {
+    label: "final",
+    subject: "Regarding the {label} position",
+    body: [
+      "Hello {first},",
+      "Thank you for interviewing with {company} — across four rounds, a take-home project, and a 'quick' fifth chat.",
+      "We've decided to go with an internal candidate who was always going to get the role. We posted it externally for 'compliance.'",
+      "We're genuinely sorry about the nineteen hours of your life.",
+      "Sincerely,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Thanks for applying to {company}",
+    body: [
+      "Hi {first},",
+      "We loved your experience for the {label} role. Truly.",
+      "Unfortunately you weren't a 'culture fit' — a phrase that means nothing and everything. The team voted, and someone who once did an Ironman edged you out.",
+      "Keep being you. Just not here.",
+      "Warm regards,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Your application for {label}",
+    body: [
+      "Dear {first},",
+      "Thank you for your interest in {company}.",
+      "We found you to be simultaneously overqualified and underqualified — a rare achievement. The role requires five years of experience with a tool that has existed for eighteen months.",
+      "We've decided to leave the position open indefinitely instead.",
+      "Best of luck,"
+    ]
+  },
+  {
+    label: "ghosted",
+    subject: "Application status: {label}",
+    body: [
+      "Hi {first},",
+      "Your application for {label} at {company} has advanced to the next stage: silence.",
+      "You may now spend three weeks refreshing this inbox and re-reading your cover letter for typos that no longer matter.",
+      "This inbox is not monitored. It never was.",
+      "— Automated —"
+    ]
+  },
+  {
+    label: "rejected",
     subject: "Your application to {company}",
     body: [
       "Dear {first},",
@@ -399,7 +454,12 @@ const SNIPPETS = [
   "We've decided to move forward with an AI tool that works weekends…",
   "Your application was scored and declined by an automated system in 0.3 seconds…",
   "We asked an AI to do the take-home and it finished before you said hello…",
-  "The model rated you 'qualified, but redundant'…"
+  "The model rated you 'qualified, but redundant'…",
+  "We went with an internal candidate who was always getting the role…",
+  "You weren't a 'culture fit,' a phrase that means nothing and everything…",
+  "You were somehow overqualified AND underqualified — a rare feat…",
+  "Your application has advanced to the next stage: silence…",
+  "The role pays in exposure and a quarterly pizza party…"
 ];
 
 /* ---------- Personalization (name + "dream job") ----------
