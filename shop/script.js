@@ -9,7 +9,8 @@ const IMAGES = [
   "img/tee-freelance.jpg",
   "img/tee-tagline.jpg",
   "img/tee-survive.jpg",
-  "img/mat-office.jpg"
+  "img/mat-office.jpg",
+  "img/foam-finger.jpg"
 ];
 (function () {
   const mosaic = document.getElementById("mosaic");
