@@ -910,14 +910,14 @@ function renderAdRow() {
     li.innerHTML = `
       <span class="er-avatar" style="background:${AD.color}">${AD.advertiser[0]}</span>
       <span class="er-sender">${AD.advertiser}</span>
-      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">${AD.subject}</span><span class="er-snippet">${AD.snippet} · <span class="ad-take">👑 take this spot from ${centsUSD(nextBidCents(AD.price))} →</span></span></span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">${AD.subject}</span><span class="er-snippet">${AD.snippet} · <span class="ad-take">👑 your brand could be here →</span></span></span>
       <span class="er-date">Sponsored</span>`;
   } else {
     li.classList.add("ad-empty");
     li.innerHTML = `
       <span class="er-avatar" style="background:var(--accent)">📣</span>
       <span class="er-sender">Advertise here</span>
-      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">Your brand, at the top of the inbox — from ${centsUSD(AD.price)}.</span><span class="er-snippet">A real ad auction: pay to take the spot, hold it until you're outbid. <span class="ad-take">Claim it →</span></span></span>
+      <span class="er-main"><span class="er-label lbl-ad">Ad</span><span class="er-subject">Your brand, at the top of the inbox.</span><span class="er-snippet">A real ad auction — see how to take this spot. <span class="ad-take">Claim it →</span></span></span>
       <span class="er-date">Sponsored</span>`;
   }
   li.addEventListener("click", openAd);
@@ -1075,9 +1075,10 @@ function tweetEmail(e) {
     `An endless inbox of every job rejection ever. I can't stop scrolling my own funeral. 💀`,
   ];
   const text = lines[Math.abs(e.i) % lines.length];
-  const url = (typeof shareLink === "function") ? shareLink() : location.href;
   if (typeof track === "function") track("tweet", { company: co });
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank", "noopener");
+  // Generate the rejection image and share it WITH the post (mobile: native share
+  // to X incl. the image; desktop: download image + open the tweet composer to attach).
+  renderEmailImage(e, "tweet", text);
 }
 
 /* The sponsored slot opens as a real (better-looking) email. */
@@ -1100,8 +1101,8 @@ function openAd() {
         <a href="${AD.url}" target="_blank" rel="noopener" id="adCta">${AD.cta} →</a>
       </div>
       <div class="ad-takeover">
-        <p>👑 This is a <strong>real paid ad</strong>. ${AD.advertiser} is holding the #1 spot${AD.amountPaid ? ` for ${centsUSD(AD.amountPaid)}` : ""}.</p>
-        <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adTake">Outbid them — take the throne from ${centsUSD(nextBidCents(AD.price))} →</a>
+        <p>👑 This is a <strong>real paid ad</strong>. ${AD.advertiser} took the #1 spot. Think you could do better?</p>
+        <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adTake">See how to take this spot →</a>
       </div>
       <p class="ad-disc">A real ad, placed through the UNEMPLOYABLE™ ad auction.</p>`;
     const cta = modalBody.querySelector("#adCta");
@@ -1122,13 +1123,13 @@ function openAd() {
           <div class="mb-to">to ${FIRST_NAME} · Sponsored</div>
         </div>
       </div>
-      <div class="ad-spec-box"><span>Your ad here</span><small>${AD_SPEC} · from ${centsUSD(AD.price)}</small></div>
+      <div class="ad-spec-box"><span>Your ad here</span><small>${AD_SPEC}</small></div>
       <div class="mb-content">
         <p>Put your brand in front of thousands of chronically-rejected (highly-employable, actually) people — right where they're already doom-scrolling.</p>
         <p>It's a live auction: pay to take the #1 slot and <strong>hold it until someone outbids you</strong>. No minimum time, no upper limit.</p>
       </div>
       <div class="mb-cta">
-        <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adInq">Claim this spot — from ${centsUSD(AD.price)} →</a>
+        <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adInq">Claim this spot →</a>
       </div>`;
     const inq = modalBody.querySelector("#adInq");
     if (inq) inq.addEventListener("click", () => track("ad_inquiry"));
@@ -1157,8 +1158,29 @@ function shareOrDownload(blob, filename, text) {
   if (typeof gToast === "function") gToast("⬇️ Saved — go post it.");
 }
 
+/* Tweet WITH the rejection image: native share (mobile, image attaches) or,
+   on desktop where X can't pre-attach media, download the image + open the
+   composer so they drag it in. */
+function shareImageToTweet(blob, filename, text, url) {
+  if (!blob) { alert("Couldn't generate the image — try again."); return; }
+  track("tweet_image", { file: filename });
+  let file = null;
+  try { file = new File([blob], filename, { type: "image/png" }); } catch (e) {}
+  if (file && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+    navigator.share({ files: [file], text }).catch(() => {});
+    return;
+  }
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = u; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 3000);
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank", "noopener");
+  if (typeof gToast === "function") gToast("⬇️ Image saved — drag it into your tweet.");
+}
+
 /* ---------- Save an email as a shareable PNG (canvas) ---------- */
-function renderEmailImage(e) {
+function renderEmailImage(e, mode = "save", tweetText = "") {
   const scale = 2, W = 1080, pad = 72, cw = W - pad * 2;
   const FS_SUB = 40, FS_META = 22, FS_BODY = 27, LH_BODY = 41;
   const cv = document.createElement("canvas");
@@ -1226,7 +1248,13 @@ function renderEmailImage(e) {
 
   cv.toBlob((blob) => {
     const slug = (e.company || "rejection").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    shareOrDownload(blob, `unemployable-${slug}.png`, "I'm getting rejected on theunemployable.xyz — make your own.");
+    const fn = `unemployable-${slug}.png`;
+    if (mode === "tweet") {
+      const url = (typeof shareLink === "function") ? shareLink() : location.href;
+      shareImageToTweet(blob, fn, tweetText, url);
+    } else {
+      shareOrDownload(blob, fn, "I'm getting rejected on theunemployable.xyz — make your own.");
+    }
   }, "image/png");
 }
 document.getElementById("modalBack").addEventListener("click", closeModal);
