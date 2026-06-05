@@ -393,6 +393,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .mb-btn:hover { background: var(--hover); }
 .mb-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .mb-btn.primary:hover { background: #a81b19; }
+.mb-btn.tweet { background: #000; color: #fff; border-color: #000; }
+.mb-btn.tweet:hover { background: #222; }
 .mb-actions { flex-wrap: wrap; }
 
 /* ===== Personalize modal ===== */
@@ -636,6 +638,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .mb-btn:hover { background: var(--hover); }
 :root[data-theme="dark"] .mb-btn.primary { background: var(--accent); color: #202124; border-color: var(--accent); }
 :root[data-theme="dark"] .mb-btn.primary:hover { background: #f6a59e; }
+:root[data-theme="dark"] .mb-btn.tweet { background: #fff; color: #000; border-color: #fff; }
+:root[data-theme="dark"] .mb-btn.tweet:hover { background: #e8eaed; }
 :root[data-theme="dark"] .pz-input { background: #1f1f1f; }
 :root[data-theme="dark"] .pz-cat { background: #1f1f1f; color: #bdc1c6; }
 :root[data-theme="dark"] .pz-cat.on { background: #3a1a18; color: #f6a59e; border-color: #f6a59e; }

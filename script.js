@@ -1038,12 +1038,14 @@ function openEmail(i) {
     </div>
     <div class="mb-actions">
       <button class="mb-btn primary" id="saveImgBtn">📤 Share / Save image</button>
+      <button class="mb-btn tweet" id="tweetBtn">𝕏 Tweet this</button>
       <button class="mb-btn" id="replyBtn">↩ Reply</button>
       <button class="mb-btn" id="fwdBtn">↪ Forward to mom</button>
     </div>
   `;
 
   modalBody.querySelector("#saveImgBtn").addEventListener("click", () => renderEmailImage(e));
+  modalBody.querySelector("#tweetBtn").addEventListener("click", () => tweetEmail(e));
   modalBody.querySelector("#replyBtn").addEventListener("click", () => {
     alert("This inbox is not monitored. It never was.");
   });
@@ -1060,6 +1062,22 @@ function openEmail(i) {
 function closeModal() {
   overlay.hidden = true;
   document.body.style.overflow = "";
+}
+
+/* Tweet a rejection — pre-written, on-brand, with the personalized share link
+   so anyone who clicks lands in their OWN endless rejection inbox. */
+function tweetEmail(e) {
+  const co = e.company, role = e.role;
+  const lines = [
+    `Just got "rejected" by ${co} for a ${role} role — on a website I made up — and it still stung. 💀`,
+    `I scrolled my entire career's worth of "we've decided to move forward with other candidates." Most relatable site on the internet. 💀`,
+    `${co} doesn't want me as a ${role}. Neither does anyone else. I am officially UNEMPLOYABLE™. 💀`,
+    `An endless inbox of every job rejection ever. I can't stop scrolling my own funeral. 💀`,
+  ];
+  const text = lines[Math.abs(e.i) % lines.length];
+  const url = (typeof shareLink === "function") ? shareLink() : location.href;
+  if (typeof track === "function") track("tweet", { company: co });
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank", "noopener");
 }
 
 /* The sponsored slot opens as a real (better-looking) email. */
