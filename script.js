@@ -46,38 +46,36 @@ const AD_INQUIRY = "mailto:garrett@201lab.com?subject=Advertising%20on%20UNEMPLO
 const centsUSD = (c) => `$${(c / 100).toLocaleString("en-US", { minimumFractionDigits: c % 100 ? 2 : 0 })}`;
 const nextBidCents = (c) => c + Math.max(100, Math.ceil(c * 0.05));
 
-const REAL_COMPANIES = [
-  "Google", "Meta", "Facebook", "X", "Amazon", "Microsoft", "Mozilla", "IBM", "Intuit",
-  "Disney", "PlayStation", "Roku", "Vimeo", "Yelp", "Nextdoor", "Reddit",
-  "Snap", "Shopify", "Stripe", "Coinbase", "Plaid", "Mercury", "Ramp",
-  "Klaviyo", "Figma", "Figure", "Frame.io", "InVision", "Webflow", "Vercel",
-  "Netlify", "GitLab", "HashiCorp", "ClickHouse", "ClickUp", "Cursor", "Loom",
-  "Calendly", "Linktree", "ReadMe", "Hightouch", "Metronome", "Movable Ink",
-  "Sprinklr", "Podium", "NerdWallet", "Instacart", "DoorDash", "Instabase",
-  "Anthropic", "OpenAI", "Luma AI", "Nominal", "Cribl", "HackerOne", "Socure",
-  "Transcend", "ID.me", "Kajabi", "Anchorage Digital", "Altruist", "Square",
-  "Opendoor", "Open Listings", "Peerspace", "Whatnot", "GOAT", "StubHub",
-  "PrizePicks", "Gametime", "Sweetgreen", "Ritual", "Headspace", "Equinox",
-  "FIGS", "Bird", "Rivian", "Tesla", "Faraday Future", "Hyperloop One",
-  "Cubic", "Esri", "Experian", "Symantec", "NortonLifeLock", "Cylance",
-  "Anduril", "Epirus", "CHAOS Industries", "BuildOps", "ServiceTitan",
-  "Fetch Rewards", "System1", "Revature", "Atticus", "JOANY", "Fair",
-  "Foundation", "Chariot", "PushPress", "Moss", "MomentFeed", "Smarkets",
-  "SteelHouse", "Sidebench", "Hawke Media", "Fullscreen", "We Are Envoy",
-  "UTA", "CBS Interactive", "AOL", "VSCO", "Ghost", "Girlboss", "Jumpcut",
-  "Runway", "TP-Link", "BMW", "Cast & Crew", "Freshworks", "a16z", "CX2",
-  "Airtable", "Zoox", "Yum Brands", "BCG Digital Ventures",
-  // more real ones pulled from the forwarded emails
-  "LaunchDarkly", "Addepar", "Second Nature", "Premier Lacrosse League",
-  "Taco Bell", "Zoo", "Gametime United",
-  "Monarch Money", "Era", "Parachute Home", "JPL", "Dave", "Ring",
-  // a few famous names mixed in for the laugh
-  "Airbnb", "Apple", "Netflix", "Spotify", "Uber", "Lyft", "Adobe", "Dropbox", "Notion",
-  "Linear", "Datadog", "Robinhood", "Brex", "Canva", "Duolingo", "Nike",
-  "Patreon", "Substack", "Etsy", "Asana", "Zendesk", "Pinterest", "Discord",
-  // and the house favorite
-  "Ironically Still Hiring Inc."
-];
+/* Companies grouped by INDUSTRY so a rejection always fits the brand —
+   no "Line Cook @ Ramp". A mix of companies Garrett actually applied to plus
+   famous names for recognizability. Add a name under the right industry and it
+   just works (domain + color auto-generated; override looks in BRAND below). */
+const INDUSTRY_COMPANIES = {
+  tech: ["Google", "Meta", "Facebook", "X", "Microsoft", "Mozilla", "IBM", "Yelp", "Nextdoor", "Reddit", "Snap", "Shopify", "Klaviyo", "Figma", "Frame.io", "InVision", "Webflow", "Vercel", "Netlify", "GitLab", "HashiCorp", "ClickHouse", "ClickUp", "Loom", "Calendly", "Linktree", "ReadMe", "Hightouch", "Movable Ink", "Sprinklr", "Podium", "Nominal", "Cribl", "Kajabi", "Foundation", "Chariot", "PushPress", "MomentFeed", "Smarkets", "SteelHouse", "Freshworks", "CX2", "Airtable", "LaunchDarkly", "Bird", "Cubic", "Esri", "ServiceTitan", "BuildOps", "Fetch Rewards", "System1", "Ghost", "TP-Link", "Ring", "Dropbox", "Notion", "Linear", "Datadog", "Asana", "Zendesk", "Pinterest", "Discord", "Adobe", "Canva", "Uber", "Lyft", "Apple", "Zoo", "PrizePicks", "Gametime", "Gametime United", "Salesforce", "Oracle", "SAP", "Workday", "ServiceNow", "Atlassian", "Slack", "Zoom", "Box", "Twilio", "Snowflake", "Databricks", "MongoDB", "Okta", "Gusto", "Rippling", "Deel", "Intercom", "Amplitude", "Retool", "Sentry", "Grammarly", "Miro", "Zapier", "Cloudflare", "DigitalOcean", "GitHub", "Samsara"],
+  ai: ["Anthropic", "OpenAI", "Luma AI", "Cursor", "Runway", "Instabase", "Hugging Face", "Scale AI", "Perplexity", "Mistral AI", "Cohere", "Glean", "Sierra", "Together AI", "Replicate", "Character.AI"],
+  fintech: ["Stripe", "Coinbase", "Plaid", "Mercury", "Ramp", "Square", "Robinhood", "Brex", "Intuit", "Figure", "Metronome", "NerdWallet", "Anchorage Digital", "Altruist", "Experian", "Moss", "Fair", "Monarch Money", "Era", "Dave", "Addepar", "PayPal", "Venmo", "Chime", "SoFi", "Affirm", "Klarna", "Wise", "Marqeta", "Carta", "Gemini", "Kraken", "Betterment", "Wealthfront", "Bill.com"],
+  finance: ["a16z", "JPMorgan Chase", "Goldman Sachs", "Morgan Stanley", "Visa", "Mastercard", "Sequoia Capital", "Fidelity Investments", "Charles Schwab"],
+  security: ["HackerOne", "Socure", "Transcend", "ID.me", "Symantec", "NortonLifeLock", "Cylance", "CrowdStrike", "Palo Alto Networks", "Snyk", "Wiz", "1Password"],
+  ecommerce: ["Amazon", "Instacart", "Whatnot", "GOAT", "StubHub", "Etsy", "eBay", "Wayfair", "Chewy", "Faire", "Poshmark", "Mercari", "ThredUp"],
+  retail: ["Nike", "FIGS", "Ritual", "Parachute Home", "Lululemon", "Adidas", "Warby Parker", "Allbirds", "Glossier", "Gymshark", "Away", "Bombas", "Target", "Walmart", "Costco", "Best Buy", "REI", "Crate & Barrel"],
+  food: ["Sweetgreen", "Taco Bell", "Yum Brands", "McDonald's", "Starbucks", "Chipotle", "Chick-fil-A", "Domino's", "Wingstop", "Shake Shack", "CAVA", "Panera Bread", "Dutch Bros", "Blue Bottle Coffee", "Toast"],
+  logistics: ["DoorDash", "Gopuff", "Flexport", "FedEx", "UPS"],
+  media: ["Disney", "Roku", "Vimeo", "Fullscreen", "UTA", "CBS Interactive", "AOL", "VSCO", "Girlboss", "Jumpcut", "Cast & Crew", "Patreon", "Substack", "Netflix", "Spotify", "Premier Lacrosse League", "HBO", "Hulu", "Warner Bros. Discovery", "Paramount", "NBCUniversal", "Twitch", "SoundCloud", "TikTok", "Vox Media", "BuzzFeed", "Condé Nast"],
+  agency: ["Hawke Media", "Sidebench", "We Are Envoy", "Ogilvy", "Wieden+Kennedy", "R/GA", "Huge"],
+  gaming: ["PlayStation", "Riot Games", "Epic Games", "Electronic Arts", "Activision Blizzard", "Ubisoft", "Bungie", "Roblox", "Unity"],
+  auto: ["Rivian", "Tesla", "Faraday Future", "Hyperloop One", "BMW", "Zoox", "SpaceX", "Blue Origin", "Lucid Motors", "Waymo", "Cruise", "Boeing", "Garmin", "GoPro", "Sonos", "Peloton", "DJI"],
+  defense: ["Anduril", "Epirus", "CHAOS Industries", "JPL", "Lockheed Martin", "Palantir", "Shield AI"],
+  health: ["Headspace", "JOANY", "Second Nature", "Equinox", "Calm", "Ro", "Hims & Hers", "Oscar Health", "Devoted Health", "Cedar", "Tempus", "23andMe", "Noom", "Whoop", "Oura"],
+  travel: ["Airbnb", "Marriott", "Hilton", "Delta Air Lines", "United Airlines", "Southwest Airlines", "Expedia", "Booking.com", "Hopper", "Turo", "Hyatt"],
+  realestate: ["Opendoor", "Open Listings", "Peerspace", "Zillow", "Redfin", "Compass", "CoStar Group"],
+  education: ["Duolingo", "Revature", "Coursera", "Udemy", "Khan Academy", "Chegg", "Outschool"],
+  consulting: ["BCG Digital Ventures", "McKinsey & Company", "Bain & Company", "Deloitte", "Accenture", "KPMG", "EY"],
+  legal: ["Atticus", "Ironclad", "Clio"],
+};
+// name -> industry, and the flat list everything else uses
+const COMPANY_INDUSTRY = {};
+for (const [ind, names] of Object.entries(INDUSTRY_COMPANIES)) for (const n of names) COMPANY_INDUSTRY[n] = ind;
+const REAL_COMPANIES = [...Object.keys(COMPANY_INDUSTRY), "Ironically Still Hiring Inc."];
 
 /* Optional per-brand overrides: name -> [domain, avatarColor]. Anything
    not listed gets a slugged domain and a stable auto-generated color.   */
@@ -118,6 +116,25 @@ const BRAND = {
   "Zoo": ["zoo.dev", "#111111"], "Premier Lacrosse League": ["premierlacrosseleague.com", "#0A1A2F"],
   "JPL": ["jpl.nasa.gov", "#1A3A6B"], "Ring": ["ring.com", "#1B97E0"],
   "Monarch Money": ["monarchmoney.com", "#5A31F4"], "Dave": ["dave.com", "#111111"],
+  // expanded company list — notable brand colors / clean domains
+  "Salesforce": ["salesforce.com", "#00A1E0"], "Oracle": ["oracle.com", "#C74634"],
+  "SAP": ["sap.com", "#0FAAFF"], "Slack": ["slack.com", "#4A154B"], "Zoom": ["zoom.us", "#2D8CFF"],
+  "PayPal": ["paypal.com", "#003087"], "Venmo": ["venmo.com", "#008CFF"], "Visa": ["visa.com", "#1A1F71"],
+  "Mastercard": ["mastercard.com", "#EB001B"], "Goldman Sachs": ["goldmansachs.com", "#6699CC"],
+  "Starbucks": ["starbucks.com", "#00704A"], "McDonald's": ["mcdonalds.com", "#DA291C"],
+  "Chipotle": ["chipotle.com", "#A81612"], "Walmart": ["walmart.com", "#0071CE"],
+  "Target": ["target.com", "#CC0000"], "Costco": ["costco.com", "#E32219"],
+  "Lululemon": ["lululemon.com", "#D31334"], "Twitch": ["twitch.tv", "#9146FF"],
+  "Roblox": ["roblox.com", "#E2231A"], "TikTok": ["tiktok.com", "#111111"],
+  "SpaceX": ["spacex.com", "#111111"], "Palantir": ["palantir.com", "#101113"],
+  "Peloton": ["onepeloton.com", "#181818"], "Booking.com": ["booking.com", "#003580"],
+  "Delta Air Lines": ["delta.com", "#003366"], "United Airlines": ["united.com", "#002244"],
+  "Southwest Airlines": ["southwest.com", "#304CB2"], "Zillow": ["zillow.com", "#006AFF"],
+  "Coursera": ["coursera.org", "#0056D2"], "Riot Games": ["riotgames.com", "#D32936"],
+  "Epic Games": ["epicgames.com", "#2A2A2A"], "Cloudflare": ["cloudflare.com", "#F38020"],
+  "CrowdStrike": ["crowdstrike.com", "#E01F3D"], "GitHub": ["github.com", "#24292E"],
+  "Warner Bros. Discovery": ["wbd.com", "#0A1A2F"], "Wieden+Kennedy": ["wk.com", "#111111"],
+  "McKinsey & Company": ["mckinsey.com", "#051C2C"], "Bain & Company": ["bain.com", "#C8102E"],
   "Ironically Still Hiring Inc.": ["stillno.com", "#777777"]
 };
 
@@ -203,6 +220,34 @@ const DEFAULT_POOL = [].concat(
   ...Object.values(ROLE_CATEGORIES).map((arr) => arr.slice(0, 4)),  // a few from every field
   JOKE_ROLES, JOKE_ROLES,                                            // weight the jokes a touch
 );
+
+/* Per-industry role pools, composed from the taxonomy above, so the role you
+   get rejected for actually fits the company (a fintech rejects you for finance
+   + product + eng, not "Sous Chef"). Unknown companies fall back to DEFAULT_POOL. */
+const corp = (...keys) => [].concat(...keys.map((k) => ROLE_CATEGORIES[k] || []));
+const INDUSTRY_POOLS = {
+  tech: corp("Software Engineering", "Design", "Product", "Data & Analytics", "Marketing", "Sales", "Customer Support", "Operations", "People & HR"),
+  ai: corp("Software Engineering", "Data & Analytics", "Product", "Design", "Operations"),
+  fintech: corp("Software Engineering", "Product", "Design", "Finance & Accounting", "Data & Analytics", "Sales", "Operations", "Legal"),
+  finance: corp("Finance & Accounting", "Data & Analytics", "Operations", "Sales", "Legal"),
+  security: corp("Software Engineering", "Product", "Sales", "Data & Analytics", "Operations"),
+  ecommerce: corp("Software Engineering", "Product", "Design", "Marketing", "Operations", "Retail", "Customer Support", "Data & Analytics"),
+  retail: corp("Retail", "Marketing", "Design", "Operations", "Sales", "Customer Support"),
+  food: corp("Hospitality & Food", "Retail", "Operations", "Marketing", "Customer Support"),
+  logistics: corp("Operations", "Software Engineering", "Product", "Customer Support", "Sales"),
+  media: corp("Creative & Media", "Product", "Design", "Marketing", "Software Engineering", "Operations"),
+  agency: corp("Creative & Media", "Marketing", "Design", "Sales", "Operations"),
+  gaming: corp("Software Engineering", "Design", "Product", "Creative & Media", "Data & Analytics"),
+  auto: corp("Software Engineering", "Operations", "Construction & Trades", "Design", "Product", "Data & Analytics"),
+  defense: corp("Software Engineering", "Operations", "Construction & Trades", "Data & Analytics", "Product"),
+  health: corp("Healthcare", "Product", "Operations", "Software Engineering", "Customer Support", "Data & Analytics"),
+  travel: corp("Operations", "Customer Support", "Marketing", "Software Engineering", "Product", "Sales", "Hospitality & Food"),
+  realestate: corp("Sales", "Operations", "Product", "Marketing", "Software Engineering", "Finance & Accounting"),
+  education: corp("Education", "Product", "Operations", "Marketing", "Software Engineering", "Customer Support"),
+  consulting: corp("Operations", "Data & Analytics", "Sales", "Finance & Accounting", "Software Engineering", "Product"),
+  legal: corp("Legal", "Operations", "Product", "Finance & Accounting"),
+};
+function poolForCompany(name) { return INDUSTRY_POOLS[COMPANY_INDUSTRY[name]] || DEFAULT_POOL; }
 
 /* Sender personas */
 const SENDERS = [
@@ -552,7 +597,14 @@ function buildEmail(i) {
   // Personalized? Reject across the WHOLE chosen pool (categories + freeform).
   // Otherwise the broad, funny generic pool.
   const pool = activeRolePool();
-  const role = pool ? pool[Math.floor(rng() * pool.length)] : pick(rng, DEFAULT_POOL);
+  let role;
+  if (pool) {
+    role = pool[Math.floor(rng() * pool.length)];                 // user personalization wins
+  } else {
+    // match the role to the company's industry (no "Line Cook @ Ramp"); ~12% joke for flavor
+    const ind = poolForCompany(cName);
+    role = rng() < 0.12 ? pick(rng, JOKE_ROLES) : ind[Math.floor(rng() * ind.length)];
+  }
   const [senderName, senderUser] = pick(rng, SENDERS);
   const tpl = TEMPLATES[Math.floor(rng() * TEMPLATES.length)];
   const snippet = pick(rng, SNIPPETS);
