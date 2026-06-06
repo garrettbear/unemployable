@@ -189,6 +189,9 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .built-by { margin: 6px 0 0; font-size: 11px; color: var(--text-faint); }
 .built-by a { color: var(--blue); text-decoration: none; }
 .built-by a:hover { text-decoration: underline; }
+.foot-links { margin: 6px 0 0; font-size: 11px; color: var(--text-faint); }
+.foot-links a { color: var(--text-faint); text-decoration: none; }
+.foot-links a:hover { color: var(--blue); text-decoration: underline; }
 .about-credit {
   font-size: 13px; line-height: 1.6; color: var(--text);
   background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; margin: 8px 0 4px;
@@ -289,10 +292,11 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 
 /* "take this spot" hint in the ad row + takeover block in the modal */
 .ad-take { color: #001fff; font-weight: 700; white-space: nowrap; }
-.ad-takeover { margin-top: 18px; padding: 16px 18px; border: 1px solid #001fff; border-radius: 12px; background: #eef1ff; text-align: center; }
-.ad-takeover p { margin: 0 0 10px; font-size: 13.5px; color: #0a1a8f; line-height: 1.5; }
-.ad-takeover a { display: inline-block; background: #001fff; color: #fff; text-decoration: none; font-weight: 800; padding: 11px 22px; border-radius: 22px; font-size: 13px; letter-spacing: .2px; }
-.ad-takeover a:hover { filter: brightness(1.15); }
+/* "Take this spot" promo — intentionally subtle so it never upstages the ad. */
+.ad-takeover { margin-top: 20px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: transparent; text-align: center; }
+.ad-takeover p { margin: 0 0 5px; font-size: 12.5px; color: var(--text-faint); line-height: 1.5; }
+.ad-takeover a { display: inline-block; color: var(--blue); text-decoration: none; font-weight: 700; font-size: 12.5px; }
+.ad-takeover a:hover { text-decoration: underline; }
 .ad-spec-box {
   aspect-ratio: 1200 / 628; width: 100%; margin: 4px 0 6px;
   border: 2px dashed var(--line); border-radius: 12px; background: #f6faff;
@@ -374,17 +378,15 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .mb-content { font-size: 14px; line-height: 1.7; color: #3c4043; }
 .mb-content p { margin: 0 0 14px; }
 .mb-content .sig { color: var(--text-soft); }
-.mb-cta {
-  margin-top: 28px; padding: 18px 20px; border: 1px dashed var(--accent);
-  border-radius: 12px; background: var(--accent-soft); text-align: center;
-}
-.mb-cta p { margin: 0 0 10px; font-size: 14px; color: var(--accent); font-weight: 500; }
+/* The advertiser's own CTA — keep it clean so nothing looks like an error. */
+.mb-cta { margin-top: 24px; text-align: center; }
+.mb-cta p { margin: 0 0 10px; font-size: 14px; color: var(--text-soft); font-weight: 500; }
 .mb-cta a {
   display: inline-block; background: var(--text); color: #fff; text-decoration: none;
   font-weight: 700; padding: 10px 22px; border-radius: 20px; font-size: 13px;
   letter-spacing: .3px; transition: background .15s;
 }
-.mb-cta a:hover { background: var(--accent); }
+.mb-cta a:hover { background: #001fff; }
 .mb-actions { margin-top: 24px; display: flex; gap: 12px; }
 .mb-btn {
   border: 1px solid var(--line); background: #fff; color: var(--text-soft);
@@ -657,11 +659,10 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 :root[data-theme="dark"] .ad-row:hover { background: #20303f; }
 :root[data-theme="dark"] .ad-spec-box { background: #1c2530; border-color: #3c4043; }
 :root[data-theme="dark"] .ad-take { color: #8ab4f8; }
-:root[data-theme="dark"] .ad-takeover { background: #0e1430; border-color: #2b3da8; }
-:root[data-theme="dark"] .ad-takeover p { color: #aebbff; }
-:root[data-theme="dark"] .mb-cta { background: var(--accent-soft); }
+:root[data-theme="dark"] .ad-takeover { background: transparent; border-color: var(--line); }
+:root[data-theme="dark"] .ad-takeover p { color: var(--text-faint); }
 :root[data-theme="dark"] .mb-cta a { background: #e8eaed; color: #202124; }
-:root[data-theme="dark"] .mb-cta a:hover { background: var(--accent); }
+:root[data-theme="dark"] .mb-cta a:hover { background: #001fff; color: #fff; }
 :root[data-theme="dark"] .row-check,
 :root[data-theme="dark"] .er-check { accent-color: #8ab4f8; }
 
