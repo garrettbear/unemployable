@@ -42,7 +42,7 @@ const AD = {
   cta: "Learn more",
   url: AUCTION_URL,
 };
-const AD_INQUIRY = "mailto:garrett@201lab.com?subject=Advertising%20on%20UNEMPLOYABLE%E2%84%A2";
+const AD_INQUIRY = "mailto:contact@theunemployable.xyz?subject=Advertising%20on%20UNEMPLOYABLE%E2%84%A2";
 const centsUSD = (c) => `$${(c / 100).toLocaleString("en-US", { minimumFractionDigits: c % 100 ? 2 : 0 })}`;
 const nextBidCents = (c) => c + Math.max(100, Math.ceil(c * 0.05));
 
