@@ -999,7 +999,7 @@ async function loadLiveAd() {
         AD.snippet = (ad.body || "").slice(0, 80);
         AD.body = (ad.body || "").split(/\n+/).filter(Boolean);
         AD.url = ad.url || AUCTION_URL;
-        AD.image = ad.image_path ? `${SUPA_URL}/storage/v1/object/public/ad-creatives/${ad.image_path}` : "";
+        AD.image = ad.image_path ? (ad.image_path.startsWith("http") ? ad.image_path : `${SUPA_URL}/storage/v1/object/public/ad-creatives/${ad.image_path}`) : "";
         AD.amountPaid = ad.amount_paid_cents || 0;
         AD.color = (typeof autoColor === "function") ? autoColor(AD.advertiser) : "#5f6368";
       } else { AD.on = false; AD.real = false; }
@@ -1153,8 +1153,9 @@ function openAd() {
         <a href="${AD.url}" target="_blank" rel="noopener" id="adCta">${AD.cta} →</a>
       </div>
       <div class="ad-takeover">
-        <p>👑 This is a <strong>real paid ad</strong>. ${AD.advertiser} took the #1 spot. Think you could do better?</p>
-        <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adTake">See how to take this spot →</a>
+        <p>👑 This is a <strong>real paid ad</strong>. ${AD.advertiser} took the #1 spot in a live auction. Think you could do better?</p>
+        <a class="tk-btn" href="${AUCTION_URL}" target="_blank" rel="noopener" id="adTake">⚔️ Outbid them — take this spot →</a>
+        <span class="tk-grave">🪦 Dethroned ads are never deleted — they live <strong>forever</strong> on the <a href="${AUCTION_URL}/graveyard" target="_blank" rel="noopener">Ad Graveyard</a>, or <a href="${AUCTION_URL}/plots" target="_blank" rel="noopener">buy a permanent plot</a> outright.</span>
       </div>
       <p class="ad-disc">A real ad, placed through the UNEMPLOYABLE™ ad auction.</p>`;
     const cta = modalBody.querySelector("#adCta");
@@ -1182,7 +1183,8 @@ function openAd() {
       </div>
       <div class="mb-cta">
         <a href="${AUCTION_URL}" target="_blank" rel="noopener" id="adInq">Claim this spot →</a>
-      </div>`;
+      </div>
+      <p class="ad-grave-note">🪦 When you're outbid, your ad isn't deleted — it retires to the <a href="${AUCTION_URL}/graveyard" target="_blank" rel="noopener">Ad Graveyard</a>, on the wall <strong>forever</strong>. Or skip the fight and <a href="${AUCTION_URL}/plots" target="_blank" rel="noopener">buy a permanent plot</a>.</p>`;
     const inq = modalBody.querySelector("#adInq");
     if (inq) inq.addEventListener("click", () => track("ad_inquiry"));
   }
