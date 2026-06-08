@@ -481,6 +481,94 @@ const TEMPLATES = [
       "Please don't take it personally — we're doing this to literally everyone.",
       "Best,"
     ]
+  },
+  {
+    label: "rejected",
+    subject: "Your application for {label}",
+    body: [
+      "Hi {first},",
+      "Thank you for applying for the {label} position at {company}.",
+      "After review, we've decided not to fill the role. Instead, we've reposted it at a 20% lower salary with three additional responsibilities and the word 'rockstar' in the title.",
+      "You are welcome — encouraged, even — to reapply.",
+      "Onward,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Outcome of your {label} application",
+    body: [
+      "Hello {first},",
+      "Thank you for participating in our nationwide search for {label}.",
+      "After interviewing 240 candidates across 11 weeks, we have selected the CEO's nephew, Brayden. Brayden is 24 and describes himself as 'an ideas guy.'",
+      "He starts Monday as the person who would have been your manager.",
+      "Best wishes,"
+    ]
+  },
+  {
+    label: "ghosted",
+    subject: "Re: re: re: Exciting opportunity at {company}!",
+    body: [
+      "Hi {first},",
+      "Quick update on the {label} role — the one I reached out to YOU about, twice, with rocket emojis.",
+      "We've decided you're not a fit. I know. I messaged you first. I'm as confused as you are.",
+      "Let's definitely keep in touch. (We will not keep in touch.)",
+      "Cheering for you!"
+    ]
+  },
+  {
+    label: "final",
+    subject: "Interview feedback — {label}",
+    body: [
+      "Hi {first},",
+      "Thank you for completing your AI-conducted interview for {label} at {company}.",
+      "The platform flagged a few concerns: your eye contact was rated 'suspicious' (you looked at the camera, which is suspicious), and your enthusiasm benchmarked 11% below the median candidate.",
+      "Per company policy, we are unable to share feedback. The above was the feedback.",
+      "Regards,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Thank you from the {company} family",
+    body: [
+      "Hi {first},",
+      "Thanks for interviewing for {label}. As you know, we're not just a company — we're a family.",
+      "After meeting you, the family voted.",
+      "We wish you the very best in your future families.",
+      "With love,"
+    ]
+  },
+  {
+    label: "rejected",
+    subject: "Update on your application to {company}",
+    body: [
+      "Dear {first},",
+      "Thank you for applying for the {label} position.",
+      "Our records show you never actually applied for this role. We're rejecting you anyway — proactively. We believe in efficiency here at {company}.",
+      "Consider this a rejection you can bank for later.",
+      "Cheers,"
+    ]
+  },
+  {
+    label: "final",
+    subject: "About your offer for {label}…",
+    body: [
+      "Hi {first},",
+      "Congratulations again on the offer! Quick housekeeping note: we've rescinded it.",
+      "A restructure occurred in the time between us sending the offer and you reading this email. The role no longer exists. Neither does the team, or the person who interviewed you.",
+      "The branded water bottle is still on its way. Please enjoy it.",
+      "Take care,"
+    ]
+  },
+  {
+    label: "ghosted",
+    subject: "Long time! About your {label} application",
+    body: [
+      "Hi {first},",
+      "You applied for {label} at {company} 487 days ago. We're just getting to it now!",
+      "Unfortunately, the position was filled 486 days ago.",
+      "We pride ourselves on closing the loop. Loop closed.",
+      "Warmly,"
+    ]
   }
 ];
 
@@ -504,7 +592,17 @@ const SNIPPETS = [
   "You weren't a 'culture fit,' a phrase that means nothing and everything…",
   "You were somehow overqualified AND underqualified — a rare feat…",
   "Your application has advanced to the next stage: silence…",
-  "The role pays in exposure and a quarterly pizza party…"
+  "The role pays in exposure and a quarterly pizza party…",
+  "We've reposted the role at a 20% lower salary — feel free to reapply…",
+  "After a nationwide search, we've selected the CEO's nephew, Brayden…",
+  "I reached out to YOU about this role, and I'm as confused as you are…",
+  "Our AI flagged your eye contact as 'suspicious'…",
+  "Your enthusiasm benchmarked 11% below the median candidate…",
+  "We're a family here, and the family voted…",
+  "Our records show you never applied — we're rejecting you proactively…",
+  "Quick housekeeping note: we've rescinded the offer…",
+  "The position no longer exists. Neither does the team…",
+  "You applied 487 days ago — we're just getting to it now…"
 ];
 
 /* ---------- Personalization (name + "dream job") ----------
@@ -1307,7 +1405,7 @@ function renderEmailImage(e, mode = "save", tweetText = "") {
       const url = (typeof shareLink === "function") ? shareLink() : location.href;
       shareImageToTweet(blob, fn, tweetText, url);
     } else {
-      shareOrDownload(blob, fn, "I'm getting rejected on theunemployable.xyz — make your own.");
+      shareOrDownload(blob, fn, "You're getting rejected on theunemployable.xyz 👀 — go check your inbox.");
     }
   }, "image/png");
 }
@@ -1319,6 +1417,31 @@ const aboutOverlay = document.getElementById("aboutOverlay");
 document.getElementById("aboutBtn").addEventListener("click", () => {
   aboutOverlay.hidden = false; document.body.style.overflow = "hidden";
 });
+
+/* ---------- first-visit "wtf is this" explainer ----------
+   Friends keep texting "lol wtf is this" — so the site answers. Shows once
+   (localStorage). On prank links (?name=) we wait longer so the joke lands
+   before the reveal. */
+(function () {
+  const ov = document.getElementById("wtfOverlay");
+  if (!ov) return;
+  const close = () => { ov.hidden = true; document.body.style.overflow = ""; try { localStorage.setItem("ue-wtf", "1"); } catch (e) {} };
+  const open = () => {
+    // if another modal is up (they opened an email), don't stack — try again shortly
+    if (document.body.style.overflow === "hidden") { setTimeout(open, 8000); return; }
+    ov.hidden = false; document.body.style.overflow = "hidden"; track("wtf_open");
+  };
+  const goEl = document.getElementById("wtfGo"), prankEl = document.getElementById("wtfPrank"), abEl = document.getElementById("wtfAbout");
+  document.getElementById("wtfClose").addEventListener("click", close);
+  if (goEl) goEl.addEventListener("click", close);
+  if (prankEl) prankEl.addEventListener("click", () => { close(); track("wtf_prank"); if (typeof openPersonalize === "function") openPersonalize(); });
+  if (abEl) abEl.addEventListener("click", () => { close(); const b = document.getElementById("aboutBtn"); if (b) b.click(); });
+  ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
+  let seen = false; try { seen = localStorage.getItem("ue-wtf") === "1"; } catch (e) {}
+  if (seen) return;
+  const pranked = new URLSearchParams(location.search).has("name");
+  setTimeout(open, pranked ? 15000 : 2500);
+})();
 function closeAbout() { aboutOverlay.hidden = true; document.body.style.overflow = ""; }
 document.getElementById("aboutClose").addEventListener("click", closeAbout);
 aboutOverlay.addEventListener("click", (e) => { if (e.target === aboutOverlay) closeAbout(); });
@@ -1812,12 +1935,30 @@ function shareLink() {
     if (rIn && rIn.value.trim()) addRole();
     if (cIn && cIn.value.trim()) addCo();
     savePersonalize();
+    // copy a ready-to-text prank message, not just a bare link
     const link = shareLink(), note = document.getElementById("pzNote");
+    const who = (!IS_DEFAULT_NAME && FIRST_NAME) ? `${FIRST_NAME}, you're` : "You're";
+    const msg = `${who} getting rejected on theunemployable.xyz 👀 ${link}`;
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(link)
-        .then(() => { if (note) { note.textContent = "Link copied — send it to a friend."; note.classList.add("ok"); } })
-        .catch(() => { if (note) { note.textContent = link; } });
-    } else if (note) { note.textContent = link; }
+      navigator.clipboard.writeText(msg)
+        .then(() => { if (note) { note.textContent = "😈 Prank message copied — just paste it to them."; note.classList.add("ok"); } })
+        .catch(() => { if (note) { note.textContent = msg; } });
+    } else if (note) { note.textContent = msg; }
+    track("prank_copy");
+  });
+  // Reset: wipe the current profile so you can prank the next friend fresh
+  const pzReset = document.getElementById("pzReset");
+  if (pzReset) pzReset.addEventListener("click", () => {
+    const nIn = document.getElementById("pzName"); if (nIn) nIn.value = "";
+    if (rIn) rIn.value = ""; if (cIn) cIn.value = "";
+    pzCats = []; pzRoles = []; pzCos = [];
+    renderPz();
+    savePersonalize();   // persists the cleared state + regenerates the inbox
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}  // drop ?name= etc. from the URL
+    const note = document.getElementById("pzNote");
+    if (note) { note.textContent = "🧼 Cleared — ready for the next victim."; note.classList.remove("ok"); }
+    if (nIn) nIn.focus();
+    track("prank_reset");
   });
   updateMeAvatar();
 })();

@@ -188,7 +188,8 @@
 
       <div class="pz-actions">
         <button class="about-shop pz-apply" id="pzApply">Apply</button>
-        <button class="mb-btn" id="pzCopy">Copy shareable link</button>
+        <button class="mb-btn" id="pzCopy">😈 Copy prank message</button>
+        <button class="mb-btn pz-reset" id="pzReset" title="Clear everything for the next victim">Reset</button>
       </div>
       <p class="pz-note" id="pzNote"></p>
     </div>
@@ -269,6 +270,23 @@
       <p class="cvs-egg">Spiritual sequel to <a href="https://codepen.io/garrettbear/pen/JzMmqg" target="_blank" rel="noopener">the CVS receipt</a>. 🧾</p>
       <p class="copyright">© <span class="yr">2026</span> UNEMPLOYABLE™ · All rights reserved (the only thing we've got).</p>
       <p class="about-links"><a href="/careers" target="_blank" rel="noopener">Careers</a> · <a href="/terms" target="_blank" rel="noopener">Terms</a> · <a href="/privacy" target="_blank" rel="noopener">Privacy</a> · <span class="ver">v1.0</span></p>
+    </div>
+  </div>
+
+  <!-- first-visit "wtf is this" explainer -->
+  <div class="modal-overlay" id="wtfOverlay" hidden>
+    <div class="wtf-card" role="dialog" aria-modal="true" aria-labelledby="wtfTitle">
+      <button class="about-close" id="wtfClose" aria-label="Close">×</button>
+      <div class="wtf-emoji">🤨</div>
+      <h2 id="wtfTitle">wtf is this?</h2>
+      <p class="wtf-lede">Everyone's inbox, with the rise of AI.</p>
+      <p>It's satire — none of these emails are real, but you've probably received every single one. A company posts a job, an AI screens 900 applicants, an AI writes the rejection, and increasingly an AI <em>is</em> the new hire. This inbox just scrolls back through the entire genre of corporate "no." Forever.</p>
+      <p>Built by <a href="https://garrettbear.com" target="_blank" rel="noopener">one very rejected human</a> after 1.5 years of job hunting. The sponsored ad at the top is real, though — someone actually paid for it, and <a href="https://ads.theunemployable.xyz" target="_blank" rel="noopener">you can outbid them</a>.</p>
+      <div class="wtf-actions">
+        <button class="wtf-btn primary" id="wtfGo">😮‍💨 Back to the rejections</button>
+        <button class="wtf-btn" id="wtfPrank">😈 Put a friend's name on them</button>
+      </div>
+      <p class="wtf-foot">Full story in <button class="linklike" id="wtfAbout">About &amp; the joke</button></p>
     </div>
   </div>
 
