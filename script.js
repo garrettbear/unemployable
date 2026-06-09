@@ -1144,6 +1144,57 @@ document.querySelectorAll(".mobile-tab").forEach((t) => {
 const overlay = document.getElementById("modalOverlay");
 const modalBody = document.getElementById("modalBody");
 
+/* ---------- In-email capture ----------
+   Instead of a popup, a few opened rejections end with a tongue-in-cheek
+   "this inbox isn't monitored — ours is" signup. Sparse, dismissible, and it
+   never shows once someone's subscribed. Reuses deliver()/validEmail() below. */
+let _capOpens = 0;
+const CAP_LINES = [
+  ["📬 This inbox isn't monitored. Ours is.", "Get the one email that <em>isn't</em> a rejection — first merch drop, plus dispatches from the unemployment line."],
+  ["📭 Still refreshing for good news?", "We'll actually send some. Drop your email for the drop + the occasional non-rejection."],
+  ["🎟️ One email. Zero rejections. Promise.", "Be first to the merch drop. We only email when there's something worth opening."],
+  ["🤖 When the robots unionize, you'll want to know.", "Join the list: early merch access and the rare email a human actually wrote."],
+];
+function _isSubscribed() { try { return localStorage.getItem("ue-sub") === "1"; } catch (e) { return false; } }
+function _capDismissed() { try { return sessionStorage.getItem("ue-cap-x") === "1"; } catch (e) { return false; } }
+function maybeCapture(e) {
+  const standard = !e.rick && !e.egg && (e.label === "rejected" || e.label === "ghosted" || e.label === "final");
+  if (!standard || _isSubscribed() || _capDismissed()) return "";
+  _capOpens++;
+  if (_capOpens % 4 !== 2) return "";   // sparse — surfaces on qualifying opens #2, #6, #10…
+  const [head, sub] = CAP_LINES[Math.floor(Math.random() * CAP_LINES.length)];
+  return `<div class="mb-capture" id="mbCapture">
+    <button class="cap-x" id="capX" type="button" aria-label="Dismiss">×</button>
+    <p class="cap-head">${head}</p>
+    <p class="cap-sub">${sub}</p>
+    <form class="cap-form" id="capForm" novalidate>
+      <input type="email" required placeholder="you@stillchecking.email" aria-label="Email address" autocomplete="email" inputmode="email" />
+      <input class="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button type="submit">Notify me</button>
+    </form>
+    <p class="cap-note" id="capNote">No spam. Unlike recruiters, we actually follow up.</p>
+  </div>`;
+}
+function wireCapture() {
+  const form = modalBody.querySelector("#capForm");
+  if (!form) return;
+  const note = modalBody.querySelector("#capNote");
+  const x = modalBody.querySelector("#capX");
+  const done = () => { const c = document.getElementById("mbCapture"); if (c) c.innerHTML = '<div class="cap-done">✓ You\'re on the list. We\'ll send something that isn\'t a rejection.</div>'; };
+  if (x) x.addEventListener("click", () => { try { sessionStorage.setItem("ue-cap-x", "1"); } catch (e) {} const c = document.getElementById("mbCapture"); if (c) c.remove(); track("email_capture_dismiss"); });
+  form.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const input = form.querySelector("input[type=email]"); const hp = form.querySelector(".hp");
+    const email = ((input && input.value) || "").trim();
+    if (hp && hp.value) { done(); return; }
+    if (!validEmail(email)) { if (note) { note.textContent = "Hmm — that doesn't look like a real email."; note.classList.add("err"); } if (input) { input.focus(); input.select(); } return; }
+    deliver(email);
+    try { localStorage.setItem("ue-sub", "1"); } catch (e) {}
+    track("email_capture_signup");
+    done();
+  });
+}
+
 function openEmail(i) {
   const e = store[i];
   if (!e) return;
@@ -1151,6 +1202,7 @@ function openEmail(i) {
   const row = list.querySelector(`.email-row[data-i="${i}"]`);
   if (row) { row.classList.remove("unread"); row.classList.add("read"); }
   recordOpen(e);
+  const cap = maybeCapture(e);
 
   modalBody.parentElement.classList.toggle("egg", !!e.egg);
 
@@ -1186,6 +1238,7 @@ function openEmail(i) {
       }</p>
       <a href="${e.rick ? RICK : 'https://shop.theunemployable.xyz'}" ${e.rick ? 'id="offerCta"' : 'target="_blank" rel="noopener"'}>${e.rick ? '✅ Accept your offer →' : 'Shop the brand →'}</a>
     </div>
+    ${cap}
     <div class="mb-actions">
       <button class="mb-btn primary" id="saveImgBtn">📤 Share / Save image</button>
       <button class="mb-btn tweet" id="tweetBtn">𝕏 Tweet this</button>
@@ -1204,6 +1257,7 @@ function openEmail(i) {
   });
   const offerCta = modalBody.querySelector("#offerCta");
   if (offerCta) offerCta.addEventListener("click", (ev) => { ev.preventDefault(); rickroll("🎺 Offer accepted!"); });
+  wireCapture();
 
   overlay.hidden = false;
   document.body.style.overflow = "hidden";
@@ -2079,6 +2133,7 @@ function validEmail(s) {
 }
 function succeedSignup(form, note, okText) {
   track("waitlist_signup");
+  try { localStorage.setItem("ue-sub", "1"); } catch (e) {}   // also suppresses the in-email capture
   form.innerHTML = '<div class="signup-done">✓ You\'re on the list.</div>';
   if (note) { note.textContent = okText; note.classList.remove("err"); note.classList.add("ok"); }
 }
